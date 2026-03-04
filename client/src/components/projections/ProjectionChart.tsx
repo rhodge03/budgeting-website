@@ -97,6 +97,15 @@ export default function ProjectionChart({ data, showInflationAdjusted, retiremen
             fillOpacity={0.6}
           />
 
+          <Area
+            type="monotone"
+            dataKey="investmentGrowth"
+            name="Interest Earned"
+            stroke="#8b5cf6"
+            fill="none"
+            strokeWidth={2}
+          />
+
           {showInflationAdjusted && (
             <Area
               type="monotone"
