@@ -28,19 +28,20 @@ export interface ProjectionInputs {
   expenseCategories: HouseholdSnapshot['expenseCategories'];
   expenseBuffer: number;  // percentage
   inflationRate: number;  // percentage, e.g. 3
+  maxAge: number;         // project until this age (default 100)
 }
 
 export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
-  const { earners, expenseCategories, expenseBuffer, inflationRate } = inputs;
+  const { earners, expenseCategories, expenseBuffer, inflationRate, maxAge } = inputs;
 
   // Find the primary earner to anchor the timeline
   const primary = earners.find((e) => e.isPrimary) || earners[0];
   if (!primary?.retirementSettings) return [];
 
   const { currentAge } = primary.retirementSettings;
-  if (currentAge >= 100) return [];
+  if (currentAge >= maxAge) return [];
 
-  const yearsToProject = 100 - currentAge;
+  const yearsToProject = maxAge - currentAge;
   const currentYear = new Date().getFullYear();
   const results: ProjectionYear[] = [];
   const inflationMultiplier = 1 + inflationRate / 100;

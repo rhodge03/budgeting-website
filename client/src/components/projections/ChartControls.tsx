@@ -5,6 +5,8 @@ interface Props {
   onToggleInflation: () => void;
   ssClaimingAge: number;
   onSsClaimingAgeChange: (age: number) => void;
+  maxAge: number;
+  onMaxAgeChange: (age: number) => void;
 }
 
 export default function ChartControls({
@@ -14,6 +16,8 @@ export default function ChartControls({
   onToggleInflation,
   ssClaimingAge,
   onSsClaimingAgeChange,
+  maxAge,
+  onMaxAgeChange,
 }: Props) {
   return (
     <div className="flex items-center gap-4 flex-wrap">
@@ -29,6 +33,18 @@ export default function ChartControls({
           className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <span className="text-xs text-gray-500">%</span>
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <label className="text-xs text-gray-500">Max Age</label>
+        <input
+          type="number"
+          min={50}
+          max={120}
+          value={maxAge}
+          onChange={(e) => onMaxAgeChange(Math.min(120, Math.max(50, Number(e.target.value))))}
+          className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
       <div className="flex items-center gap-1.5">

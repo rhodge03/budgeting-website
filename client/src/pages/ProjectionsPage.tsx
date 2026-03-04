@@ -13,6 +13,7 @@ export default function ProjectionsPage() {
   const [inflationRate, setInflationRate] = useState(3);
   const [showInflationAdjusted, setShowInflationAdjusted] = useState(false);
   const [ssClaimingAge, setSsClaimingAge] = useState(67);
+  const [maxAge, setMaxAge] = useState(100);
 
   const primary = earners.find((e) => e.isPrimary) || earners[0];
   const retirementAge = primary?.retirementSettings?.targetRetirementAge;
@@ -25,8 +26,9 @@ export default function ProjectionsPage() {
         expenseCategories,
         expenseBuffer: Number(household?.expenseBuffer ?? 0),
         inflationRate,
+        maxAge,
       }),
-    [earners, expenseCategories, household?.expenseBuffer, inflationRate],
+    [earners, expenseCategories, household?.expenseBuffer, inflationRate, maxAge],
   );
 
   const ssEstimate = useMemo(() => {
@@ -51,6 +53,8 @@ export default function ProjectionsPage() {
           onToggleInflation={() => setShowInflationAdjusted(!showInflationAdjusted)}
           ssClaimingAge={ssClaimingAge}
           onSsClaimingAgeChange={setSsClaimingAge}
+          maxAge={maxAge}
+          onMaxAgeChange={setMaxAge}
         />
       </div>
 
