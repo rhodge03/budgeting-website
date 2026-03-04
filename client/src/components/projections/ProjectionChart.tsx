@@ -107,15 +107,26 @@ export default function ProjectionChart({ data, showInflationAdjusted, retiremen
           />
 
           {showInflationAdjusted && (
-            <Area
-              type="monotone"
-              dataKey="totalSavingsReal"
-              name="Total (Inflation-Adjusted)"
-              stroke="#f59e0b"
-              fill="none"
-              strokeDasharray="5 3"
-              strokeWidth={2}
-            />
+            <>
+              <Area
+                type="monotone"
+                dataKey="totalSavingsReal"
+                name="Total (Inflation-Adjusted)"
+                stroke="#f59e0b"
+                fill="none"
+                strokeDasharray="5 3"
+                strokeWidth={2}
+              />
+              <Area
+                type="monotone"
+                dataKey="investmentGrowthReal"
+                name="Interest (Inflation-Adjusted)"
+                stroke="#a78bfa"
+                fill="none"
+                strokeDasharray="5 3"
+                strokeWidth={2}
+              />
+            </>
           )}
         </AreaChart>
       </ResponsiveContainer>

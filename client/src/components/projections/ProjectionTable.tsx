@@ -38,7 +38,9 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
               <th className="px-3 py-2 text-right font-medium">401(k) Contrib.</th>
               <th className="px-3 py-2 text-right font-medium">Interest Earned</th>
               <th className="px-3 py-2 text-right font-medium">Net Cash</th>
-              <th className="px-3 py-2 text-right font-medium">Total Savings</th>
+              <th className="px-3 py-2 text-right font-medium">401(k)</th>
+              <th className="px-3 py-2 text-right font-medium">Savings</th>
+              <th className="px-3 py-2 text-right font-medium">Total</th>
               <th className="px-3 py-2 text-right font-medium">Real Value</th>
             </tr>
           </thead>
@@ -59,11 +61,13 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
                   <td className="px-3 py-1.5 text-right text-gray-700">${fmt(row.totalIncome)}</td>
                   <td className="px-3 py-1.5 text-right text-red-600">${fmt(row.totalTax)}</td>
                   <td className="px-3 py-1.5 text-right text-gray-700">${fmt(row.totalExpenses)}</td>
-                  <td className="px-3 py-1.5 text-right text-blue-600">${fmt(row.totalContributions401k)}</td>
+                  <td className="px-3 py-1.5 text-right text-blue-600">${fmt(row.totalContributions401k + row.totalEmployerMatch)}</td>
                   <td className="px-3 py-1.5 text-right text-emerald-600">${fmt(row.investmentGrowth)}</td>
                   <td className={`px-3 py-1.5 text-right ${row.netCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {row.netCashFlow < 0 ? '-' : ''}${fmt(Math.abs(row.netCashFlow))}
                   </td>
+                  <td className="px-3 py-1.5 text-right text-blue-600">${fmt(row.fourOneK)}</td>
+                  <td className="px-3 py-1.5 text-right text-green-600">${fmt(row.generalSavings)}</td>
                   <td className="px-3 py-1.5 text-right font-medium text-gray-900">${fmt(row.totalSavings)}</td>
                   <td className="px-3 py-1.5 text-right text-gray-500">${fmt(row.totalSavingsReal)}</td>
                 </tr>

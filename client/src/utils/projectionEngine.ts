@@ -20,6 +20,7 @@ export interface ProjectionYear {
   investmentGrowth: number; // interest/gains accrued this year
   // Inflation-adjusted
   totalSavingsReal: number;
+  investmentGrowthReal: number; // interest/gains adjusted for inflation
 }
 
 export interface ProjectionInputs {
@@ -36,10 +37,10 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
   const primary = earners.find((e) => e.isPrimary) || earners[0];
   if (!primary?.retirementSettings) return [];
 
-  const { currentAge, withdrawalAge } = primary.retirementSettings;
-  if (currentAge >= withdrawalAge) return [];
+  const { currentAge } = primary.retirementSettings;
+  if (currentAge >= 100) return [];
 
-  const yearsToProject = withdrawalAge - currentAge;
+  const yearsToProject = 100 - currentAge;
   const currentYear = new Date().getFullYear();
   const results: ProjectionYear[] = [];
   const inflationMultiplier = 1 + inflationRate / 100;
@@ -163,6 +164,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       netCashFlow: Math.round(netCash),
       investmentGrowth: Math.round(totalInvestmentGrowth),
       totalSavingsReal: Math.round(totalSavings / inflationFactor),
+      investmentGrowthReal: Math.round(totalInvestmentGrowth / inflationFactor),
     });
   }
 

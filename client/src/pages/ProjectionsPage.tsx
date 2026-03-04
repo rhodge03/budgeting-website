@@ -12,6 +12,7 @@ export default function ProjectionsPage() {
   const { earners, expenseCategories, household } = useHouseholdStore();
   const [inflationRate, setInflationRate] = useState(3);
   const [showInflationAdjusted, setShowInflationAdjusted] = useState(false);
+  const [ssClaimingAge, setSsClaimingAge] = useState(67);
 
   const primary = earners.find((e) => e.isPrimary) || earners[0];
   const retirementAge = primary?.retirementSettings?.targetRetirementAge;
@@ -34,9 +35,9 @@ export default function ProjectionsPage() {
     if (totalIncome === 0) return null;
     return estimateSocialSecurity({
       currentAnnualIncome: totalIncome,
-      claimingAge: retirementAge ?? 67,
+      claimingAge: ssClaimingAge,
     });
-  }, [primary, retirementAge]);
+  }, [primary, ssClaimingAge]);
 
   return (
     <div className="space-y-4">
@@ -48,6 +49,8 @@ export default function ProjectionsPage() {
           onInflationRateChange={setInflationRate}
           showInflationAdjusted={showInflationAdjusted}
           onToggleInflation={() => setShowInflationAdjusted(!showInflationAdjusted)}
+          ssClaimingAge={ssClaimingAge}
+          onSsClaimingAgeChange={setSsClaimingAge}
         />
       </div>
 
