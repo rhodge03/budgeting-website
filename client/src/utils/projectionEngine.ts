@@ -1,0 +1,163 @@
+import { calculateTax } from './taxCalculator';
+import type { HouseholdSnapshot } from 'shared';
+
+type EarnerWithRelations = HouseholdSnapshot['earners'][number];
+
+export interface ProjectionYear {
+  age: number;            // primary earner's age
+  year: number;           // calendar year
+  // Balances at end of year
+  generalSavings: number;
+  fourOneK: number;
+  totalSavings: number;
+  // Annual flows
+  totalIncome: number;
+  totalTax: number;
+  totalExpenses: number;
+  totalContributions401k: number;
+  totalEmployerMatch: number;
+  netCashFlow: number;
+  // Inflation-adjusted
+  totalSavingsReal: number;
+}
+
+export interface ProjectionInputs {
+  earners: EarnerWithRelations[];
+  expenseCategories: HouseholdSnapshot['expenseCategories'];
+  expenseBuffer: number;  // percentage
+  inflationRate: number;  // percentage, e.g. 3
+}
+
+export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
+  const { earners, expenseCategories, expenseBuffer, inflationRate } = inputs;
+
+  // Find the primary earner to anchor the timeline
+  const primary = earners.find((e) => e.isPrimary) || earners[0];
+  if (!primary?.retirementSettings) return [];
+
+  const { currentAge, withdrawalAge } = primary.retirementSettings;
+  if (currentAge >= withdrawalAge) return [];
+
+  const yearsToProject = withdrawalAge - currentAge;
+  const currentYear = new Date().getFullYear();
+  const results: ProjectionYear[] = [];
+  const inflationMultiplier = 1 + inflationRate / 100;
+
+  // Monthly expenses (before buffer)
+  const monthlyExpenses = expenseCategories.reduce(
+    (sum, cat) => sum + cat.subCategories.reduce((s, sub) => s + Number(sub.amount), 0),
+    0,
+  );
+  const annualExpenses = monthlyExpenses * 12 * (1 + expenseBuffer / 100);
+
+  // Per-earner tracking
+  const earnerState = earners.map((earner) => {
+    const income = earner.incomeEntries.reduce((s, ie) => s + Number(ie.amount), 0);
+    const taxableIncome = earner.incomeEntries
+      .filter((ie) => ie.isTaxable)
+      .reduce((s, ie) => s + Number(ie.amount), 0);
+    const savings = earner.savingsBalance;
+    const retirement = earner.retirementSettings;
+    const ror = earner.rateOfReturn;
+
+    return {
+      earner,
+      currentIncome: income,
+      currentTaxableIncome: taxableIncome,
+      generalSavings: Number(savings?.generalSavingsBalance ?? 0),
+      fourOneK: Number(savings?.fourOneKBalance ?? 0),
+      contributionPct: Number(savings?.contributionPercent ?? 0) / 100,
+      employerMatchPct: Number(savings?.employerMatchPercent ?? 0) / 100,
+      salaryGrowthRate: Number(savings?.salaryGrowthRate ?? 0) / 100,
+      annualRate: Number(ror?.annualRate ?? 7) / 100,
+      retirementAge: retirement?.targetRetirementAge ?? 65,
+      currentAge: retirement?.currentAge ?? currentAge,
+    };
+  });
+
+  for (let y = 0; y < yearsToProject; y++) {
+    const age = currentAge + y;
+    const year = currentYear + y;
+    const inflationFactor = Math.pow(inflationMultiplier, y);
+
+    let totalIncome = 0;
+    let totalTax = 0;
+    let totalContributions401k = 0;
+    let totalEmployerMatch = 0;
+    let aggregateGeneralSavings = 0;
+    let aggregateFourOneK = 0;
+
+    for (const es of earnerState) {
+      const earnerAge = es.currentAge + y;
+      const isRetired = earnerAge >= es.retirementAge;
+
+      // Salary grows each year (only while working)
+      const income = isRetired ? 0 : es.currentIncome * Math.pow(1 + es.salaryGrowthRate, y);
+      const taxableIncome = isRetired ? 0 : es.currentTaxableIncome * Math.pow(1 + es.salaryGrowthRate, y);
+
+      // 401k contributions (only while working)
+      const contribution401k = isRetired ? 0 : taxableIncome * es.contributionPct;
+      const employerMatch = isRetired ? 0 : taxableIncome * es.employerMatchPct;
+
+      // Calculate taxes
+      const itemizedTotal = es.earner.itemizedDeductions.reduce((s, d) => s + Number(d.amount), 0);
+      const tax = isRetired
+        ? { totalTax: 0 }
+        : calculateTax({
+            grossIncome: income,
+            filingStatus: es.earner.filingStatus,
+            state: es.earner.state,
+            deductionType: es.earner.deductionType,
+            itemizedDeductionTotal: itemizedTotal,
+            preTax401k: contribution401k,
+          });
+
+      totalIncome += income;
+      totalTax += tax.totalTax;
+      totalContributions401k += contribution401k;
+      totalEmployerMatch += employerMatch;
+
+      // Grow balances with rate of return
+      es.fourOneK = es.fourOneK * (1 + es.annualRate) + contribution401k + employerMatch;
+      aggregateFourOneK += es.fourOneK;
+      aggregateGeneralSavings += es.generalSavings;
+    }
+
+    // Household expenses grow with inflation
+    const yearExpenses = annualExpenses * inflationFactor;
+
+    // Net cash flow = income - taxes - expenses - 401k contributions (already deducted)
+    const netCash = totalIncome - totalTax - yearExpenses - totalContributions401k;
+
+    // Add net cash to general savings (shared at household level)
+    // Distribute proportionally but track aggregate
+    if (earnerState.length > 0) {
+      // Add net cash flow to the primary earner's general savings for simplicity
+      earnerState[0].generalSavings += netCash;
+      // Grow all general savings with the primary earner's rate
+      for (const es of earnerState) {
+        es.generalSavings = es.generalSavings * (1 + es.annualRate);
+      }
+    }
+
+    aggregateGeneralSavings = earnerState.reduce((s, es) => s + es.generalSavings, 0);
+    const totalSavings = aggregateGeneralSavings + aggregateFourOneK;
+
+    results.push({
+      age,
+      year,
+      generalSavings: Math.round(aggregateGeneralSavings),
+      fourOneK: Math.round(aggregateFourOneK),
+      totalSavings: Math.round(totalSavings),
+      totalIncome: Math.round(totalIncome),
+      totalTax: Math.round(totalTax),
+      totalExpenses: Math.round(yearExpenses),
+      totalContributions401k: Math.round(totalContributions401k),
+      totalEmployerMatch: Math.round(totalEmployerMatch),
+      netCashFlow: Math.round(netCash),
+      totalSavingsReal: Math.round(totalSavings / inflationFactor),
+    });
+  }
+
+  return results;
+}
