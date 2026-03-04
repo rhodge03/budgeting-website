@@ -36,6 +36,9 @@ interface HouseholdState {
   addIncomeEntry: (earnerId: string, data: { label: string; amount: number; isTaxable?: boolean }) => Promise<void>;
   updateIncomeEntry: (entryId: string, data: Partial<IncomeEntry>) => Promise<void>;
   removeIncomeEntry: (entryId: string, earnerId: string) => Promise<void>;
+
+  // Local earner data updates (sync store without API call)
+  patchEarnerData: (earnerId: string, patch: Partial<EarnerWithRelations>) => void;
 }
 
 export const useHouseholdStore = create<HouseholdState>((set, get) => ({
@@ -171,6 +174,14 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
         e.id === earnerId
           ? { ...e, incomeEntries: e.incomeEntries.filter((ie) => ie.id !== entryId) }
           : e,
+      ),
+    }));
+  },
+
+  patchEarnerData: (earnerId, patch) => {
+    set((state) => ({
+      earners: state.earners.map((e) =>
+        e.id === earnerId ? { ...e, ...patch } : e,
       ),
     }));
   },

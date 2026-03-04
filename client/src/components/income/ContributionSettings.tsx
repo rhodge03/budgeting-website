@@ -6,7 +6,7 @@ import PercentageInput from '../shared/PercentageInput';
 import { useAutoSave } from '../../hooks/useAutoSave';
 
 export default function ContributionSettings() {
-  const { earners, selectedEarnerId } = useHouseholdStore();
+  const { earners, selectedEarnerId, patchEarnerData } = useHouseholdStore();
   const earner = earners.find((e) => e.id === selectedEarnerId);
   const savings = earner?.savingsBalance;
 
@@ -37,7 +37,9 @@ export default function ContributionSettings() {
     key: earner?.id || '',
     onSave: async (data) => {
       if (!earner) return;
-      await savingsApi.update(earner.id, data);
+      const result = await savingsApi.update(earner.id, data);
+      // Sync the store so data persists across tab switches
+      patchEarnerData(earner.id, { savingsBalance: result });
     },
   });
 
