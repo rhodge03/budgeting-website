@@ -3,6 +3,7 @@
 export interface Household {
   id: string;
   name: string;
+  expenseBuffer: number;
   createdAt: string;
   updatedAt: string;
 }

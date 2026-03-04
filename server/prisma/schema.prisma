@@ -10,10 +10,11 @@ datasource db {
 // ─── AUTH & HOUSEHOLD ─────────────────────────────────
 
 model Household {
-  id        String   @id @default(uuid())
-  name      String   @default("My Household")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(uuid())
+  name            String   @default("My Household")
+  expenseBuffer   Decimal  @default(0) @db.Decimal(5, 2) @map("expense_buffer")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   users             User[]
   earners           Earner[]

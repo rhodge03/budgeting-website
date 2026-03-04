@@ -25,3 +25,13 @@ export async function getSnapshot(householdId: string) {
 
   return { household, earners, expenseCategories };
 }
+
+export async function updateHousehold(householdId: string, data: {
+  name?: string;
+  expenseBuffer?: number;
+}) {
+  return prisma.household.update({
+    where: { id: householdId },
+    data,
+  });
+}

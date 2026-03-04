@@ -24,6 +24,7 @@ interface HouseholdState {
   // Actions
   loadSnapshot: () => Promise<void>;
   reset: () => void;
+  updateHousehold: (data: Partial<HouseholdSnapshot['household']>) => Promise<void>;
 
   // Earner actions
   addEarner: (name: string) => Promise<void>;
@@ -92,6 +93,14 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
       isLoading: false,
       error: null,
     });
+  },
+
+  updateHousehold: async (data) => {
+    // Optimistic update
+    set((state) => ({
+      household: state.household ? { ...state.household, ...data } : state.household,
+    }));
+    await householdApi.update(data);
   },
 
   addEarner: async (name) => {

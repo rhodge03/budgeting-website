@@ -3,16 +3,23 @@ import { useHouseholdStore } from '../../stores/householdStore';
 import CategoryGroup from './CategoryGroup';
 
 export default function BudgetPanel() {
-  const { expenseCategories, addExpenseCategory } = useHouseholdStore();
+  const { household, expenseCategories, addExpenseCategory, updateHousehold } = useHouseholdStore();
   const [showMonthly, setShowMonthly] = useState(true);
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
+
+  const bufferPct = Number(household?.expenseBuffer ?? 0);
 
   const totalMonthly = expenseCategories.reduce(
     (sum, cat) => sum + cat.subCategories.reduce((s, sub) => s + Number(sub.amount), 0),
     0,
   );
-  const displayTotal = showMonthly ? totalMonthly : totalMonthly * 12;
+  const bufferedMonthly = totalMonthly * (1 + bufferPct / 100);
+  const displayTotal = showMonthly ? bufferedMonthly : bufferedMonthly * 12;
+
+  const handleBufferChange = (value: number) => {
+    updateHousehold({ expenseBuffer: Math.max(0, value) });
+  };
 
   const handleAddCategory = async () => {
     if (!newName.trim()) return;
@@ -44,9 +51,24 @@ export default function BudgetPanel() {
               Annual
             </button>
           </div>
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs text-gray-500">Buffer</label>
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={bufferPct}
+              onChange={(e) => handleBufferChange(Number(e.target.value))}
+              className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="text-xs text-gray-500">%</span>
+          </div>
           <span className="text-sm font-semibold text-gray-900">
             Total: ${displayTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             <span className="text-gray-500 font-normal"> / {showMonthly ? 'mo' : 'yr'}</span>
+            {bufferPct > 0 && (
+              <span className="text-xs text-amber-600 font-normal ml-1">(+{bufferPct}% buffer)</span>
+            )}
           </span>
         </div>
         <button
