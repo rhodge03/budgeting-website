@@ -1,4 +1,4 @@
-import { calculateTax } from './taxCalculator';
+import { calculateTax, calculateCapitalGainsTax } from './taxCalculator';
 import type { HouseholdSnapshot } from 'shared';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
@@ -20,6 +20,7 @@ export interface ProjectionYear {
   investmentGrowth: number; // total interest/gains accrued this year
   fourOneKGrowth: number;   // 401(k) interest this year
   savingsGrowth: number;    // general savings interest this year
+  capitalGainsTax: number;  // tax on realized gains from selling investments
   // Inflation-adjusted
   totalSavingsReal: number;
   investmentGrowthReal: number; // interest/gains adjusted for inflation
@@ -76,6 +77,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       earner,
       incomeEntries,
       generalSavings: Number(savings?.generalSavingsBalance ?? 0),
+      costBasis: Number(savings?.generalSavingsBalance ?? 0), // start: all basis, no unrealized gains
       fourOneK: Number(savings?.fourOneKBalance ?? 0),
       contributionPct: Number(savings?.contributionPercent ?? 0) / 100,
       employerMatchPct: Number(savings?.employerMatchPercent ?? 0) / 100,
@@ -157,6 +159,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
 
     // Calculate interest on savings BEFORE applying net cash,
     // then net cash comes out of the interest (not the principal)
+    let totalCapGainsTax = 0;
     if (earnerState.length > 0) {
       // Grow all general savings with the earner's rate first
       for (const es of earnerState) {
@@ -164,9 +167,73 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
         totalInvestmentGrowth += savingsInterest;
         totalSavingsGrowth += savingsInterest;
         es.generalSavings = es.generalSavings + savingsInterest;
+        // Interest is unrealized gains — costBasis stays the same
       }
-      // Then apply net cash flow (negative net cash draws from interest/savings)
-      earnerState[0].generalSavings += netCash;
+
+      const es0 = earnerState[0];
+      if (netCash >= 0) {
+        // Positive cash flow: add to savings and increase cost basis
+        es0.generalSavings += netCash;
+        es0.costBasis += netCash;
+      } else {
+        // Negative cash flow: need to sell investments to cover deficit
+        const deficit = -netCash;
+        const balance = es0.generalSavings;
+
+        if (balance <= 0) {
+          // No savings left, just go negative
+          es0.generalSavings -= deficit;
+        } else {
+          const gainRatio = Math.max(0, (balance - es0.costBasis) / balance);
+
+          if (gainRatio <= 0) {
+            // No unrealized gains — no cap gains tax
+            const withdrawal = Math.min(deficit, balance);
+            es0.generalSavings -= deficit;
+            es0.costBasis -= withdrawal; // reduce basis by amount sold (all basis)
+            if (es0.costBasis < 0) es0.costBasis = 0;
+          } else {
+            // Iterative solve: sell enough to cover deficit + tax on the realized gains
+            // Use primary earner's filing status/state for cap gains tax
+            const primaryEarner = es0.earner;
+            // ordinaryTaxableIncome: approximate using total income minus deductions
+            const ordinaryTaxable = Math.max(0, totalIncome - totalContributions401k);
+            let W = deficit;
+            let capGainsTax = 0;
+            for (let i = 0; i < 3; i++) {
+              const realizedGains = W * gainRatio;
+              capGainsTax = calculateCapitalGainsTax({
+                capitalGains: realizedGains,
+                ordinaryTaxableIncome: ordinaryTaxable,
+                filingStatus: primaryEarner.filingStatus,
+                state: primaryEarner.state,
+              });
+              W = deficit + capGainsTax;
+            }
+            // Cap withdrawal at available balance
+            W = Math.min(W, balance);
+            // Recalculate tax if capped
+            if (W < deficit + capGainsTax) {
+              const realizedGains = W * gainRatio;
+              capGainsTax = calculateCapitalGainsTax({
+                capitalGains: realizedGains,
+                ordinaryTaxableIncome: ordinaryTaxable,
+                filingStatus: primaryEarner.filingStatus,
+                state: primaryEarner.state,
+              });
+            }
+            es0.generalSavings -= W;
+            es0.costBasis -= W * (1 - gainRatio); // reduce basis proportionally
+            if (es0.costBasis < 0) es0.costBasis = 0;
+            // Any remaining deficit beyond what savings can cover
+            if (W < deficit + capGainsTax) {
+              es0.generalSavings -= (deficit + capGainsTax - W);
+            }
+            totalCapGainsTax = capGainsTax;
+            totalTax += capGainsTax;
+          }
+        }
+      }
     }
 
     aggregateGeneralSavings = earnerState.reduce((s, es) => s + es.generalSavings, 0);
@@ -187,6 +254,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       investmentGrowth: Math.round(totalInvestmentGrowth),
       fourOneKGrowth: Math.round(totalFourOneKGrowth),
       savingsGrowth: Math.round(totalSavingsGrowth),
+      capitalGainsTax: Math.round(totalCapGainsTax),
       totalSavingsReal: Math.round(totalSavings / inflationFactor),
       investmentGrowthReal: Math.round(totalInvestmentGrowth / inflationFactor),
       savingsGrowthReal: Math.round(totalSavingsGrowth / inflationFactor),

@@ -117,4 +117,29 @@ export const STATE_TAX_RATES: Record<string, { rate: number; name: string }> = {
   WY: { rate: 0, name: 'Wyoming' },
 };
 
+// 2025 Long-Term Capital Gains Brackets
+// Rates depend on total taxable income (ordinary + cap gains), with gains stacking on top.
+export const CAPITAL_GAINS_BRACKETS = {
+  single: [
+    { min: 0, max: 48350, rate: 0 },
+    { min: 48350, max: 533400, rate: 0.15 },
+    { min: 533400, max: Infinity, rate: 0.20 },
+  ],
+  married_jointly: [
+    { min: 0, max: 96700, rate: 0 },
+    { min: 96700, max: 600050, rate: 0.15 },
+    { min: 600050, max: Infinity, rate: 0.20 },
+  ],
+  married_separately: [
+    { min: 0, max: 48350, rate: 0 },
+    { min: 48350, max: 300000, rate: 0.15 },
+    { min: 300000, max: Infinity, rate: 0.20 },
+  ],
+  head_of_household: [
+    { min: 0, max: 64750, rate: 0 },
+    { min: 64750, max: 566700, rate: 0.15 },
+    { min: 566700, max: Infinity, rate: 0.20 },
+  ],
+} as const;
+
 // FilingStatus type is exported from shared/types/index.ts
