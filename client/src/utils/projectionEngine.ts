@@ -124,12 +124,12 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       const contribution401k = taxableIncome > 0 ? taxableIncome * es.contributionPct : 0;
       const employerMatch = taxableIncome > 0 ? taxableIncome * es.employerMatchPct : 0;
 
-      // Calculate taxes (only if there's income this year)
+      // Calculate taxes (only on taxable income)
       const itemizedTotal = es.earner.itemizedDeductions.reduce((s, d) => s + Number(d.amount), 0);
-      const tax = income === 0
+      const tax = taxableIncome === 0
         ? { totalTax: 0 }
         : calculateTax({
-            grossIncome: income,
+            grossIncome: taxableIncome,
             filingStatus: es.earner.filingStatus,
             state: es.earner.state,
             deductionType: es.earner.deductionType,
