@@ -34,6 +34,7 @@ export default function ContributionSettings() {
   useAutoSave({
     data: formData,
     enabled: !!earner,
+    key: earner?.id || '',
     onSave: async (data) => {
       if (!earner) return;
       await savingsApi.update(earner.id, data);
