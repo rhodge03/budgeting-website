@@ -17,7 +17,8 @@ export function useAutoSave<T>({
 }: UseAutoSaveOptions<T>) {
   const statusRef = useRef<SaveStatus>('idle');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isInitialMount = useRef(true);
+  const lastSavedRef = useRef<string>('');
+  const isHydrated = useRef(false);
   const latestData = useRef(data);
   const onSaveRef = useRef(onSave);
 
@@ -25,10 +26,16 @@ export function useAutoSave<T>({
   latestData.current = data;
   onSaveRef.current = onSave;
 
+  const serialized = JSON.stringify(data);
+
   const save = useCallback(async () => {
+    const current = JSON.stringify(latestData.current);
+    // Don't save if nothing actually changed
+    if (current === lastSavedRef.current) return;
     statusRef.current = 'saving';
     try {
       await onSaveRef.current(latestData.current);
+      lastSavedRef.current = current;
       statusRef.current = 'saved';
     } catch {
       statusRef.current = 'error';
@@ -36,11 +43,15 @@ export function useAutoSave<T>({
   }, []);
 
   useEffect(() => {
-    // Skip the initial hydration render
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
+    // Skip until hydration has set real data (first two changes: init + hydration)
+    if (!isHydrated.current) {
+      isHydrated.current = true;
+      lastSavedRef.current = serialized;
       return;
     }
+
+    // Don't save if the serialized value hasn't changed from last save
+    if (serialized === lastSavedRef.current) return;
 
     if (!enabled) return;
 
@@ -50,7 +61,7 @@ export function useAutoSave<T>({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [data, debounceMs, enabled, save]);
+  }, [serialized, debounceMs, enabled, save]);
 
   return { status: statusRef.current };
 }
