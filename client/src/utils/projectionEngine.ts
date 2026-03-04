@@ -58,26 +58,31 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
 
   // Per-earner tracking
   const earnerState = earners.map((earner) => {
-    const income = earner.incomeEntries.reduce((s, ie) => s + Number(ie.amount), 0);
-    const taxableIncome = earner.incomeEntries
-      .filter((ie) => ie.isTaxable)
-      .reduce((s, ie) => s + Number(ie.amount), 0);
     const savings = earner.savingsBalance;
     const retirement = earner.retirementSettings;
     const ror = earner.rateOfReturn;
+    const salaryGrowthRate = Number(savings?.salaryGrowthRate ?? 0) / 100;
+    const retirementAge = retirement?.targetRetirementAge ?? 65;
+    const earnerCurrentAge = retirement?.currentAge ?? currentAge;
+
+    // Pre-process income entries with their durations
+    const incomeEntries = earner.incomeEntries.map((ie) => ({
+      amount: Number(ie.amount),
+      isTaxable: ie.isTaxable,
+      durationYears: ie.durationYears != null ? Number(ie.durationYears) : null,
+    }));
 
     return {
       earner,
-      currentIncome: income,
-      currentTaxableIncome: taxableIncome,
+      incomeEntries,
+      salaryGrowthRate,
       generalSavings: Number(savings?.generalSavingsBalance ?? 0),
       fourOneK: Number(savings?.fourOneKBalance ?? 0),
       contributionPct: Number(savings?.contributionPercent ?? 0) / 100,
       employerMatchPct: Number(savings?.employerMatchPercent ?? 0) / 100,
-      salaryGrowthRate: Number(savings?.salaryGrowthRate ?? 0) / 100,
       annualRate: Number(ror?.annualRate ?? 7) / 100,
-      retirementAge: retirement?.targetRetirementAge ?? 65,
-      currentAge: retirement?.currentAge ?? currentAge,
+      retirementAge,
+      currentAge: earnerCurrentAge,
     };
   });
 
@@ -99,18 +104,29 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     for (const es of earnerState) {
       const earnerAge = es.currentAge + y;
       const isRetired = earnerAge >= es.retirementAge;
+      const growthFactor = Math.pow(1 + es.salaryGrowthRate, y);
 
-      // Salary grows each year (only while working)
-      const income = isRetired ? 0 : es.currentIncome * Math.pow(1 + es.salaryGrowthRate, y);
-      const taxableIncome = isRetired ? 0 : es.currentTaxableIncome * Math.pow(1 + es.salaryGrowthRate, y);
+      // Evaluate each income entry individually based on its duration
+      let income = 0;
+      let taxableIncome = 0;
+      for (const ie of es.incomeEntries) {
+        // Entry active? Check duration (null = until retirement)
+        const active = ie.durationYears != null
+          ? y < ie.durationYears
+          : !isRetired;
+        if (!active) continue;
+        const entryAmount = ie.amount * growthFactor;
+        income += entryAmount;
+        if (ie.isTaxable) taxableIncome += entryAmount;
+      }
 
-      // 401k contributions (only while working)
-      const contribution401k = isRetired ? 0 : taxableIncome * es.contributionPct;
-      const employerMatch = isRetired ? 0 : taxableIncome * es.employerMatchPct;
+      // 401k contributions based on current taxable income
+      const contribution401k = taxableIncome > 0 ? taxableIncome * es.contributionPct : 0;
+      const employerMatch = taxableIncome > 0 ? taxableIncome * es.employerMatchPct : 0;
 
-      // Calculate taxes
+      // Calculate taxes (only if there's income this year)
       const itemizedTotal = es.earner.itemizedDeductions.reduce((s, d) => s + Number(d.amount), 0);
-      const tax = isRetired
+      const tax = income === 0
         ? { totalTax: 0 }
         : calculateTax({
             grossIncome: income,

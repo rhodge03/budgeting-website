@@ -6,7 +6,7 @@ export async function listByEarner(earnerId: string): Promise<IncomeEntry[]> {
   return data;
 }
 
-export async function create(earnerId: string, body: { label: string; amount: number; isTaxable?: boolean }): Promise<IncomeEntry> {
+export async function create(earnerId: string, body: { label: string; amount: number; isTaxable?: boolean; durationYears?: number | null }): Promise<IncomeEntry> {
   const { data } = await api.post(`/income/earner/${earnerId}`, body);
   return data;
 }

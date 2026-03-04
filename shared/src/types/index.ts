@@ -40,6 +40,7 @@ export interface IncomeEntry {
   label: string;
   amount: number;
   isTaxable: boolean;
+  durationYears: number | null;
   sortOrder: number;
 }
 

@@ -65,14 +65,15 @@ model Earner {
 // ─── INCOME ───────────────────────────────────────────
 
 model IncomeEntry {
-  id        String   @id @default(uuid())
-  earnerId  String   @map("earner_id")
-  label     String
-  amount    Decimal  @db.Decimal(12, 2)
-  isTaxable Boolean  @default(true) @map("is_taxable")
-  sortOrder Int      @default(0) @map("sort_order")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  earnerId      String   @map("earner_id")
+  label         String
+  amount        Decimal  @db.Decimal(12, 2)
+  isTaxable     Boolean  @default(true) @map("is_taxable")
+  durationYears Int?     @map("duration_years")
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   earner Earner @relation(fields: [earnerId], references: [id], onDelete: Cascade)
 

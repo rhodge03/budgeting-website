@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import CategoryGroup from './CategoryGroup';
+
+const BUFFER_STORAGE_KEY = 'expense-buffer';
 
 export default function BudgetPanel() {
   const { household, expenseCategories, addExpenseCategory, updateHousehold } = useHouseholdStore();
@@ -8,7 +10,25 @@ export default function BudgetPanel() {
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
 
-  const bufferPct = Number(household?.expenseBuffer ?? 0);
+  const serverBuffer = Number(household?.expenseBuffer ?? 0);
+
+  // On mount, restore from localStorage if server value is 0
+  useEffect(() => {
+    if (serverBuffer === 0) {
+      try {
+        const stored = localStorage.getItem(BUFFER_STORAGE_KEY);
+        if (stored && Number(stored) > 0) {
+          updateHousehold({ expenseBuffer: Number(stored) });
+        }
+      } catch { /* ignore */ }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const bufferPct = serverBuffer || (() => {
+    try {
+      return Number(localStorage.getItem(BUFFER_STORAGE_KEY) ?? 0);
+    } catch { return 0; }
+  })();
 
   const totalMonthly = expenseCategories.reduce(
     (sum, cat) => sum + cat.subCategories.reduce((s, sub) => s + Number(sub.amount), 0),
@@ -18,7 +38,9 @@ export default function BudgetPanel() {
   const displayTotal = showMonthly ? bufferedMonthly : bufferedMonthly * 12;
 
   const handleBufferChange = (value: number) => {
-    updateHousehold({ expenseBuffer: Math.max(0, value) });
+    const clamped = Math.max(0, value);
+    localStorage.setItem(BUFFER_STORAGE_KEY, String(clamped));
+    updateHousehold({ expenseBuffer: clamped });
   };
 
   const handleAddCategory = async () => {

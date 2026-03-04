@@ -2,9 +2,13 @@ import { useHouseholdStore } from '../../stores/householdStore';
 import * as retirementApi from '../../api/retirement';
 import CurrencyInput from '../shared/CurrencyInput';
 
-export default function RetirementSettingsPanel() {
-  const { earners, selectedEarnerId, patchEarnerData } = useHouseholdStore();
-  const earner = earners.find((e) => e.id === selectedEarnerId);
+interface Props {
+  earnerId: string;
+}
+
+export default function RetirementSettingsPanel({ earnerId }: Props) {
+  const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
+  const patchEarnerData = useHouseholdStore((s) => s.patchEarnerData);
   const settings = earner?.retirementSettings;
 
   if (!earner) return null;

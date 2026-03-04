@@ -12,14 +12,10 @@ interface HouseholdState {
   household: HouseholdSnapshot['household'] | null;
   earners: EarnerWithRelations[];
   expenseCategories: ExpenseCategory[];
-  selectedEarnerId: string | null;
 
   // Status
   isLoading: boolean;
   error: string | null;
-
-  // Computed
-  selectedEarner: () => EarnerWithRelations | undefined;
 
   // Actions
   loadSnapshot: () => Promise<void>;
@@ -32,7 +28,6 @@ interface HouseholdState {
   archiveEarner: (id: string) => Promise<void>;
   removeEarner: (id: string) => Promise<void>;
   setPrimaryEarner: (id: string) => Promise<void>;
-  selectEarner: (id: string) => void;
 
   // Income actions
   addIncomeEntry: (earnerId: string, data: { label: string; amount: number; isTaxable?: boolean }) => Promise<void>;
@@ -55,28 +50,18 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   household: null,
   earners: [],
   expenseCategories: [],
-  selectedEarnerId: null,
   isLoading: false,
   error: null,
-
-  selectedEarner: () => {
-    const { earners, selectedEarnerId } = get();
-    return earners.find((e) => e.id === selectedEarnerId);
-  },
 
   loadSnapshot: async () => {
     const isInitial = get().household === null;
     if (isInitial) set({ isLoading: true, error: null });
     try {
       const snapshot = await householdApi.getSnapshot();
-      const currentSelectedId = get().selectedEarnerId;
-      const stillExists = snapshot.earners.some((e) => e.id === currentSelectedId);
-      const primaryOrFirst = snapshot.earners.find((e) => e.isPrimary) || snapshot.earners[0];
       set({
         household: snapshot.household,
         earners: snapshot.earners,
         expenseCategories: snapshot.expenseCategories,
-        selectedEarnerId: stillExists ? currentSelectedId : (primaryOrFirst?.id || null),
         isLoading: false,
       });
     } catch (err: any) {
@@ -89,7 +74,6 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
       household: null,
       earners: [],
       expenseCategories: [],
-      selectedEarnerId: null,
       isLoading: false,
       error: null,
     });
@@ -107,7 +91,6 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
     const earner = await earnersApi.create(name);
     set((state) => ({
       earners: [...state.earners, earner as EarnerWithRelations],
-      selectedEarnerId: state.earners.length === 0 ? earner.id : state.selectedEarnerId,
     }));
   },
 
@@ -122,30 +105,16 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
 
   archiveEarner: async (id) => {
     await earnersApi.archive(id);
-    set((state) => {
-      const earners = state.earners.filter((e) => e.id !== id);
-      return {
-        earners,
-        selectedEarnerId:
-          state.selectedEarnerId === id
-            ? earners[0]?.id || null
-            : state.selectedEarnerId,
-      };
-    });
+    set((state) => ({
+      earners: state.earners.filter((e) => e.id !== id),
+    }));
   },
 
   removeEarner: async (id) => {
     await earnersApi.remove(id);
-    set((state) => {
-      const earners = state.earners.filter((e) => e.id !== id);
-      return {
-        earners,
-        selectedEarnerId:
-          state.selectedEarnerId === id
-            ? earners[0]?.id || null
-            : state.selectedEarnerId,
-      };
-    });
+    set((state) => ({
+      earners: state.earners.filter((e) => e.id !== id),
+    }));
   },
 
   setPrimaryEarner: async (id) => {
@@ -156,10 +125,6 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
         isPrimary: e.id === id,
       })),
     }));
-  },
-
-  selectEarner: (id) => {
-    set({ selectedEarnerId: id });
   },
 
   addIncomeEntry: async (earnerId, data) => {

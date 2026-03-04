@@ -16,6 +16,7 @@ export async function create(earnerId: string, householdId: string, data: {
   label: string;
   amount: number;
   isTaxable?: boolean;
+  durationYears?: number | null;
 }) {
   const earner = await prisma.earner.findFirst({ where: { id: earnerId, householdId } });
   if (!earner) throw new NotFoundError('Earner not found');
@@ -27,6 +28,7 @@ export async function create(earnerId: string, householdId: string, data: {
       label: data.label,
       amount: data.amount,
       isTaxable: data.isTaxable ?? true,
+      durationYears: data.durationYears ?? null,
       sortOrder: count,
     },
   });
@@ -36,6 +38,7 @@ export async function update(id: string, householdId: string, data: {
   label?: string;
   amount?: number;
   isTaxable?: boolean;
+  durationYears?: number | null;
   sortOrder?: number;
 }) {
   const entry = await prisma.incomeEntry.findUnique({
@@ -66,6 +69,7 @@ export async function bulkUpsert(earnerId: string, householdId: string, entries:
   label: string;
   amount: number;
   isTaxable: boolean;
+  durationYears?: number | null;
   sortOrder: number;
 }[]) {
   const earner = await prisma.earner.findFirst({ where: { id: earnerId, householdId } });
@@ -87,6 +91,7 @@ export async function bulkUpsert(earnerId: string, householdId: string, entries:
               label: entry.label,
               amount: entry.amount,
               isTaxable: entry.isTaxable,
+              durationYears: entry.durationYears ?? null,
               sortOrder: entry.sortOrder,
             },
           })
@@ -96,6 +101,7 @@ export async function bulkUpsert(earnerId: string, householdId: string, entries:
               label: entry.label,
               amount: entry.amount,
               isTaxable: entry.isTaxable,
+              durationYears: entry.durationYears ?? null,
               sortOrder: entry.sortOrder,
             },
           }),

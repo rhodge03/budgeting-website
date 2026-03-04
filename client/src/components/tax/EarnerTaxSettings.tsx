@@ -18,9 +18,13 @@ const STATES = Object.entries(STATE_TAX_RATES)
     rate,
   }));
 
-export default function EarnerTaxSettings() {
-  const { earners, selectedEarnerId, patchEarnerData } = useHouseholdStore();
-  const earner = earners.find((e) => e.id === selectedEarnerId);
+interface Props {
+  earnerId: string;
+}
+
+export default function EarnerTaxSettings({ earnerId }: Props) {
+  const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
+  const patchEarnerData = useHouseholdStore((s) => s.patchEarnerData);
 
   if (!earner) return null;
 

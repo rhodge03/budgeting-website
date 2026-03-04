@@ -69,7 +69,7 @@ export default function ProjectionsPage() {
       runProjection({
         earners,
         expenseCategories,
-        expenseBuffer: Number(household?.expenseBuffer ?? 0),
+        expenseBuffer: Number(household?.expenseBuffer ?? 0) || Number(localStorage.getItem('expense-buffer') ?? 0),
         inflationRate,
         maxAge,
       }),

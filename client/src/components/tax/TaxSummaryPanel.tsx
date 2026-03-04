@@ -4,9 +4,13 @@ import { calculateTax } from '../../utils/taxCalculator';
 import { STATE_TAX_RATES } from 'shared/constants/taxBrackets';
 import type { FilingStatus } from 'shared';
 
-export default function TaxSummaryPanel() {
-  const { earners, selectedEarnerId } = useHouseholdStore();
-  const earner = earners.find((e) => e.id === selectedEarnerId);
+interface Props {
+  earnerId: string;
+}
+
+export default function TaxSummaryPanel({ earnerId }: Props) {
+  const earners = useHouseholdStore((s) => s.earners);
+  const earner = earners.find((e) => e.id === earnerId);
 
   const isJoint = earner?.filingStatus === 'married_jointly';
 

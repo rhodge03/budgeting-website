@@ -3,18 +3,16 @@ import { useHouseholdStore } from '../../stores/householdStore';
 import CurrencyInput from '../shared/CurrencyInput';
 import type { IncomeEntry } from 'shared';
 
-export default function IncomePanel() {
-  const { earners, selectedEarnerId, addIncomeEntry, updateIncomeEntry, removeIncomeEntry } = useHouseholdStore();
-  const earner = earners.find((e) => e.id === selectedEarnerId);
+interface Props {
+  earnerId: string;
+}
+
+export default function IncomePanel({ earnerId }: Props) {
+  const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
+  const { addIncomeEntry, updateIncomeEntry, removeIncomeEntry } = useHouseholdStore();
   const [saving, setSaving] = useState(false);
 
-  if (!earner) {
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <p className="text-sm text-gray-500">Select an earner to manage income.</p>
-      </div>
-    );
-  }
+  if (!earner) return null;
 
   const entries = earner.incomeEntries || [];
 
@@ -105,6 +103,9 @@ function IncomeEntryRow({
   onRemove: () => void;
 }) {
   const [label, setLabel] = useState(entry.label);
+  const [durationStr, setDurationStr] = useState(
+    entry.durationYears != null ? String(entry.durationYears) : '',
+  );
 
   const handleLabelBlur = () => {
     if (label !== entry.label) {
@@ -119,21 +120,43 @@ function IncomeEntryRow({
     [onUpdate],
   );
 
+  const handleDurationBlur = () => {
+    const parsed = durationStr.trim() === '' ? null : parseInt(durationStr, 10);
+    const current = entry.durationYears ?? null;
+    if (parsed !== current) {
+      onUpdate({ durationYears: isNaN(parsed as number) ? null : parsed });
+    }
+  };
+
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <input
         type="text"
         value={label}
         onChange={(e) => setLabel(e.target.value)}
         onBlur={handleLabelBlur}
-        className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex-1 min-w-0 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Income label"
       />
       <CurrencyInput
         value={Number(entry.amount)}
         onChange={handleAmountChange}
-        className="w-40"
+        className="w-36"
       />
+      <div className="flex items-center gap-1">
+        <input
+          type="number"
+          min={1}
+          max={99}
+          value={durationStr}
+          onChange={(e) => setDurationStr(e.target.value)}
+          onBlur={handleDurationBlur}
+          placeholder="\u221E"
+          title="Duration in years (empty = until retirement)"
+          className="w-12 px-1.5 py-2 text-sm text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <span className="text-xs text-gray-500">yr</span>
+      </div>
       <label className="flex items-center gap-1 text-xs text-gray-600 whitespace-nowrap">
         <input
           type="checkbox"

@@ -8,9 +8,13 @@ const BENCHMARKS: { key: string; label: string; rate: number }[] = [
   { key: 'gold', label: 'Gold', rate: 4.5 },
 ];
 
-export default function RateOfReturnPanel() {
-  const { earners, selectedEarnerId, patchEarnerData } = useHouseholdStore();
-  const earner = earners.find((e) => e.id === selectedEarnerId);
+interface Props {
+  earnerId: string;
+}
+
+export default function RateOfReturnPanel({ earnerId }: Props) {
+  const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
+  const patchEarnerData = useHouseholdStore((s) => s.patchEarnerData);
   const ror = earner?.rateOfReturn;
 
   if (!earner) return null;

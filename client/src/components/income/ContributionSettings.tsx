@@ -3,9 +3,13 @@ import * as savingsApi from '../../api/savings';
 import CurrencyInput from '../shared/CurrencyInput';
 import PercentageInput from '../shared/PercentageInput';
 
-export default function ContributionSettings() {
-  const { earners, selectedEarnerId, patchEarnerData } = useHouseholdStore();
-  const earner = earners.find((e) => e.id === selectedEarnerId);
+interface Props {
+  earnerId: string;
+}
+
+export default function ContributionSettings({ earnerId }: Props) {
+  const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
+  const patchEarnerData = useHouseholdStore((s) => s.patchEarnerData);
   const savings = earner?.savingsBalance;
 
   if (!earner || !savings) return null;
