@@ -17,7 +17,9 @@ export interface ProjectionYear {
   totalContributions401k: number;
   totalEmployerMatch: number;
   netCashFlow: number;
-  investmentGrowth: number; // interest/gains accrued this year
+  investmentGrowth: number; // total interest/gains accrued this year
+  fourOneKGrowth: number;   // 401(k) interest this year
+  savingsGrowth: number;    // general savings interest this year
   // Inflation-adjusted
   totalSavingsReal: number;
   investmentGrowthReal: number; // interest/gains adjusted for inflation
@@ -88,6 +90,8 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     let totalContributions401k = 0;
     let totalEmployerMatch = 0;
     let totalInvestmentGrowth = 0;
+    let totalFourOneKGrowth = 0;
+    let totalSavingsGrowth = 0;
     let aggregateGeneralSavings = 0;
     let aggregateFourOneK = 0;
 
@@ -125,6 +129,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       const fourOneKInterest = es.fourOneK * es.annualRate;
       es.fourOneK = es.fourOneK + fourOneKInterest + contribution401k + employerMatch;
       totalInvestmentGrowth += fourOneKInterest;
+      totalFourOneKGrowth += fourOneKInterest;
       aggregateFourOneK += es.fourOneK;
       aggregateGeneralSavings += es.generalSavings;
     }
@@ -144,6 +149,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       for (const es of earnerState) {
         const savingsInterest = es.generalSavings * es.annualRate;
         totalInvestmentGrowth += savingsInterest;
+        totalSavingsGrowth += savingsInterest;
         es.generalSavings = es.generalSavings + savingsInterest;
       }
     }
@@ -164,6 +170,8 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       totalEmployerMatch: Math.round(totalEmployerMatch),
       netCashFlow: Math.round(netCash),
       investmentGrowth: Math.round(totalInvestmentGrowth),
+      fourOneKGrowth: Math.round(totalFourOneKGrowth),
+      savingsGrowth: Math.round(totalSavingsGrowth),
       totalSavingsReal: Math.round(totalSavings / inflationFactor),
       investmentGrowthReal: Math.round(totalInvestmentGrowth / inflationFactor),
     });

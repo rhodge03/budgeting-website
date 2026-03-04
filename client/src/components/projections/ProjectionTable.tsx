@@ -36,7 +36,8 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
               <th className="px-3 py-2 text-right font-medium">Taxes</th>
               <th className="px-3 py-2 text-right font-medium">Expenses</th>
               <th className="px-3 py-2 text-right font-medium">401(k) Contrib.</th>
-              <th className="px-3 py-2 text-right font-medium">Interest Earned</th>
+              <th className="px-3 py-2 text-right font-medium">401(k) Interest</th>
+              <th className="px-3 py-2 text-right font-medium">Savings Interest</th>
               <th className="px-3 py-2 text-right font-medium">Net Cash</th>
               <th className="px-3 py-2 text-right font-medium">401(k)</th>
               <th className="px-3 py-2 text-right font-medium">Savings</th>
@@ -62,7 +63,8 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
                   <td className="px-3 py-1.5 text-right text-red-600">${fmt(row.totalTax)}</td>
                   <td className="px-3 py-1.5 text-right text-gray-700">${fmt(row.totalExpenses)}</td>
                   <td className="px-3 py-1.5 text-right text-blue-600">${fmt(row.totalContributions401k + row.totalEmployerMatch)}</td>
-                  <td className="px-3 py-1.5 text-right text-emerald-600">${fmt(row.investmentGrowth)}</td>
+                  <td className="px-3 py-1.5 text-right text-emerald-600">${fmt(row.fourOneKGrowth)}</td>
+                  <td className="px-3 py-1.5 text-right text-emerald-600">${fmt(row.savingsGrowth)}</td>
                   <td className={`px-3 py-1.5 text-right ${row.netCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {row.netCashFlow < 0 ? '-' : ''}${fmt(Math.abs(row.netCashFlow))}
                   </td>
