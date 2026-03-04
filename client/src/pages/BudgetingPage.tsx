@@ -1,8 +1,10 @@
+import BudgetPanel from '../components/budgeting/BudgetPanel';
+
 export default function BudgetingPage() {
   return (
-    <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Budgeting</h2>
-      <p className="text-gray-500">Expense budgeting will go here.</p>
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold text-gray-900">Budgeting</h2>
+      <BudgetPanel />
     </div>
   );
 }

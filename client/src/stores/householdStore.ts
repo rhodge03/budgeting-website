@@ -1,8 +1,9 @@
 import { create } from 'zustand';
-import type { HouseholdSnapshot, Earner, IncomeEntry, ExpenseCategory } from 'shared';
+import type { HouseholdSnapshot, Earner, IncomeEntry, ExpenseCategory, ExpenseSubCategory } from 'shared';
 import * as householdApi from '../api/household';
 import * as earnersApi from '../api/earners';
 import * as incomeApi from '../api/income';
+import * as expensesApi from '../api/expenses';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
 
@@ -36,6 +37,14 @@ interface HouseholdState {
   addIncomeEntry: (earnerId: string, data: { label: string; amount: number; isTaxable?: boolean }) => Promise<void>;
   updateIncomeEntry: (entryId: string, data: Partial<IncomeEntry>) => Promise<void>;
   removeIncomeEntry: (entryId: string, earnerId: string) => Promise<void>;
+
+  // Expense actions
+  addExpenseCategory: (name: string) => Promise<void>;
+  updateExpenseCategory: (id: string, data: Partial<ExpenseCategory>) => Promise<void>;
+  removeExpenseCategory: (id: string) => Promise<void>;
+  addExpenseSubCategory: (categoryId: string, name: string) => Promise<void>;
+  updateExpenseSubCategory: (id: string, categoryId: string, data: Partial<ExpenseSubCategory>) => Promise<void>;
+  removeExpenseSubCategory: (id: string, categoryId: string) => Promise<void>;
 
   // Local earner data updates (sync store without API call)
   patchEarnerData: (earnerId: string, patch: Partial<EarnerWithRelations>) => void;
@@ -174,6 +183,62 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
         e.id === earnerId
           ? { ...e, incomeEntries: e.incomeEntries.filter((ie) => ie.id !== entryId) }
           : e,
+      ),
+    }));
+  },
+
+  addExpenseCategory: async (name) => {
+    const category = await expensesApi.createCategory({ name });
+    set((state) => ({
+      expenseCategories: [...state.expenseCategories, category],
+    }));
+  },
+
+  updateExpenseCategory: async (id, data) => {
+    const updated = await expensesApi.updateCategory(id, data);
+    set((state) => ({
+      expenseCategories: state.expenseCategories.map((c) =>
+        c.id === id ? updated : c,
+      ),
+    }));
+  },
+
+  removeExpenseCategory: async (id) => {
+    await expensesApi.removeCategory(id);
+    set((state) => ({
+      expenseCategories: state.expenseCategories.filter((c) => c.id !== id),
+    }));
+  },
+
+  addExpenseSubCategory: async (categoryId, name) => {
+    const sub = await expensesApi.createSubCategory(categoryId, { name });
+    set((state) => ({
+      expenseCategories: state.expenseCategories.map((c) =>
+        c.id === categoryId
+          ? { ...c, subCategories: [...c.subCategories, sub] }
+          : c,
+      ),
+    }));
+  },
+
+  updateExpenseSubCategory: async (id, categoryId, data) => {
+    const updated = await expensesApi.updateSubCategory(id, data);
+    set((state) => ({
+      expenseCategories: state.expenseCategories.map((c) =>
+        c.id === categoryId
+          ? { ...c, subCategories: c.subCategories.map((s) => s.id === id ? { ...s, ...updated } : s) }
+          : c,
+      ),
+    }));
+  },
+
+  removeExpenseSubCategory: async (id, categoryId) => {
+    await expensesApi.removeSubCategory(id);
+    set((state) => ({
+      expenseCategories: state.expenseCategories.map((c) =>
+        c.id === categoryId
+          ? { ...c, subCategories: c.subCategories.filter((s) => s.id !== id) }
+          : c,
       ),
     }));
   },
