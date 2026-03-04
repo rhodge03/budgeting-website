@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── AUTH & HOUSEHOLD ─────────────────────────────────
+
+model Household {
+  id        String   @id @default(uuid())
+  name      String   @default("My Household")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users             User[]
+  earners           Earner[]
+  expenseCategories ExpenseCategory[]
+
+  @@map("households")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  householdId  String   @map("household_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@map("users")
+}
+
+// ─── EARNER ───────────────────────────────────────────
+
+model Earner {
+  id            String   @id @default(uuid())
+  householdId   String   @map("household_id")
+  name          String
+  dateOfBirth   DateTime? @map("date_of_birth")
+  state         String   @default("CA")
+  filingStatus  String   @default("single") @map("filing_status")
+  deductionType String   @default("standard") @map("deduction_type")
+  isArchived    Boolean  @default(false) @map("is_archived")
+  isPrimary     Boolean  @default(false) @map("is_primary")
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  household          Household           @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  incomeEntries      IncomeEntry[]
+  savingsBalance     SavingsBalance?
+  retirementSettings RetirementSettings?
+  rateOfReturn       RateOfReturn?
+  itemizedDeductions ItemizedDeduction[]
+
+  @@map("earners")
+}
+
+// ─── INCOME ───────────────────────────────────────────
+
+model IncomeEntry {
+  id        String   @id @default(uuid())
+  earnerId  String   @map("earner_id")
+  label     String
+  amount    Decimal  @db.Decimal(12, 2)
+  isTaxable Boolean  @default(true) @map("is_taxable")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  earner Earner @relation(fields: [earnerId], references: [id], onDelete: Cascade)
+
+  @@map("income_entries")
+}
+
+// ─── 401(K) & SAVINGS ─────────────────────────────────
+
+model SavingsBalance {
+  id                    String   @id @default(uuid())
+  earnerId              String   @unique @map("earner_id")
+  generalSavingsBalance Decimal  @default(0) @db.Decimal(14, 2) @map("general_savings_balance")
+  fourOneKBalance       Decimal  @default(0) @db.Decimal(14, 2) @map("four_one_k_balance")
+  contributionPercent   Decimal  @default(0) @db.Decimal(5, 2) @map("contribution_percent")
+  employerMatchPercent  Decimal  @default(0) @db.Decimal(5, 2) @map("employer_match_percent")
+  salaryGrowthRate      Decimal  @default(0) @db.Decimal(5, 2) @map("salary_growth_rate")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  earner Earner @relation(fields: [earnerId], references: [id], onDelete: Cascade)
+
+  @@map("savings_balances")
+}
+
+// ─── RETIREMENT SETTINGS ──────────────────────────────
+
+model RetirementSettings {
+  id                  String   @id @default(uuid())
+  earnerId            String   @unique @map("earner_id")
+  currentAge          Int      @default(30) @map("current_age")
+  targetRetirementAge Int      @default(65) @map("target_retirement_age")
+  withdrawalAge       Int      @default(59) @map("withdrawal_age")
+  retirementGoal      Decimal  @default(0) @db.Decimal(14, 2) @map("retirement_goal")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  earner Earner @relation(fields: [earnerId], references: [id], onDelete: Cascade)
+
+  @@map("retirement_settings")
+}
+
+// ─── RATE OF RETURN ───────────────────────────────────
+
+model RateOfReturn {
+  id            String   @id @default(uuid())
+  earnerId      String   @unique @map("earner_id")
+  annualRate    Decimal  @default(10.0) @db.Decimal(5, 2) @map("annual_rate")
+  benchmarkType String?  @map("benchmark_type")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  earner Earner @relation(fields: [earnerId], references: [id], onDelete: Cascade)
+
+  @@map("rates_of_return")
+}
+
+// ─── ITEMIZED DEDUCTIONS ──────────────────────────────
+
+model ItemizedDeduction {
+  id        String   @id @default(uuid())
+  earnerId  String   @map("earner_id")
+  label     String
+  amount    Decimal  @db.Decimal(12, 2)
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  earner Earner @relation(fields: [earnerId], references: [id], onDelete: Cascade)
+
+  @@map("itemized_deductions")
+}
+
+// ─── EXPENSES (SHARED / HOUSEHOLD LEVEL) ──────────────
+
+model ExpenseCategory {
+  id          String   @id @default(uuid())
+  householdId String   @map("household_id")
+  name        String
+  isDefault   Boolean  @default(false) @map("is_default")
+  isCollapsed Boolean  @default(false) @map("is_collapsed")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  household     Household          @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  subCategories ExpenseSubCategory[]
+
+  @@map("expense_categories")
+}
+
+model ExpenseSubCategory {
+  id         String   @id @default(uuid())
+  categoryId String   @map("category_id")
+  name       String
+  amount     Decimal  @default(0) @db.Decimal(12, 2)
+  isDefault  Boolean  @default(false) @map("is_default")
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  category ExpenseCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("expense_sub_categories")
+}
