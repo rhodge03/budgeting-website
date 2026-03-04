@@ -1,11 +1,10 @@
 import { useState, useCallback } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
-import * as incomeApi from '../../api/income';
 import CurrencyInput from '../shared/CurrencyInput';
 import type { IncomeEntry } from 'shared';
 
 export default function IncomePanel() {
-  const { earners, selectedEarnerId, loadSnapshot } = useHouseholdStore();
+  const { earners, selectedEarnerId, addIncomeEntry, updateIncomeEntry, removeIncomeEntry } = useHouseholdStore();
   const earner = earners.find((e) => e.id === selectedEarnerId);
   const [saving, setSaving] = useState(false);
 
@@ -22,8 +21,7 @@ export default function IncomePanel() {
   const handleAddEntry = async () => {
     setSaving(true);
     try {
-      await incomeApi.create(earner.id, { label: 'New Income', amount: 0 });
-      await loadSnapshot();
+      await addIncomeEntry(earner.id, { label: 'New Income', amount: 0 });
     } finally {
       setSaving(false);
     }
@@ -32,8 +30,7 @@ export default function IncomePanel() {
   const handleUpdateEntry = async (id: string, data: Partial<IncomeEntry>) => {
     setSaving(true);
     try {
-      await incomeApi.update(id, data);
-      await loadSnapshot();
+      await updateIncomeEntry(id, data);
     } finally {
       setSaving(false);
     }
@@ -42,8 +39,7 @@ export default function IncomePanel() {
   const handleRemoveEntry = async (id: string) => {
     setSaving(true);
     try {
-      await incomeApi.remove(id);
-      await loadSnapshot();
+      await removeIncomeEntry(id, earner.id);
     } finally {
       setSaving(false);
     }

@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import type { HouseholdSnapshot, Earner, ExpenseCategory } from 'shared';
+import type { HouseholdSnapshot, Earner, IncomeEntry, ExpenseCategory } from 'shared';
 import * as householdApi from '../api/household';
 import * as earnersApi from '../api/earners';
+import * as incomeApi from '../api/income';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
 
@@ -30,6 +31,11 @@ interface HouseholdState {
   removeEarner: (id: string) => Promise<void>;
   setPrimaryEarner: (id: string) => Promise<void>;
   selectEarner: (id: string) => void;
+
+  // Income actions
+  addIncomeEntry: (earnerId: string, data: { label: string; amount: number; isTaxable?: boolean }) => Promise<void>;
+  updateIncomeEntry: (entryId: string, data: Partial<IncomeEntry>) => Promise<void>;
+  removeIncomeEntry: (entryId: string, earnerId: string) => Promise<void>;
 }
 
 export const useHouseholdStore = create<HouseholdState>((set, get) => ({
@@ -46,15 +52,18 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   loadSnapshot: async () => {
-    set({ isLoading: true, error: null });
+    const isInitial = get().household === null;
+    if (isInitial) set({ isLoading: true, error: null });
     try {
       const snapshot = await householdApi.getSnapshot();
+      const currentSelectedId = get().selectedEarnerId;
+      const stillExists = snapshot.earners.some((e) => e.id === currentSelectedId);
       const primaryOrFirst = snapshot.earners.find((e) => e.isPrimary) || snapshot.earners[0];
       set({
         household: snapshot.household,
         earners: snapshot.earners,
         expenseCategories: snapshot.expenseCategories,
-        selectedEarnerId: primaryOrFirst?.id || null,
+        selectedEarnerId: stillExists ? currentSelectedId : (primaryOrFirst?.id || null),
         isLoading: false,
       });
     } catch (err: any) {
@@ -130,5 +139,39 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
 
   selectEarner: (id) => {
     set({ selectedEarnerId: id });
+  },
+
+  addIncomeEntry: async (earnerId, data) => {
+    const entry = await incomeApi.create(earnerId, data);
+    set((state) => ({
+      earners: state.earners.map((e) =>
+        e.id === earnerId
+          ? { ...e, incomeEntries: [...e.incomeEntries, entry] }
+          : e,
+      ),
+    }));
+  },
+
+  updateIncomeEntry: async (entryId, data) => {
+    const updated = await incomeApi.update(entryId, data);
+    set((state) => ({
+      earners: state.earners.map((e) => ({
+        ...e,
+        incomeEntries: e.incomeEntries.map((ie) =>
+          ie.id === entryId ? { ...ie, ...updated } : ie,
+        ),
+      })),
+    }));
+  },
+
+  removeIncomeEntry: async (entryId, earnerId) => {
+    await incomeApi.remove(entryId);
+    set((state) => ({
+      earners: state.earners.map((e) =>
+        e.id === earnerId
+          ? { ...e, incomeEntries: e.incomeEntries.filter((ie) => ie.id !== entryId) }
+          : e,
+      ),
+    }));
   },
 }));
