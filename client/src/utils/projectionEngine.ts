@@ -23,6 +23,7 @@ export interface ProjectionYear {
   // Inflation-adjusted
   totalSavingsReal: number;
   investmentGrowthReal: number; // interest/gains adjusted for inflation
+  savingsGrowthReal: number;    // savings interest adjusted for inflation
 }
 
 export interface ProjectionInputs {
@@ -140,18 +141,18 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     // Net cash flow = income - taxes - expenses - 401k contributions (already deducted)
     const netCash = totalIncome - totalTax - yearExpenses - totalContributions401k;
 
-    // Add net cash to general savings (shared at household level)
-    // Distribute proportionally but track aggregate
+    // Calculate interest on savings BEFORE applying net cash,
+    // then net cash comes out of the interest (not the principal)
     if (earnerState.length > 0) {
-      // Add net cash flow to the primary earner's general savings for simplicity
-      earnerState[0].generalSavings += netCash;
-      // Grow all general savings with the earner's rate, tracking interest
+      // Grow all general savings with the earner's rate first
       for (const es of earnerState) {
         const savingsInterest = es.generalSavings * es.annualRate;
         totalInvestmentGrowth += savingsInterest;
         totalSavingsGrowth += savingsInterest;
         es.generalSavings = es.generalSavings + savingsInterest;
       }
+      // Then apply net cash flow (negative net cash draws from interest/savings)
+      earnerState[0].generalSavings += netCash;
     }
 
     aggregateGeneralSavings = earnerState.reduce((s, es) => s + es.generalSavings, 0);
@@ -174,6 +175,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       savingsGrowth: Math.round(totalSavingsGrowth),
       totalSavingsReal: Math.round(totalSavings / inflationFactor),
       investmentGrowthReal: Math.round(totalInvestmentGrowth / inflationFactor),
+      savingsGrowthReal: Math.round(totalSavingsGrowth / inflationFactor),
     });
   }
 

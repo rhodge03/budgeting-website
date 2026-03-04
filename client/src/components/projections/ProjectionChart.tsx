@@ -35,6 +35,7 @@ export const AVAILABLE_SERIES: ChartSeries[] = [
   { key: 'netCashFlow',          label: 'Net Cash Flow',              color: '#22c55e' },
   { key: 'totalSavingsReal',     label: 'Total (Inflation-Adj.)',     color: '#f59e0b', dashed: true },
   { key: 'investmentGrowthReal', label: 'Interest (Inflation-Adj.)',  color: '#fbbf24', dashed: true },
+  { key: 'savingsGrowthReal',   label: 'Sav. Interest (Infl-Adj.)', color: '#d97706', dashed: true },
 ];
 
 export const DEFAULT_SERIES: string[] = [

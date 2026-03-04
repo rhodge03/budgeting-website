@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useHouseholdStore } from '../stores/householdStore';
 import { runProjection } from '../utils/projectionEngine';
 import { estimateSocialSecurity } from '../utils/socialSecurityEstimator';
@@ -8,12 +8,48 @@ import ProjectionSummary from '../components/projections/ProjectionSummary';
 import ProjectionTable from '../components/projections/ProjectionTable';
 import SocialSecurityDetail from '../components/projections/SocialSecurityDetail';
 
+const STORAGE_KEY = 'projection-chart-settings';
+
+interface ChartSettings {
+  inflationRate: number;
+  ssClaimingAge: number;
+  maxAge: number;
+  enabledSeries: string[];
+}
+
+function loadSettings(): ChartSettings | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as ChartSettings;
+  } catch {
+    return null;
+  }
+}
+
+function saveSettings(settings: ChartSettings) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+}
+
 export default function ProjectionsPage() {
   const { earners, expenseCategories, household } = useHouseholdStore();
-  const [inflationRate, setInflationRate] = useState(3);
-  const [ssClaimingAge, setSsClaimingAge] = useState(67);
-  const [maxAge, setMaxAge] = useState(100);
-  const [enabledSeries, setEnabledSeries] = useState(() => new Set(DEFAULT_SERIES));
+
+  const [inflationRate, setInflationRate] = useState(() => loadSettings()?.inflationRate ?? 3);
+  const [ssClaimingAge, setSsClaimingAge] = useState(() => loadSettings()?.ssClaimingAge ?? 67);
+  const [maxAge, setMaxAge] = useState(() => loadSettings()?.maxAge ?? 100);
+  const [enabledSeries, setEnabledSeries] = useState(() => {
+    const saved = loadSettings()?.enabledSeries;
+    return saved ? new Set(saved) : new Set(DEFAULT_SERIES);
+  });
+
+  useEffect(() => {
+    saveSettings({
+      inflationRate,
+      ssClaimingAge,
+      maxAge,
+      enabledSeries: Array.from(enabledSeries),
+    });
+  }, [inflationRate, ssClaimingAge, maxAge, enabledSeries]);
 
   const handleToggleSeries = useCallback((key: string) => {
     setEnabledSeries((prev) => {
