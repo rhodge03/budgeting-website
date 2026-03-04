@@ -93,6 +93,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     const inflationFactor = Math.pow(inflationMultiplier, y);
 
     let totalIncome = 0;
+    let totalTaxableIncome = 0;
     let totalTax = 0;
     let totalContributions401k = 0;
     let totalEmployerMatch = 0;
@@ -138,6 +139,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
           });
 
       totalIncome += income;
+      totalTaxableIncome += taxableIncome;
       totalTax += tax.totalTax;
       totalContributions401k += contribution401k;
       totalEmployerMatch += employerMatch;
@@ -196,8 +198,8 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
             // Iterative solve: sell enough to cover deficit + tax on the realized gains
             // Use primary earner's filing status/state for cap gains tax
             const primaryEarner = es0.earner;
-            // ordinaryTaxableIncome: approximate using total income minus deductions
-            const ordinaryTaxable = Math.max(0, totalIncome - totalContributions401k);
+            // ordinaryTaxableIncome: only taxable income (excludes non-taxable entries)
+            const ordinaryTaxable = Math.max(0, totalTaxableIncome - totalContributions401k);
             let W = deficit;
             let capGainsTax = 0;
             for (let i = 0; i < 3; i++) {
