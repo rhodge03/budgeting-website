@@ -8,24 +8,35 @@ export default function TaxSummaryPanel() {
   const { earners, selectedEarnerId } = useHouseholdStore();
   const earner = earners.find((e) => e.id === selectedEarnerId);
 
+  const isJoint = earner?.filingStatus === 'married_jointly';
+
   const breakdown = useMemo(() => {
     if (!earner) return null;
 
-    const grossIncome = (earner.incomeEntries || [])
-      .filter((e) => e.isTaxable)
-      .reduce((sum, e) => sum + Number(e.amount), 0);
+    // For MFJ, combine all earners' income on one joint return
+    const earnersToInclude = isJoint ? earners : [earner];
 
-    const totalIncome = (earner.incomeEntries || [])
-      .reduce((sum, e) => sum + Number(e.amount), 0);
+    let grossIncome = 0;
+    let totalIncome = 0;
+    let preTax401k = 0;
+    let itemizedTotal = 0;
 
-    // Calculate pre-tax 401k from gross taxable income
-    const contributionPct = earner.savingsBalance
-      ? Number(earner.savingsBalance.contributionPercent) / 100
-      : 0;
-    const preTax401k = grossIncome * contributionPct;
+    for (const e of earnersToInclude) {
+      const taxable = (e.incomeEntries || [])
+        .filter((ie) => ie.isTaxable)
+        .reduce((sum, ie) => sum + Number(ie.amount), 0);
+      const all = (e.incomeEntries || [])
+        .reduce((sum, ie) => sum + Number(ie.amount), 0);
+      const contributionPct = e.savingsBalance
+        ? Number(e.savingsBalance.contributionPercent) / 100
+        : 0;
 
-    const itemizedTotal = (earner.itemizedDeductions || [])
-      .reduce((sum, d) => sum + Number(d.amount), 0);
+      grossIncome += taxable;
+      totalIncome += all;
+      preTax401k += taxable * contributionPct;
+      itemizedTotal += (e.itemizedDeductions || [])
+        .reduce((sum, d) => sum + Number(d.amount), 0);
+    }
 
     return {
       ...calculateTax({
@@ -38,7 +49,7 @@ export default function TaxSummaryPanel() {
       }),
       totalIncome,
     };
-  }, [earner]);
+  }, [earner, earners, isJoint]);
 
   if (!earner || !breakdown) return null;
 
@@ -47,7 +58,7 @@ export default function TaxSummaryPanel() {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-        Tax Breakdown
+        Tax Breakdown {isJoint && '(Joint)'}
       </h3>
 
       <div className="space-y-3">
