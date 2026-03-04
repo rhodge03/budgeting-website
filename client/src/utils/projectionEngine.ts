@@ -17,6 +17,7 @@ export interface ProjectionYear {
   totalContributions401k: number;
   totalEmployerMatch: number;
   netCashFlow: number;
+  investmentGrowth: number; // interest/gains accrued this year
   // Inflation-adjusted
   totalSavingsReal: number;
 }
@@ -84,6 +85,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     let totalTax = 0;
     let totalContributions401k = 0;
     let totalEmployerMatch = 0;
+    let totalInvestmentGrowth = 0;
     let aggregateGeneralSavings = 0;
     let aggregateFourOneK = 0;
 
@@ -117,8 +119,10 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       totalContributions401k += contribution401k;
       totalEmployerMatch += employerMatch;
 
-      // Grow balances with rate of return
-      es.fourOneK = es.fourOneK * (1 + es.annualRate) + contribution401k + employerMatch;
+      // Grow balances with rate of return, tracking interest separately
+      const fourOneKInterest = es.fourOneK * es.annualRate;
+      es.fourOneK = es.fourOneK + fourOneKInterest + contribution401k + employerMatch;
+      totalInvestmentGrowth += fourOneKInterest;
       aggregateFourOneK += es.fourOneK;
       aggregateGeneralSavings += es.generalSavings;
     }
@@ -134,9 +138,11 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     if (earnerState.length > 0) {
       // Add net cash flow to the primary earner's general savings for simplicity
       earnerState[0].generalSavings += netCash;
-      // Grow all general savings with the primary earner's rate
+      // Grow all general savings with the earner's rate, tracking interest
       for (const es of earnerState) {
-        es.generalSavings = es.generalSavings * (1 + es.annualRate);
+        const savingsInterest = es.generalSavings * es.annualRate;
+        totalInvestmentGrowth += savingsInterest;
+        es.generalSavings = es.generalSavings + savingsInterest;
       }
     }
 
@@ -155,6 +161,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       totalContributions401k: Math.round(totalContributions401k),
       totalEmployerMatch: Math.round(totalEmployerMatch),
       netCashFlow: Math.round(netCash),
+      investmentGrowth: Math.round(totalInvestmentGrowth),
       totalSavingsReal: Math.round(totalSavings / inflationFactor),
     });
   }
