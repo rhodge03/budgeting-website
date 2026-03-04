@@ -1,8 +1,18 @@
+import EarnerSelector from '../components/earners/EarnerSelector';
+import EarnerManager from '../components/earners/EarnerManager';
+import IncomePanel from '../components/income/IncomePanel';
+import ContributionSettings from '../components/income/ContributionSettings';
+
 export default function IncomeRetirementPage() {
   return (
-    <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Income & Retirement</h2>
-      <p className="text-gray-500">Income and retirement settings will go here.</p>
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold text-gray-900">
+        Income & Retirement
+      </h2>
+      <EarnerSelector />
+      <EarnerManager />
+      <IncomePanel />
+      <ContributionSettings />
     </div>
   );
 }
