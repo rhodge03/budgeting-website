@@ -61,21 +61,20 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     const savings = earner.savingsBalance;
     const retirement = earner.retirementSettings;
     const ror = earner.rateOfReturn;
-    const salaryGrowthRate = Number(savings?.salaryGrowthRate ?? 0) / 100;
     const retirementAge = retirement?.targetRetirementAge ?? 65;
     const earnerCurrentAge = retirement?.currentAge ?? currentAge;
 
-    // Pre-process income entries with their durations
+    // Pre-process income entries with their durations and per-entry growth rates
     const incomeEntries = earner.incomeEntries.map((ie) => ({
       amount: Number(ie.amount),
       isTaxable: ie.isTaxable,
       durationYears: ie.durationYears != null ? Number(ie.durationYears) : null,
+      growthRate: ie.growthRate != null ? Number(ie.growthRate) / 100 : 0,
     }));
 
     return {
       earner,
       incomeEntries,
-      salaryGrowthRate,
       generalSavings: Number(savings?.generalSavingsBalance ?? 0),
       fourOneK: Number(savings?.fourOneKBalance ?? 0),
       contributionPct: Number(savings?.contributionPercent ?? 0) / 100,
@@ -104,9 +103,8 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     for (const es of earnerState) {
       const earnerAge = es.currentAge + y;
       const isRetired = earnerAge >= es.retirementAge;
-      const growthFactor = Math.pow(1 + es.salaryGrowthRate, y);
 
-      // Evaluate each income entry individually based on its duration
+      // Evaluate each income entry individually based on its duration and growth rate
       let income = 0;
       let taxableIncome = 0;
       for (const ie of es.incomeEntries) {
@@ -115,7 +113,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
           ? y < ie.durationYears
           : !isRetired;
         if (!active) continue;
-        const entryAmount = ie.amount * growthFactor;
+        const entryAmount = ie.amount * Math.pow(1 + ie.growthRate, y);
         income += entryAmount;
         if (ie.isTaxable) taxableIncome += entryAmount;
       }

@@ -29,7 +29,7 @@ export default function ContributionSettings({ earnerId }: Props) {
         Savings & 401(k)
       </h3>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CurrencyInput
           label="General Savings Balance"
           value={Number(savings.generalSavingsBalance)}
@@ -49,11 +49,6 @@ export default function ContributionSettings({ earnerId }: Props) {
           label="Employer Match %"
           value={Number(savings.employerMatchPercent)}
           onChange={(v) => handleChange('employerMatchPercent', v)}
-        />
-        <PercentageInput
-          label="Expected Salary Growth %"
-          value={Number(savings.salaryGrowthRate)}
-          onChange={(v) => handleChange('salaryGrowthRate', v)}
         />
       </div>
     </div>

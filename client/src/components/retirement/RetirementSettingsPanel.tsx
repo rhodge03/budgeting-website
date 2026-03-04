@@ -35,7 +35,7 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
 
       <div className="space-y-4">
         {/* Age Sliders */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <AgeSlider
             label="Current Age"
             value={currentAge}

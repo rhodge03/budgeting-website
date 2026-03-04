@@ -106,6 +106,9 @@ function IncomeEntryRow({
   const [durationStr, setDurationStr] = useState(
     entry.durationYears != null ? String(entry.durationYears) : '',
   );
+  const [growthStr, setGrowthStr] = useState(
+    entry.growthRate != null ? String(entry.growthRate) : '',
+  );
 
   const handleLabelBlur = () => {
     if (label !== entry.label) {
@@ -128,51 +131,80 @@ function IncomeEntryRow({
     }
   };
 
+  const handleGrowthBlur = () => {
+    const parsed = growthStr.trim() === '' ? null : parseFloat(growthStr);
+    const current = entry.growthRate ?? null;
+    if (parsed !== current) {
+      onUpdate({ growthRate: isNaN(parsed as number) ? null : parsed });
+    }
+  };
+
   return (
-    <div className="flex items-center gap-2">
-      <input
-        type="text"
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
-        onBlur={handleLabelBlur}
-        className="flex-1 min-w-0 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Income label"
-      />
-      <CurrencyInput
-        value={Number(entry.amount)}
-        onChange={handleAmountChange}
-        className="w-36"
-      />
-      <div className="flex items-center gap-1">
+    <div className="border border-gray-100 rounded-md p-2 space-y-2">
+      {/* Row 1: Label + remove */}
+      <div className="flex items-center gap-2">
         <input
-          type="number"
-          min={1}
-          max={99}
-          value={durationStr}
-          onChange={(e) => setDurationStr(e.target.value)}
-          onBlur={handleDurationBlur}
-          placeholder="\u221E"
-          title="Duration in years (empty = until retirement)"
-          className="w-12 px-1.5 py-2 text-sm text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          type="text"
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          onBlur={handleLabelBlur}
+          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Income label"
         />
-        <span className="text-xs text-gray-500">yr</span>
+        <button
+          onClick={onRemove}
+          className="text-gray-400 hover:text-red-500 text-lg leading-none px-1"
+          title="Remove"
+        >
+          &times;
+        </button>
       </div>
-      <label className="flex items-center gap-1 text-xs text-gray-600 whitespace-nowrap">
-        <input
-          type="checkbox"
-          checked={entry.isTaxable}
-          onChange={(e) => onUpdate({ isTaxable: e.target.checked })}
-          className="rounded border-gray-300"
+      {/* Row 2: Amount, Duration, Growth %, Taxable */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <CurrencyInput
+          value={Number(entry.amount)}
+          onChange={handleAmountChange}
+          className="w-32"
         />
-        Taxable
-      </label>
-      <button
-        onClick={onRemove}
-        className="text-gray-400 hover:text-red-500 text-lg leading-none"
-        title="Remove"
-      >
-        &times;
-      </button>
+        <div className="flex items-center gap-1">
+          <input
+            type="number"
+            min={1}
+            max={99}
+            value={durationStr}
+            onChange={(e) => setDurationStr(e.target.value)}
+            onBlur={handleDurationBlur}
+            placeholder={"\u221E"}
+            title="Duration in years (empty = until retirement)"
+            className="w-12 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="text-xs text-gray-500">yr</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <input
+            type="number"
+            min={0}
+            max={50}
+            step={0.1}
+            value={growthStr}
+            onChange={(e) => setGrowthStr(e.target.value)}
+            onBlur={handleGrowthBlur}
+            placeholder="0"
+            title="Annual growth rate % (empty = 0%)"
+            className="w-14 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="text-xs text-gray-500">%/yr</span>
+        </div>
+        <label className="flex items-center gap-1 text-xs text-gray-600 whitespace-nowrap">
+          <input
+            type="checkbox"
+            checked={entry.isTaxable}
+            onChange={(e) => onUpdate({ isTaxable: e.target.checked })}
+            className="rounded border-gray-300"
+          />
+          Taxable
+        </label>
+      </div>
     </div>
   );
 }

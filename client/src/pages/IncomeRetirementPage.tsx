@@ -19,7 +19,7 @@ export default function IncomeRetirementPage() {
 
       <div
         className={`grid gap-6 ${
-          earners.length > 1 ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'
+          earners.length > 1 ? 'grid-cols-1 xl:grid-cols-2' : 'grid-cols-1'
         }`}
       >
         {earners.map((earner) => (

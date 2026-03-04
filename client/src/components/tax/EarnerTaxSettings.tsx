@@ -39,7 +39,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
         Tax Settings
       </h3>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* State selector */}
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">

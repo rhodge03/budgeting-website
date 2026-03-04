@@ -41,6 +41,7 @@ export interface IncomeEntry {
   amount: number;
   isTaxable: boolean;
   durationYears: number | null;
+  growthRate: number | null;
   sortOrder: number;
 }
 
