@@ -11,9 +11,39 @@ import {
 } from 'recharts';
 import type { ProjectionYear } from '../../utils/projectionEngine';
 
+export interface ChartSeries {
+  key: keyof ProjectionYear;
+  label: string;
+  color: string;
+  fill?: string;       // if set, renders as filled area
+  stackId?: string;    // if set, stacks with others of same id
+  dashed?: boolean;
+}
+
+export const AVAILABLE_SERIES: ChartSeries[] = [
+  { key: 'fourOneK',              label: '401(k) Balance',             color: '#3b82f6', fill: '#93c5fd', stackId: 'balance' },
+  { key: 'generalSavings',       label: 'Savings Balance',            color: '#10b981', fill: '#6ee7b7', stackId: 'balance' },
+  { key: 'totalSavings',         label: 'Total Balance',              color: '#1f2937' },
+  { key: 'totalIncome',          label: 'Income',                     color: '#6366f1' },
+  { key: 'totalTax',             label: 'Taxes',                      color: '#ef4444' },
+  { key: 'totalExpenses',        label: 'Expenses',                   color: '#f97316' },
+  { key: 'totalContributions401k', label: '401(k) Contrib.',          color: '#0ea5e9' },
+  { key: 'totalEmployerMatch',   label: 'Employer Match',             color: '#14b8a6' },
+  { key: 'fourOneKGrowth',       label: '401(k) Interest',            color: '#8b5cf6' },
+  { key: 'savingsGrowth',        label: 'Savings Interest',           color: '#a855f7' },
+  { key: 'investmentGrowth',     label: 'Total Interest',             color: '#7c3aed' },
+  { key: 'netCashFlow',          label: 'Net Cash Flow',              color: '#22c55e' },
+  { key: 'totalSavingsReal',     label: 'Total (Inflation-Adj.)',     color: '#f59e0b', dashed: true },
+  { key: 'investmentGrowthReal', label: 'Interest (Inflation-Adj.)',  color: '#fbbf24', dashed: true },
+];
+
+export const DEFAULT_SERIES: string[] = [
+  'fourOneK', 'generalSavings', 'investmentGrowth',
+];
+
 interface Props {
   data: ProjectionYear[];
-  showInflationAdjusted: boolean;
+  enabledSeries: Set<string>;
   retirementAge?: number;
   retirementGoal?: number;
 }
@@ -27,7 +57,7 @@ const formatCurrency = (value: number) => {
 const tooltipFormatter = (value: number | undefined) =>
   value != null ? `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : '';
 
-export default function ProjectionChart({ data, showInflationAdjusted, retirementAge, retirementGoal }: Props) {
+export default function ProjectionChart({ data, enabledSeries, retirementAge, retirementGoal }: Props) {
   if (data.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
@@ -37,6 +67,8 @@ export default function ProjectionChart({ data, showInflationAdjusted, retiremen
       </div>
     );
   }
+
+  const activeSeries = AVAILABLE_SERIES.filter((s) => enabledSeries.has(s.key));
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
@@ -60,7 +92,7 @@ export default function ProjectionChart({ data, showInflationAdjusted, retiremen
           />
           <Legend wrapperStyle={{ fontSize: 13 }} />
 
-          {retirementGoal && retirementGoal > 0 && (
+          {retirementGoal && retirementGoal > 0 && enabledSeries.has('totalSavings') && (
             <ReferenceLine
               y={retirementGoal}
               stroke="#f59e0b"
@@ -78,56 +110,20 @@ export default function ProjectionChart({ data, showInflationAdjusted, retiremen
             />
           )}
 
-          <Area
-            type="monotone"
-            dataKey="fourOneK"
-            name="401(k)"
-            stackId="1"
-            stroke="#3b82f6"
-            fill="#93c5fd"
-            fillOpacity={0.6}
-          />
-          <Area
-            type="monotone"
-            dataKey="generalSavings"
-            name="General Savings"
-            stackId="1"
-            stroke="#10b981"
-            fill="#6ee7b7"
-            fillOpacity={0.6}
-          />
-
-          <Area
-            type="monotone"
-            dataKey="investmentGrowth"
-            name="Interest Earned"
-            stroke="#8b5cf6"
-            fill="none"
-            strokeWidth={2}
-          />
-
-          {showInflationAdjusted && (
-            <>
-              <Area
-                type="monotone"
-                dataKey="totalSavingsReal"
-                name="Total (Inflation-Adjusted)"
-                stroke="#f59e0b"
-                fill="none"
-                strokeDasharray="5 3"
-                strokeWidth={2}
-              />
-              <Area
-                type="monotone"
-                dataKey="investmentGrowthReal"
-                name="Interest (Inflation-Adjusted)"
-                stroke="#a78bfa"
-                fill="none"
-                strokeDasharray="5 3"
-                strokeWidth={2}
-              />
-            </>
-          )}
+          {activeSeries.map((s) => (
+            <Area
+              key={s.key}
+              type="monotone"
+              dataKey={s.key}
+              name={s.label}
+              stackId={s.stackId}
+              stroke={s.color}
+              fill={s.fill || 'none'}
+              fillOpacity={s.fill ? 0.6 : 0}
+              strokeWidth={2}
+              strokeDasharray={s.dashed ? '5 3' : undefined}
+            />
+          ))}
         </AreaChart>
       </ResponsiveContainer>
     </div>
