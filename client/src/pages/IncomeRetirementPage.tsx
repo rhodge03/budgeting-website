@@ -2,6 +2,10 @@ import EarnerSelector from '../components/earners/EarnerSelector';
 import EarnerManager from '../components/earners/EarnerManager';
 import IncomePanel from '../components/income/IncomePanel';
 import ContributionSettings from '../components/income/ContributionSettings';
+import RetirementSettingsPanel from '../components/retirement/RetirementSettingsPanel';
+import RateOfReturnPanel from '../components/rate-of-return/RateOfReturnPanel';
+import EarnerTaxSettings from '../components/tax/EarnerTaxSettings';
+import TaxSummaryPanel from '../components/tax/TaxSummaryPanel';
 
 export default function IncomeRetirementPage() {
   return (
@@ -13,6 +17,10 @@ export default function IncomeRetirementPage() {
       <EarnerManager />
       <IncomePanel />
       <ContributionSettings />
+      <RetirementSettingsPanel />
+      <RateOfReturnPanel />
+      <EarnerTaxSettings />
+      <TaxSummaryPanel />
     </div>
   );
 }

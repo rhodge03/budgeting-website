@@ -1,0 +1,120 @@
+// 2024 Federal Income Tax Brackets
+export const FEDERAL_BRACKETS = {
+  single: [
+    { min: 0, max: 11600, rate: 0.10 },
+    { min: 11600, max: 47150, rate: 0.12 },
+    { min: 47150, max: 100525, rate: 0.22 },
+    { min: 100525, max: 191950, rate: 0.24 },
+    { min: 191950, max: 243725, rate: 0.32 },
+    { min: 243725, max: 609350, rate: 0.35 },
+    { min: 609350, max: Infinity, rate: 0.37 },
+  ],
+  married_jointly: [
+    { min: 0, max: 23200, rate: 0.10 },
+    { min: 23200, max: 94300, rate: 0.12 },
+    { min: 94300, max: 201050, rate: 0.22 },
+    { min: 201050, max: 383900, rate: 0.24 },
+    { min: 383900, max: 487450, rate: 0.32 },
+    { min: 487450, max: 731200, rate: 0.35 },
+    { min: 731200, max: Infinity, rate: 0.37 },
+  ],
+  married_separately: [
+    { min: 0, max: 11600, rate: 0.10 },
+    { min: 11600, max: 47150, rate: 0.12 },
+    { min: 47150, max: 100525, rate: 0.22 },
+    { min: 100525, max: 191950, rate: 0.24 },
+    { min: 191950, max: 243725, rate: 0.32 },
+    { min: 243725, max: 365600, rate: 0.35 },
+    { min: 365600, max: Infinity, rate: 0.37 },
+  ],
+  head_of_household: [
+    { min: 0, max: 16550, rate: 0.10 },
+    { min: 16550, max: 63100, rate: 0.12 },
+    { min: 63100, max: 100500, rate: 0.22 },
+    { min: 100500, max: 191950, rate: 0.24 },
+    { min: 191950, max: 243700, rate: 0.32 },
+    { min: 243700, max: 609350, rate: 0.35 },
+    { min: 609350, max: Infinity, rate: 0.37 },
+  ],
+} as const;
+
+// 2024 Standard Deductions
+export const STANDARD_DEDUCTION = {
+  single: 14600,
+  married_jointly: 29200,
+  married_separately: 14600,
+  head_of_household: 21900,
+} as const;
+
+// 2024 FICA rates
+export const FICA = {
+  socialSecurityRate: 0.062,
+  socialSecurityWageCap: 168600,
+  medicareRate: 0.0145,
+  additionalMedicareRate: 0.009,
+  additionalMedicareThreshold: {
+    single: 200000,
+    married_jointly: 250000,
+    married_separately: 125000,
+    head_of_household: 200000,
+  },
+} as const;
+
+// State income tax rates (simplified flat/top marginal rates for all 50 states + DC)
+// States with progressive brackets use the top marginal rate for simplicity;
+// states with no income tax are 0.
+export const STATE_TAX_RATES: Record<string, { rate: number; name: string }> = {
+  AL: { rate: 0.05, name: 'Alabama' },
+  AK: { rate: 0, name: 'Alaska' },
+  AZ: { rate: 0.025, name: 'Arizona' },
+  AR: { rate: 0.044, name: 'Arkansas' },
+  CA: { rate: 0.133, name: 'California' },
+  CO: { rate: 0.044, name: 'Colorado' },
+  CT: { rate: 0.0699, name: 'Connecticut' },
+  DE: { rate: 0.066, name: 'Delaware' },
+  DC: { rate: 0.1075, name: 'District of Columbia' },
+  FL: { rate: 0, name: 'Florida' },
+  GA: { rate: 0.0549, name: 'Georgia' },
+  HI: { rate: 0.11, name: 'Hawaii' },
+  ID: { rate: 0.058, name: 'Idaho' },
+  IL: { rate: 0.0495, name: 'Illinois' },
+  IN: { rate: 0.0305, name: 'Indiana' },
+  IA: { rate: 0.06, name: 'Iowa' },
+  KS: { rate: 0.057, name: 'Kansas' },
+  KY: { rate: 0.04, name: 'Kentucky' },
+  LA: { rate: 0.0425, name: 'Louisiana' },
+  ME: { rate: 0.0715, name: 'Maine' },
+  MD: { rate: 0.0575, name: 'Maryland' },
+  MA: { rate: 0.09, name: 'Massachusetts' },
+  MI: { rate: 0.0425, name: 'Michigan' },
+  MN: { rate: 0.0985, name: 'Minnesota' },
+  MS: { rate: 0.05, name: 'Mississippi' },
+  MO: { rate: 0.048, name: 'Missouri' },
+  MT: { rate: 0.059, name: 'Montana' },
+  NE: { rate: 0.0584, name: 'Nebraska' },
+  NV: { rate: 0, name: 'Nevada' },
+  NH: { rate: 0, name: 'New Hampshire' },
+  NJ: { rate: 0.1075, name: 'New Jersey' },
+  NM: { rate: 0.059, name: 'New Mexico' },
+  NY: { rate: 0.109, name: 'New York' },
+  NC: { rate: 0.045, name: 'North Carolina' },
+  ND: { rate: 0.025, name: 'North Dakota' },
+  OH: { rate: 0.0357, name: 'Ohio' },
+  OK: { rate: 0.0475, name: 'Oklahoma' },
+  OR: { rate: 0.099, name: 'Oregon' },
+  PA: { rate: 0.0307, name: 'Pennsylvania' },
+  RI: { rate: 0.0599, name: 'Rhode Island' },
+  SC: { rate: 0.064, name: 'South Carolina' },
+  SD: { rate: 0, name: 'South Dakota' },
+  TN: { rate: 0, name: 'Tennessee' },
+  TX: { rate: 0, name: 'Texas' },
+  UT: { rate: 0.0465, name: 'Utah' },
+  VT: { rate: 0.0875, name: 'Vermont' },
+  VA: { rate: 0.0575, name: 'Virginia' },
+  WA: { rate: 0, name: 'Washington' },
+  WV: { rate: 0.0512, name: 'West Virginia' },
+  WI: { rate: 0.0765, name: 'Wisconsin' },
+  WY: { rate: 0, name: 'Wyoming' },
+};
+
+// FilingStatus type is exported from shared/types/index.ts
