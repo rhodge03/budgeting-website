@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useHouseholdStore } from '../stores/householdStore';
+import { useEarnerSelectionStore } from '../stores/earnerSelectionStore';
 import EarnerManager from '../components/earners/EarnerManager';
 import IncomePanel from '../components/income/IncomePanel';
 import ContributionSettings from '../components/income/ContributionSettings';
@@ -9,6 +11,25 @@ import TaxSummaryPanel from '../components/tax/TaxSummaryPanel';
 
 export default function IncomeRetirementPage() {
   const earners = useHouseholdStore((s) => s.earners);
+  const selectedEarnerId = useEarnerSelectionStore((s) => s.selectedEarnerId);
+  const setSelectedEarnerId = useEarnerSelectionStore((s) => s.setSelectedEarnerId);
+
+  // Reset to 'all' if selected earner was deleted
+  useEffect(() => {
+    if (
+      selectedEarnerId !== 'all' &&
+      !earners.find((e) => e.id === selectedEarnerId)
+    ) {
+      setSelectedEarnerId('all');
+    }
+  }, [earners, selectedEarnerId, setSelectedEarnerId]);
+
+  const visibleEarners =
+    selectedEarnerId === 'all'
+      ? earners
+      : earners.filter((e) => e.id === selectedEarnerId);
+
+  const showBadge = selectedEarnerId === 'all' && earners.length > 1;
 
   return (
     <div className="space-y-6">
@@ -17,22 +38,21 @@ export default function IncomeRetirementPage() {
       </h2>
       <EarnerManager />
 
-      <div
-        className={`grid gap-6 ${
-          earners.length > 1 ? 'grid-cols-1 xl:grid-cols-2' : 'grid-cols-1'
-        }`}
-      >
-        {earners.map((earner) => (
+      <div className="space-y-6">
+        {visibleEarners.map((earner) => (
           <div key={earner.id} className="space-y-4">
-            {earners.length > 1 && (
-              <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
-                {earner.name}
+            {showBadge && (
+              <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {earner.name}
+                </h3>
                 {earner.isPrimary && (
-                  <span className="ml-2 text-xs font-normal text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-normal text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
                     Primary
                   </span>
                 )}
-              </h3>
+              </div>
             )}
             <IncomePanel earnerId={earner.id} />
             <ContributionSettings earnerId={earner.id} />

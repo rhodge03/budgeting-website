@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import TabBar from './TabBar';
 import AdUnit from '../ads/AdUnit';
+import EarnerSidebar from './EarnerSidebar';
 import { useHouseholdStore } from '../../stores/householdStore';
 
 export default function AppShell() {
@@ -32,6 +33,9 @@ export default function AppShell() {
       </div>
 
       <div className="flex-1 flex justify-center px-4">
+        {/* Left earner sidebar */}
+        <EarnerSidebar />
+
         {/* Main content */}
         <main className="flex-1 max-w-5xl w-full py-4">
           <Outlet />
