@@ -93,6 +93,7 @@ model SavingsBalance {
   contributionPercent   Decimal  @default(0) @db.Decimal(5, 2) @map("contribution_percent")
   employerMatchPercent  Decimal  @default(0) @db.Decimal(5, 2) @map("employer_match_percent")
   salaryGrowthRate      Decimal  @default(0) @db.Decimal(5, 2) @map("salary_growth_rate")
+  monthlyContribution   Decimal  @default(0) @db.Decimal(12, 2) @map("monthly_contribution")
   createdAt             DateTime @default(now()) @map("created_at")
   updatedAt             DateTime @updatedAt @map("updated_at")
 

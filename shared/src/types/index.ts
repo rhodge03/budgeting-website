@@ -57,6 +57,7 @@ export interface SavingsBalance {
   contributionPercent: number;
   employerMatchPercent: number;
   salaryGrowthRate: number;
+  monthlyContribution: number;
 }
 
 export interface RetirementSettings {

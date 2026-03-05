@@ -117,6 +117,7 @@ export function createEarner(name: string, memberType: MemberType = 'adult'): Ea
       contributionPercent: 0,
       employerMatchPercent: 0,
       salaryGrowthRate: 0,
+      monthlyContribution: 0,
     },
     retirementSettings: {
       id: crypto.randomUUID(),
@@ -236,6 +237,7 @@ export function updateSavings(earnerId: string, data: Partial<SavingsBalance>): 
       contributionPercent: 0,
       employerMatchPercent: 0,
       salaryGrowthRate: 0,
+      monthlyContribution: 0,
     };
   }
   Object.assign(earner.savingsBalance, data);

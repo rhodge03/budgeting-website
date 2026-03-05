@@ -7,6 +7,7 @@ export async function update(earnerId: string, householdId: string, data: {
   contributionPercent?: number;
   employerMatchPercent?: number;
   salaryGrowthRate?: number;
+  monthlyContribution?: number;
 }) {
   const earner = await prisma.earner.findFirst({ where: { id: earnerId, householdId } });
   if (!earner) throw new NotFoundError('Earner not found');

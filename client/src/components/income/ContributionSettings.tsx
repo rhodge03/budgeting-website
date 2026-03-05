@@ -27,10 +27,17 @@ export default function ContributionSettings({ earnerId }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CurrencyInput
-          label="General Savings Balance"
+          label="Savings Balance"
           value={Number(savings.generalSavingsBalance)}
           onChange={(v) => handleChange('generalSavingsBalance', v)}
         />
+        {isChild && (
+          <CurrencyInput
+            label="Monthly Contribution"
+            value={Number(savings.monthlyContribution)}
+            onChange={(v) => handleChange('monthlyContribution', v)}
+          />
+        )}
         {!isChild && (
           <>
             <CurrencyInput

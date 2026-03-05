@@ -79,7 +79,7 @@ export default function IncomeRetirementPage() {
               {(selectedCategory === 'all' || selectedCategory === 'retirement') && (
                 <RetirementSettingsPanel earnerId={earner.id} />
               )}
-              {!isChild && (selectedCategory === 'all' || selectedCategory === 'retirement') && (
+              {(selectedCategory === 'all' || selectedCategory === 'retirement') && (
                 <RateOfReturnPanel earnerId={earner.id} />
               )}
               {!isChild && (selectedCategory === 'all' || selectedCategory === 'tax') && (

@@ -29,19 +29,28 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-        {isChild ? 'Age' : 'Retirement Settings'}
+        {isChild ? 'Age & Withdrawal' : 'Retirement Settings'}
       </h3>
 
       <div className="space-y-4">
         {/* Age Sliders */}
-        <div className={`grid grid-cols-1 ${isChild ? '' : 'md:grid-cols-3'} gap-4`}>
+        <div className={`grid grid-cols-1 ${isChild ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
           <AgeSlider
-            label={isChild ? 'Age' : 'Current Age'}
+            label={isChild ? 'Current Age' : 'Current Age'}
             value={currentAge}
             min={0}
             max={80}
             onChange={(v) => handleChange('currentAge', v)}
           />
+          {isChild && (
+            <AgeSlider
+              label="Withdrawal Age"
+              value={withdrawalAge}
+              min={0}
+              max={30}
+              onChange={(v) => handleChange('withdrawalAge', v)}
+            />
+          )}
           {!isChild && (
             <>
               <AgeSlider

@@ -74,9 +74,16 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       growthRate: ie.growthRate != null ? Number(ie.growthRate) / 100 : 0,
     }));
 
+    const isChild = earner.memberType === 'child';
+    const monthlyContribution = Number(savings?.monthlyContribution ?? 0);
+    const withdrawalAge = retirement?.withdrawalAge ?? (isChild ? 18 : 59);
+
     return {
       earner,
       incomeEntries,
+      isChild,
+      monthlyContribution,
+      withdrawalAge,
       generalSavings: Number(savings?.generalSavingsBalance ?? 0),
       costBasis: Number(savings?.generalSavingsBalance ?? 0), // start: all basis, no unrealized gains
       fourOneK: Number(savings?.fourOneKBalance ?? 0),
@@ -179,11 +186,26 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       aggregateGeneralSavings += es.generalSavings;
     }
 
+    // Child monthly contributions: add to child's savings, counts as household expense
+    let totalChildContributions = 0;
+    for (const es of earnerState) {
+      if (es.isChild && es.monthlyContribution > 0) {
+        const earnerAge = es.currentAge + y + 1;
+        // Only contribute up to the withdrawal age
+        if (earnerAge <= es.withdrawalAge) {
+          const annualContribution = es.monthlyContribution * 12;
+          es.generalSavings += annualContribution;
+          es.costBasis += annualContribution;
+          totalChildContributions += annualContribution;
+        }
+      }
+    }
+
     // Household expenses grow with inflation
     const yearExpenses = annualExpenses * inflationFactor;
 
-    // Net cash flow = income - taxes - expenses - 401k contributions (already deducted)
-    const netCash = totalIncome - totalTax - yearExpenses - totalContributions401k;
+    // Net cash flow = income - taxes - expenses - 401k contributions - child savings contributions
+    const netCash = totalIncome - totalTax - yearExpenses - totalContributions401k - totalChildContributions;
 
     // Calculate interest on savings BEFORE applying net cash,
     // then net cash comes out of the interest (not the principal)

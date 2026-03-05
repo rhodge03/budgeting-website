@@ -5,7 +5,7 @@ import CategoryGroup from './CategoryGroup';
 const BUFFER_STORAGE_KEY = 'expense-buffer';
 
 export default function BudgetPanel() {
-  const { household, expenseCategories, addExpenseCategory, updateHousehold } = useHouseholdStore();
+  const { household, earners, expenseCategories, addExpenseCategory, updateHousehold } = useHouseholdStore();
   const [showMonthly, setShowMonthly] = useState(true);
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
@@ -34,7 +34,10 @@ export default function BudgetPanel() {
     (sum, cat) => sum + cat.subCategories.reduce((s, sub) => s + Number(sub.amount), 0),
     0,
   );
-  const bufferedMonthly = totalMonthly * (1 + bufferPct / 100);
+  const childSavingsMonthly = earners
+    .filter((e) => e.memberType === 'child')
+    .reduce((s, e) => s + Number(e.savingsBalance?.monthlyContribution ?? 0), 0);
+  const bufferedMonthly = totalMonthly * (1 + bufferPct / 100) + childSavingsMonthly;
   const displayTotal = showMonthly ? bufferedMonthly : bufferedMonthly * 12;
 
   const handleBufferChange = (value: number) => {
@@ -136,6 +139,45 @@ export default function BudgetPanel() {
           showMonthly={showMonthly}
         />
       ))}
+
+      {/* Child Savings contributions */}
+      {(() => {
+        const children = earners.filter((e) => e.memberType === 'child');
+        const childContributions = children
+          .filter((c) => Number(c.savingsBalance?.monthlyContribution ?? 0) > 0)
+          .map((c) => ({
+            id: c.id,
+            name: c.name,
+            monthly: Number(c.savingsBalance?.monthlyContribution ?? 0),
+          }));
+        if (childContributions.length === 0) return null;
+        const totalChildMonthly = childContributions.reduce((s, c) => s + c.monthly, 0);
+        const displayChildTotal = showMonthly ? totalChildMonthly : totalChildMonthly * 12;
+        return (
+          <div className="bg-white rounded-lg border border-purple-200 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 bg-purple-50">
+              <h3 className="text-sm font-semibold text-purple-900">Child Savings</h3>
+              <span className="text-sm font-medium text-purple-700">
+                ${displayChildTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <span className="text-purple-500 font-normal"> / {showMonthly ? 'mo' : 'yr'}</span>
+              </span>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {childContributions.map((c) => {
+                const display = showMonthly ? c.monthly : c.monthly * 12;
+                return (
+                  <div key={c.id} className="flex items-center justify-between px-4 py-2.5">
+                    <span className="text-sm text-gray-700">{c.name}</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      ${display.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       {expenseCategories.length === 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
