@@ -23,12 +23,20 @@ export default function AppShell() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div
+      className="min-h-screen flex"
+      style={{
+        backgroundImage: 'url(/money_background.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       {/* Left earner sidebar — full height */}
       <EarnerSidebar />
 
       {/* Everything else */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 bg-gray-50/70 backdrop-blur-sm">
         <Header />
         <TabBar />
 
