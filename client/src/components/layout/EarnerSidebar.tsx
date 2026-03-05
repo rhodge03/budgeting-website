@@ -27,7 +27,7 @@ export default function EarnerSidebar() {
   const setSelectedCategory = useEarnerSelectionStore((s) => s.setSelectedCategory);
 
   return (
-    <aside className="w-16 shrink-0 bg-white/80 backdrop-blur-sm border-r border-gray-200 flex flex-col items-center py-3 gap-2">
+    <aside className="w-16 shrink-0 bg-white/80 backdrop-blur-sm border-r border-gray-200 flex flex-col items-center py-3 gap-2 sticky top-0 h-screen overflow-y-auto">
       {/* Earner icons (only when 2+ earners) */}
       {earners.length > 1 && (
         <>
