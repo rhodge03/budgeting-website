@@ -23,35 +23,38 @@ export default function AppShell() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
-      <TabBar />
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left earner sidebar — full height */}
+      <EarnerSidebar />
 
-      {/* Banner ad */}
-      <div className="w-full max-w-5xl mx-auto px-4 pt-4">
-        <AdUnit slot="BANNER_SLOT" format="horizontal" />
-      </div>
+      {/* Everything else */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <Header />
+        <TabBar />
 
-      <div className="flex-1 flex justify-center px-4">
-        {/* Left earner sidebar */}
-        <EarnerSidebar />
+        {/* Banner ad */}
+        <div className="w-full max-w-5xl mx-auto px-4 pt-4">
+          <AdUnit slot="BANNER_SLOT" format="horizontal" />
+        </div>
 
-        {/* Main content */}
-        <main className="flex-1 max-w-5xl w-full py-4">
-          <Outlet />
-        </main>
+        <div className="flex-1 flex justify-center px-4">
+          {/* Main content */}
+          <main className="flex-1 max-w-5xl w-full py-4">
+            <Outlet />
+          </main>
 
-        {/* Right sidebar ad — large screens only */}
-        <aside className="hidden lg:block w-[160px] shrink-0 ml-4 py-4">
-          <div className="sticky top-4">
-            <AdUnit
-              slot="SIDEBAR_SLOT"
-              format="vertical"
-              responsive={false}
-              style={{ width: 160, height: 600 }}
-            />
-          </div>
-        </aside>
+          {/* Right sidebar ad — large screens only */}
+          <aside className="hidden lg:block w-[160px] shrink-0 ml-4 py-4">
+            <div className="sticky top-4">
+              <AdUnit
+                slot="SIDEBAR_SLOT"
+                format="vertical"
+                responsive={false}
+                style={{ width: 160, height: 600 }}
+              />
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   );

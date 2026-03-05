@@ -1,79 +1,60 @@
-import { useState } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import { useEarnerSelectionStore } from '../../stores/earnerSelectionStore';
+
+const COLORS = [
+  'bg-blue-500',
+  'bg-emerald-500',
+  'bg-violet-500',
+  'bg-amber-500',
+  'bg-rose-500',
+  'bg-cyan-500',
+];
 
 export default function EarnerSidebar() {
   const earners = useHouseholdStore((s) => s.earners);
   const selectedEarnerId = useEarnerSelectionStore((s) => s.selectedEarnerId);
   const setSelectedEarnerId = useEarnerSelectionStore((s) => s.setSelectedEarnerId);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (earners.length <= 1) return null;
 
-  const buttons = [
-    ...earners.map((e) => ({ id: e.id, label: e.name, isPrimary: e.isPrimary })),
-    { id: 'all' as const, label: 'Both Combined', isPrimary: false },
-  ];
-
   return (
-    <>
-      {/* Mobile toggle — below lg */}
+    <aside className="w-16 shrink-0 bg-white border-r border-gray-200 flex flex-col items-center py-3 gap-2">
+      {earners.map((earner, i) => {
+        const isSelected = selectedEarnerId === earner.id;
+        const initial = earner.name.charAt(0).toUpperCase();
+        const color = COLORS[i % COLORS.length];
+
+        return (
+          <button
+            key={earner.id}
+            onClick={() => setSelectedEarnerId(earner.id)}
+            title={earner.name}
+            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white transition-all ${color} ${
+              isSelected
+                ? 'ring-2 ring-blue-600 ring-offset-2 scale-110'
+                : 'opacity-60 hover:opacity-100 hover:scale-105'
+            }`}
+          >
+            {initial}
+          </button>
+        );
+      })}
+
+      {/* Divider */}
+      <div className="w-6 border-t border-gray-300" />
+
+      {/* Both combined */}
       <button
-        onClick={() => setMobileOpen((o) => !o)}
-        className="lg:hidden fixed bottom-4 left-4 z-40 bg-blue-600 text-white
-                   rounded-full p-3 shadow-lg hover:bg-blue-700 transition-colors"
-        aria-label="Toggle earner selection"
+        onClick={() => setSelectedEarnerId('all')}
+        title="Both Combined"
+        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all bg-gray-600 text-white text-xs font-bold ${
+          selectedEarnerId === 'all'
+            ? 'ring-2 ring-blue-600 ring-offset-2 scale-110'
+            : 'opacity-60 hover:opacity-100 hover:scale-105'
+        }`}
       >
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-        </svg>
+        All
       </button>
-
-      {/* Mobile backdrop */}
-      {mobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/30 z-30"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`
-          fixed lg:static inset-y-0 left-0 z-30
-          w-48 bg-white border-r border-gray-200 py-4 px-3
-          transform transition-transform duration-200
-          ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0 lg:block shrink-0
-        `}
-      >
-        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">
-          View Earner
-        </h3>
-        <nav className="space-y-1">
-          {buttons.map((btn) => (
-            <button
-              key={btn.id}
-              onClick={() => {
-                setSelectedEarnerId(btn.id);
-                setMobileOpen(false);
-              }}
-              className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                selectedEarnerId === btn.id
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              {btn.label}
-              {btn.isPrimary && (
-                <span className="ml-1.5 text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full">
-                  Primary
-                </span>
-              )}
-            </button>
-          ))}
-        </nav>
-      </aside>
-    </>
+    </aside>
   );
 }
