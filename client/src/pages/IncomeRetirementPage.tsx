@@ -9,10 +9,18 @@ import RateOfReturnPanel from '../components/rate-of-return/RateOfReturnPanel';
 import EarnerTaxSettings from '../components/tax/EarnerTaxSettings';
 import TaxSummaryPanel from '../components/tax/TaxSummaryPanel';
 
+const CATEGORY_TITLES = {
+  income: 'Income',
+  savings: 'Savings & Contributions',
+  retirement: 'Retirement',
+  tax: 'Tax',
+} as const;
+
 export default function IncomeRetirementPage() {
   const earners = useHouseholdStore((s) => s.earners);
   const selectedEarnerId = useEarnerSelectionStore((s) => s.selectedEarnerId);
   const setSelectedEarnerId = useEarnerSelectionStore((s) => s.setSelectedEarnerId);
+  const selectedCategory = useEarnerSelectionStore((s) => s.selectedCategory);
 
   // Reset to 'all' if selected earner was deleted
   useEffect(() => {
@@ -34,7 +42,7 @@ export default function IncomeRetirementPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-gray-900">
-        Income & Retirement
+        {CATEGORY_TITLES[selectedCategory]}
       </h2>
       <EarnerManager />
 
@@ -54,12 +62,20 @@ export default function IncomeRetirementPage() {
                 )}
               </div>
             )}
-            <IncomePanel earnerId={earner.id} />
-            <ContributionSettings earnerId={earner.id} />
-            <RetirementSettingsPanel earnerId={earner.id} />
-            <RateOfReturnPanel earnerId={earner.id} />
-            <EarnerTaxSettings earnerId={earner.id} />
-            <TaxSummaryPanel earnerId={earner.id} />
+            {selectedCategory === 'income' && <IncomePanel earnerId={earner.id} />}
+            {selectedCategory === 'savings' && <ContributionSettings earnerId={earner.id} />}
+            {selectedCategory === 'retirement' && (
+              <>
+                <RetirementSettingsPanel earnerId={earner.id} />
+                <RateOfReturnPanel earnerId={earner.id} />
+              </>
+            )}
+            {selectedCategory === 'tax' && (
+              <>
+                <EarnerTaxSettings earnerId={earner.id} />
+                <TaxSummaryPanel earnerId={earner.id} />
+              </>
+            )}
           </div>
         ))}
       </div>
