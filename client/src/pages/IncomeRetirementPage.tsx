@@ -41,8 +41,16 @@ export default function IncomeRetirementPage() {
   const showBadge = selectedEarnerId === 'all' && earners.length > 1;
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-900">
+    <div
+      className="space-y-6 min-h-full rounded-lg p-6 -m-2"
+      style={{
+        backgroundImage: 'url(/money_background.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      <h2 className="text-xl font-semibold text-gray-900 drop-shadow-sm">
         {CATEGORY_TITLES[selectedCategory]}
       </h2>
       <EarnerManager />
