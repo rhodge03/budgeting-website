@@ -2,20 +2,13 @@ import { useState } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import * as earnersApi from '../../api/earners';
 import ConfirmDialog from '../shared/ConfirmDialog';
-
-const AVATAR_OPTIONS = [
-  '👤', '👩', '👨', '👧', '👦', '🧑',
-  '👩‍💼', '👨‍💼', '👩‍💻', '👨‍💻', '👩‍🔬', '👨‍🔬',
-  '👩‍🎓', '👨‍🎓', '👩‍⚕️', '👨‍⚕️', '🧑‍🍳', '🧑‍🎨',
-  '🦊', '🐱', '🐶', '🦁', '🐻', '🐼',
-  '⭐', '💎', '🌟', '🔥', '💰', '🏠',
-];
+import { ANIMAL_ICONS, ANIMAL_KEYS } from '../shared/Icons';
 
 export default function EarnerManager() {
   const { earners, addEarner, removeEarner, archiveEarner, setPrimaryEarner, patchEarnerData } =
     useHouseholdStore();
   const [newName, setNewName] = useState('');
-  const [newIcon, setNewIcon] = useState('👤');
+  const [newIcon, setNewIcon] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [editingIconId, setEditingIconId] = useState<string | null>(null);
@@ -23,15 +16,14 @@ export default function EarnerManager() {
   const handleAdd = async () => {
     if (!newName.trim()) return;
     await addEarner(newName.trim());
-    // Update the newly created earner with the selected icon
     const latest = useHouseholdStore.getState().earners;
     const newEarner = latest[latest.length - 1];
-    if (newEarner && newIcon !== '👤') {
+    if (newEarner && newIcon) {
       patchEarnerData(newEarner.id, { avatarIcon: newIcon });
       await earnersApi.update(newEarner.id, { avatarIcon: newIcon });
     }
     setNewName('');
-    setNewIcon('👤');
+    setNewIcon(null);
     setIsAdding(false);
   };
 
@@ -45,6 +37,14 @@ export default function EarnerManager() {
     patchEarnerData(earnerId, { avatarIcon: icon });
     setEditingIconId(null);
     await earnersApi.update(earnerId, { avatarIcon: icon });
+  };
+
+  const renderAvatarIcon = (avatarIcon: string | null | undefined, name: string, size = 20) => {
+    const AnimalIcon = avatarIcon ? ANIMAL_ICONS[avatarIcon] : null;
+    if (AnimalIcon) {
+      return <AnimalIcon width={size} height={size} className="text-gray-700" />;
+    }
+    return <span>{name.charAt(0).toUpperCase()}</span>;
   };
 
   return (
@@ -82,7 +82,7 @@ export default function EarnerManager() {
               Add
             </button>
             <button
-              onClick={() => { setIsAdding(false); setNewName(''); setNewIcon('👤'); }}
+              onClick={() => { setIsAdding(false); setNewName(''); setNewIcon(null); }}
               className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
               Cancel
@@ -92,20 +92,24 @@ export default function EarnerManager() {
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Choose an icon
             </label>
-            <div className="flex flex-wrap gap-1">
-              {AVATAR_OPTIONS.map((emoji) => (
-                <button
-                  key={emoji}
-                  onClick={() => setNewIcon(emoji)}
-                  className={`w-8 h-8 rounded-md text-lg flex items-center justify-center transition-all ${
-                    newIcon === emoji
-                      ? 'bg-blue-100 ring-2 ring-blue-500 scale-110'
-                      : 'hover:bg-gray-100'
-                  }`}
-                >
-                  {emoji}
-                </button>
-              ))}
+            <div className="flex flex-wrap gap-1.5">
+              {ANIMAL_KEYS.map((key) => {
+                const Icon = ANIMAL_ICONS[key];
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setNewIcon(key)}
+                    title={key.charAt(0).toUpperCase() + key.slice(1)}
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
+                      newIcon === key
+                        ? 'bg-blue-100 ring-2 ring-blue-500 scale-110 text-blue-700'
+                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                    }`}
+                  >
+                    <Icon width={20} height={20} />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -118,13 +122,12 @@ export default function EarnerManager() {
             className="flex items-center justify-between py-2 px-3 rounded-md hover:bg-gray-50"
           >
             <div className="flex items-center gap-2">
-              {/* Clickable avatar icon */}
               <button
                 onClick={() => setEditingIconId(editingIconId === earner.id ? null : earner.id)}
-                className="text-lg hover:scale-110 transition-transform"
+                className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 hover:scale-110 transition-transform text-sm font-bold text-gray-600"
                 title="Change icon"
               >
-                {earner.avatarIcon || earner.name.charAt(0).toUpperCase()}
+                {renderAvatarIcon(earner.avatarIcon, earner.name, 18)}
               </button>
               <span className="text-sm font-medium text-gray-900">
                 {earner.name}
@@ -169,20 +172,24 @@ export default function EarnerManager() {
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Choose an icon for {earners.find((e) => e.id === editingIconId)?.name}
             </label>
-            <div className="flex flex-wrap gap-1">
-              {AVATAR_OPTIONS.map((emoji) => (
-                <button
-                  key={emoji}
-                  onClick={() => handleIconChange(editingIconId, emoji)}
-                  className={`w-8 h-8 rounded-md text-lg flex items-center justify-center transition-all ${
-                    earners.find((e) => e.id === editingIconId)?.avatarIcon === emoji
-                      ? 'bg-blue-100 ring-2 ring-blue-500 scale-110'
-                      : 'hover:bg-gray-100'
-                  }`}
-                >
-                  {emoji}
-                </button>
-              ))}
+            <div className="flex flex-wrap gap-1.5">
+              {ANIMAL_KEYS.map((key) => {
+                const Icon = ANIMAL_ICONS[key];
+                return (
+                  <button
+                    key={key}
+                    onClick={() => handleIconChange(editingIconId, key)}
+                    title={key.charAt(0).toUpperCase() + key.slice(1)}
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
+                      earners.find((e) => e.id === editingIconId)?.avatarIcon === key
+                        ? 'bg-blue-100 ring-2 ring-blue-500 scale-110 text-blue-700'
+                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                    }`}
+                  >
+                    <Icon width={20} height={20} />
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

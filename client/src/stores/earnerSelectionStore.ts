@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 type EarnerSelection = 'all' | string;
-export type Category = 'income' | 'savings' | 'retirement' | 'tax';
+export type Category = 'all' | 'income' | 'savings' | 'retirement' | 'tax';
 
 interface EarnerSelectionState {
   selectedEarnerId: EarnerSelection;
@@ -13,6 +13,6 @@ interface EarnerSelectionState {
 export const useEarnerSelectionStore = create<EarnerSelectionState>((set) => ({
   selectedEarnerId: 'all',
   setSelectedEarnerId: (id) => set({ selectedEarnerId: id }),
-  selectedCategory: 'income',
+  selectedCategory: 'all',
   setSelectedCategory: (cat) => set({ selectedCategory: cat }),
 }));

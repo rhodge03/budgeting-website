@@ -10,6 +10,7 @@ import EarnerTaxSettings from '../components/tax/EarnerTaxSettings';
 import TaxSummaryPanel from '../components/tax/TaxSummaryPanel';
 
 const CATEGORY_TITLES = {
+  all: 'Income & Retirement',
   income: 'Income',
   savings: 'Savings & Contributions',
   retirement: 'Retirement',
@@ -62,15 +63,19 @@ export default function IncomeRetirementPage() {
                 )}
               </div>
             )}
-            {selectedCategory === 'income' && <IncomePanel earnerId={earner.id} />}
-            {selectedCategory === 'savings' && <ContributionSettings earnerId={earner.id} />}
-            {selectedCategory === 'retirement' && (
+            {(selectedCategory === 'all' || selectedCategory === 'income') && (
+              <IncomePanel earnerId={earner.id} />
+            )}
+            {(selectedCategory === 'all' || selectedCategory === 'savings') && (
+              <ContributionSettings earnerId={earner.id} />
+            )}
+            {(selectedCategory === 'all' || selectedCategory === 'retirement') && (
               <>
                 <RetirementSettingsPanel earnerId={earner.id} />
                 <RateOfReturnPanel earnerId={earner.id} />
               </>
             )}
-            {selectedCategory === 'tax' && (
+            {(selectedCategory === 'all' || selectedCategory === 'tax') && (
               <>
                 <EarnerTaxSettings earnerId={earner.id} />
                 <TaxSummaryPanel earnerId={earner.id} />
