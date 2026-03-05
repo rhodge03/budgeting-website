@@ -11,7 +11,7 @@ export async function list(req: Request, res: Response, next: NextFunction) {
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
-    const earner = await earnersService.create(req.user!.householdId, req.body.name);
+    const earner = await earnersService.create(req.user!.householdId, req.body.name, req.body.memberType);
     res.status(201).json(earner);
   } catch (err) { next(err); }
 }

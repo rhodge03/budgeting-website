@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { HouseholdSnapshot, Earner, IncomeEntry, SavingsBalance, RetirementSettings, RateOfReturn, ExpenseCategory, ExpenseSubCategory } from 'shared';
+import type { HouseholdSnapshot, Earner, IncomeEntry, SavingsBalance, RetirementSettings, RateOfReturn, ExpenseCategory, ExpenseSubCategory, MemberType } from 'shared';
 import * as householdApi from '../api/household';
 import * as earnersApi from '../api/earners';
 import * as incomeApi from '../api/income';
@@ -32,7 +32,7 @@ interface HouseholdState {
   updateHousehold: (data: Partial<HouseholdSnapshot['household']>) => Promise<void>;
 
   // Earner actions
-  addEarner: (name: string) => Promise<void>;
+  addEarner: (name: string, memberType?: MemberType) => Promise<void>;
   updateEarner: (id: string, data: Partial<Earner>) => Promise<void>;
   archiveEarner: (id: string) => Promise<void>;
   removeEarner: (id: string) => Promise<void>;
@@ -106,13 +106,13 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
     }
   },
 
-  addEarner: async (name) => {
+  addEarner: async (name, memberType = 'adult') => {
     if (isGuestMode()) {
-      const earner = guestStorage.createEarner(name);
+      const earner = guestStorage.createEarner(name, memberType);
       set((state) => ({ earners: [...state.earners, earner] }));
       return;
     }
-    const earner = await earnersApi.create(name);
+    const earner = await earnersApi.create(name, memberType);
     set((state) => ({
       earners: [...state.earners, earner as EarnerWithRelations],
     }));

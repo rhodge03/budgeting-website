@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { ANIMAL_ICONS, ANIMAL_KEYS } from '../shared/Icons';
+import type { MemberType } from 'shared';
 
 function IconPicker({ selectedIcon, onSelect }: { selectedIcon: string | null; onSelect: (key: string) => void }) {
   return (
@@ -40,6 +41,7 @@ export default function EarnerManager() {
     useHouseholdStore();
   const [newName, setNewName] = useState('');
   const [newIcon, setNewIcon] = useState<string | null>(null);
+  const [newMemberType, setNewMemberType] = useState<MemberType>('adult');
   const [isAdding, setIsAdding] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
@@ -50,7 +52,7 @@ export default function EarnerManager() {
 
   const handleAdd = async () => {
     if (!newName.trim()) return;
-    await addEarner(newName.trim());
+    await addEarner(newName.trim(), newMemberType);
     const latest = useHouseholdStore.getState().earners;
     const newEarner = latest[latest.length - 1];
     if (newEarner && newIcon) {
@@ -58,6 +60,7 @@ export default function EarnerManager() {
     }
     setNewName('');
     setNewIcon(null);
+    setNewMemberType('adult');
     setIsAdding(false);
   };
 
@@ -99,27 +102,51 @@ export default function EarnerManager() {
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-          Earners
+          Household
         </h3>
         {!isAdding && !editingId && (
           <button
             onClick={() => setIsAdding(true)}
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
           >
-            + Add Earner
+            + Add Member
           </button>
         )}
       </div>
 
       {isAdding && (
         <div className="mb-4 space-y-3">
+          {/* Member type toggle */}
+          <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5 w-fit">
+            <button
+              onClick={() => setNewMemberType('adult')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                newMemberType === 'adult'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Adult
+            </button>
+            <button
+              onClick={() => setNewMemberType('child')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                newMemberType === 'child'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Child
+            </button>
+          </div>
+
           <div className="flex gap-2">
             <input
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-              placeholder="Earner name"
+              placeholder="Name"
               autoFocus
               className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -130,7 +157,7 @@ export default function EarnerManager() {
               Add
             </button>
             <button
-              onClick={() => { setIsAdding(false); setNewName(''); setNewIcon(null); }}
+              onClick={() => { setIsAdding(false); setNewName(''); setNewIcon(null); setNewMemberType('adult'); }}
               className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
               Cancel
@@ -195,20 +222,25 @@ export default function EarnerManager() {
                       Primary
                     </span>
                   )}
+                  {earner.memberType === 'child' && (
+                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
+                      Child
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => startEditing(earner)}
                     className="text-xs text-gray-500 hover:text-blue-600 px-2 py-1"
-                    title="Edit earner"
+                    title="Edit"
                   >
                     Edit
                   </button>
-                  {!earner.isPrimary && (
+                  {!earner.isPrimary && earner.memberType !== 'child' && (
                     <button
                       onClick={() => setPrimaryEarner(earner.id)}
                       className="text-xs text-gray-500 hover:text-blue-600 px-2 py-1"
-                      title="Set as primary earner"
+                      title="Set Primary"
                     >
                       Set Primary
                     </button>
@@ -216,14 +248,14 @@ export default function EarnerManager() {
                   <button
                     onClick={() => archiveEarner(earner.id)}
                     className="text-xs text-gray-500 hover:text-amber-600 px-2 py-1"
-                    title="Archive earner"
+                    title="Archive"
                   >
                     Archive
                   </button>
                   <button
                     onClick={() => setDeleteTarget({ id: earner.id, name: earner.name })}
                     className="text-xs text-gray-500 hover:text-red-600 px-2 py-1"
-                    title="Delete earner"
+                    title="Delete"
                   >
                     Delete
                   </button>
@@ -235,15 +267,15 @@ export default function EarnerManager() {
 
         {earners.length === 0 && (
           <p className="text-sm text-gray-500 text-center py-4">
-            No earners yet. Add one to get started.
+            No members yet. Add one to get started.
           </p>
         )}
       </div>
 
       <ConfirmDialog
         open={!!deleteTarget}
-        title="Delete Earner"
-        message={`Are you sure you want to delete "${deleteTarget?.name}"? This will remove all their income, savings, and retirement data. This cannot be undone.`}
+        title="Delete Member"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? This will remove all their data. This cannot be undone.`}
         confirmLabel="Delete"
         danger
         onConfirm={handleDelete}

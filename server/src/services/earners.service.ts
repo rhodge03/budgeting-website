@@ -11,13 +11,15 @@ export async function list(householdId: string, includeArchived = false) {
   });
 }
 
-export async function create(householdId: string, name: string) {
+export async function create(householdId: string, name: string, memberType: string = 'adult') {
   const count = await prisma.earner.count({ where: { householdId } });
+  const isChild = memberType === 'child';
   const earner = await prisma.earner.create({
     data: {
       householdId,
       name,
-      isPrimary: count === 0,
+      memberType,
+      isPrimary: isChild ? false : count === 0,
       sortOrder: count,
     },
   });
@@ -25,7 +27,9 @@ export async function create(householdId: string, name: string) {
   // Create default related records
   await Promise.all([
     prisma.savingsBalance.create({ data: { earnerId: earner.id } }),
-    prisma.retirementSettings.create({ data: { earnerId: earner.id } }),
+    prisma.retirementSettings.create({
+      data: { earnerId: earner.id, currentAge: isChild ? 0 : 18 },
+    }),
     prisma.rateOfReturn.create({ data: { earnerId: earner.id } }),
   ]);
 
@@ -43,6 +47,7 @@ export async function create(householdId: string, name: string) {
 
 export async function update(id: string, householdId: string, data: {
   name?: string;
+  memberType?: string;
   avatarIcon?: string | null;
   state?: string;
   filingStatus?: string;

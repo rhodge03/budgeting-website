@@ -13,6 +13,8 @@ export default function ContributionSettings({ earnerId }: Props) {
 
   if (!earner || !savings) return null;
 
+  const isChild = earner.memberType === 'child';
+
   const handleChange = async (field: string, value: number) => {
     await updateSavings(earner.id, { [field]: value });
   };
@@ -20,7 +22,7 @@ export default function ContributionSettings({ earnerId }: Props) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-        Savings & 401(k)
+        {isChild ? 'Savings' : 'Savings & 401(k)'}
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -29,21 +31,25 @@ export default function ContributionSettings({ earnerId }: Props) {
           value={Number(savings.generalSavingsBalance)}
           onChange={(v) => handleChange('generalSavingsBalance', v)}
         />
-        <CurrencyInput
-          label="401(k) Balance"
-          value={Number(savings.fourOneKBalance)}
-          onChange={(v) => handleChange('fourOneKBalance', v)}
-        />
-        <PercentageInput
-          label="401(k) Contribution %"
-          value={Number(savings.contributionPercent)}
-          onChange={(v) => handleChange('contributionPercent', v)}
-        />
-        <PercentageInput
-          label="Employer Match %"
-          value={Number(savings.employerMatchPercent)}
-          onChange={(v) => handleChange('employerMatchPercent', v)}
-        />
+        {!isChild && (
+          <>
+            <CurrencyInput
+              label="401(k) Balance"
+              value={Number(savings.fourOneKBalance)}
+              onChange={(v) => handleChange('fourOneKBalance', v)}
+            />
+            <PercentageInput
+              label="401(k) Contribution %"
+              value={Number(savings.contributionPercent)}
+              onChange={(v) => handleChange('contributionPercent', v)}
+            />
+            <PercentageInput
+              label="Employer Match %"
+              value={Number(savings.employerMatchPercent)}
+              onChange={(v) => handleChange('employerMatchPercent', v)}
+            />
+          </>
+        )}
       </div>
     </div>
   );

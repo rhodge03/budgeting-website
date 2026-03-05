@@ -48,46 +48,54 @@ export default function IncomeRetirementPage() {
       <EarnerManager />
 
       <div className="space-y-6">
-        {visibleEarners.map((earner) => (
-          <div key={earner.id} className="space-y-4">
-            {showBadge && (
-              <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {earner.name}
-                </h3>
-                {earner.isPrimary && (
-                  <span className="text-xs font-normal text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                    Primary
-                  </span>
-                )}
-              </div>
-            )}
-            {(selectedCategory === 'all' || selectedCategory === 'income') && (
-              <IncomePanel earnerId={earner.id} />
-            )}
-            {(selectedCategory === 'all' || selectedCategory === 'savings') && (
-              <ContributionSettings earnerId={earner.id} />
-            )}
-            {(selectedCategory === 'all' || selectedCategory === 'retirement') && (
-              <>
+        {visibleEarners.map((earner) => {
+          const isChild = earner.memberType === 'child';
+          return (
+            <div key={earner.id} className="space-y-4">
+              {showBadge && (
+                <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {earner.name}
+                  </h3>
+                  {earner.isPrimary && (
+                    <span className="text-xs font-normal text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                      Primary
+                    </span>
+                  )}
+                  {isChild && (
+                    <span className="text-xs font-normal text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+                      Child
+                    </span>
+                  )}
+                </div>
+              )}
+              {!isChild && (selectedCategory === 'all' || selectedCategory === 'income') && (
+                <IncomePanel earnerId={earner.id} />
+              )}
+              {(selectedCategory === 'all' || selectedCategory === 'savings') && (
+                <ContributionSettings earnerId={earner.id} />
+              )}
+              {(selectedCategory === 'all' || selectedCategory === 'retirement') && (
                 <RetirementSettingsPanel earnerId={earner.id} />
+              )}
+              {!isChild && (selectedCategory === 'all' || selectedCategory === 'retirement') && (
                 <RateOfReturnPanel earnerId={earner.id} />
-              </>
-            )}
-            {(selectedCategory === 'all' || selectedCategory === 'tax') && (
-              <>
-                <EarnerTaxSettings earnerId={earner.id} />
-                <TaxSummaryPanel earnerId={earner.id} />
-              </>
-            )}
-          </div>
-        ))}
+              )}
+              {!isChild && (selectedCategory === 'all' || selectedCategory === 'tax') && (
+                <>
+                  <EarnerTaxSettings earnerId={earner.id} />
+                  <TaxSummaryPanel earnerId={earner.id} />
+                </>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {earners.length === 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <p className="text-sm text-gray-500">Add an earner to get started.</p>
+          <p className="text-sm text-gray-500">Add a member to get started.</p>
         </div>
       )}
     </div>

@@ -42,6 +42,7 @@ model Earner {
   id            String   @id @default(uuid())
   householdId   String   @map("household_id")
   name          String
+  memberType    String   @default("adult") @map("member_type")
   avatarIcon    String?   @map("avatar_icon")
   dateOfBirth   DateTime? @map("date_of_birth")
   state         String   @default("CA")
@@ -105,7 +106,7 @@ model SavingsBalance {
 model RetirementSettings {
   id                  String   @id @default(uuid())
   earnerId            String   @unique @map("earner_id")
-  currentAge          Int      @default(30) @map("current_age")
+  currentAge          Int      @default(18) @map("current_age")
   targetRetirementAge Int      @default(65) @map("target_retirement_age")
   withdrawalAge       Int      @default(59) @map("withdrawal_age")
   retirementGoal      Decimal  @default(0) @db.Decimal(14, 2) @map("retirement_goal")

@@ -16,10 +16,13 @@ export interface User {
   updatedAt: string;
 }
 
+export type MemberType = 'adult' | 'child';
+
 export interface Earner {
   id: string;
   householdId: string;
   name: string;
+  memberType: MemberType;
   avatarIcon: string | null;
   dateOfBirth: string | null;
   state: string;

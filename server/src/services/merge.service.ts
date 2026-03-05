@@ -48,6 +48,7 @@ export async function mergeGuestData(
       data: {
         householdId,
         name: e.name,
+        memberType: e.memberType || 'adult',
         avatarIcon: e.avatarIcon,
         dateOfBirth: e.dateOfBirth ? new Date(e.dateOfBirth) : null,
         state: e.state,

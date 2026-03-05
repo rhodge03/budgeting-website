@@ -7,6 +7,7 @@ import type {
   RateOfReturn,
   ExpenseCategory,
   ExpenseSubCategory,
+  MemberType,
 } from 'shared';
 import { DEFAULT_EXPENSE_CATEGORIES } from 'shared';
 
@@ -85,16 +86,18 @@ export function updateHousehold(data: Partial<HouseholdSnapshot['household']>): 
 
 // ── Earners ──────────────────────────────────────────
 
-export function createEarner(name: string): EarnerWithRelations {
+export function createEarner(name: string, memberType: MemberType = 'adult'): EarnerWithRelations {
   const snapshot = getSnapshot();
   const earnerId = crypto.randomUUID();
-  const isPrimary = snapshot.earners.length === 0;
+  const isChild = memberType === 'child';
+  const isPrimary = isChild ? false : snapshot.earners.length === 0;
   const now = new Date().toISOString();
 
   const earner: EarnerWithRelations = {
     id: earnerId,
     householdId: snapshot.household.id,
     name,
+    memberType,
     avatarIcon: null,
     dateOfBirth: null,
     state: 'CA',
@@ -118,7 +121,7 @@ export function createEarner(name: string): EarnerWithRelations {
     retirementSettings: {
       id: crypto.randomUUID(),
       earnerId,
-      currentAge: 30,
+      currentAge: isChild ? 0 : 18,
       targetRetirementAge: 65,
       withdrawalAge: 59,
       retirementGoal: 0,
@@ -249,7 +252,7 @@ export function updateRetirement(earnerId: string, data: Partial<RetirementSetti
     earner.retirementSettings = {
       id: crypto.randomUUID(),
       earnerId,
-      currentAge: 30,
+      currentAge: 18,
       targetRetirementAge: 65,
       withdrawalAge: 59,
       retirementGoal: 0,

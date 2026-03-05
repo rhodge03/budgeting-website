@@ -38,8 +38,9 @@ export interface ProjectionInputs {
 export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
   const { earners, expenseCategories, expenseBuffer, inflationRate, maxAge } = inputs;
 
-  // Find the primary earner to anchor the timeline
-  const primary = earners.find((e) => e.isPrimary) || earners[0];
+  // Find the primary earner to anchor the timeline (children cannot be primary)
+  const adults = earners.filter((e) => e.memberType !== 'child');
+  const primary = adults.find((e) => e.isPrimary) || adults[0];
   if (!primary?.retirementSettings) return [];
 
   const { currentAge } = primary.retirementSettings;

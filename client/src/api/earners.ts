@@ -1,8 +1,8 @@
 import api from './client';
-import type { Earner } from 'shared';
+import type { Earner, MemberType } from 'shared';
 
-export async function create(name: string): Promise<Earner> {
-  const { data } = await api.post('/earners', { name });
+export async function create(name: string, memberType: MemberType = 'adult'): Promise<Earner> {
+  const { data } = await api.post('/earners', { name, memberType });
   return data;
 }
 

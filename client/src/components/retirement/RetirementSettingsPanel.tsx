@@ -12,8 +12,10 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
 
   if (!earner) return null;
 
+  const isChild = earner.memberType === 'child';
+
   // Use defaults if no settings exist yet
-  const currentAge = settings ? Number(settings.currentAge) : 30;
+  const currentAge = settings ? Number(settings.currentAge) : 18;
   const targetRetirementAge = settings ? Number(settings.targetRetirementAge) : 65;
   const withdrawalAge = settings ? Number(settings.withdrawalAge) : 59;
   const retirementGoal = settings ? Number(settings.retirementGoal) : 0;
@@ -27,49 +29,57 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-        Retirement Settings
+        {isChild ? 'Age' : 'Retirement Settings'}
       </h3>
 
       <div className="space-y-4">
         {/* Age Sliders */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className={`grid grid-cols-1 ${isChild ? '' : 'md:grid-cols-3'} gap-4`}>
           <AgeSlider
-            label="Current Age"
+            label={isChild ? 'Age' : 'Current Age'}
             value={currentAge}
-            min={18}
+            min={0}
             max={80}
             onChange={(v) => handleChange('currentAge', v)}
           />
-          <AgeSlider
-            label="Target Retirement Age"
-            value={targetRetirementAge}
-            min={30}
-            max={80}
-            onChange={(v) => handleChange('targetRetirementAge', v)}
-          />
-          <AgeSlider
-            label="401(k) Withdrawal Age"
-            value={withdrawalAge}
-            min={55}
-            max={75}
-            onChange={(v) => handleChange('withdrawalAge', v)}
-          />
+          {!isChild && (
+            <>
+              <AgeSlider
+                label="Target Retirement Age"
+                value={targetRetirementAge}
+                min={30}
+                max={80}
+                onChange={(v) => handleChange('targetRetirementAge', v)}
+              />
+              <AgeSlider
+                label="401(k) Withdrawal Age"
+                value={withdrawalAge}
+                min={55}
+                max={75}
+                onChange={(v) => handleChange('withdrawalAge', v)}
+              />
+            </>
+          )}
         </div>
 
-        {/* Years until retirement */}
-        <div className="text-sm text-gray-600">
-          <span className="font-medium">{yearsUntilRetirement}</span> years until retirement
-        </div>
+        {/* Years until retirement (adults only) */}
+        {!isChild && (
+          <div className="text-sm text-gray-600">
+            <span className="font-medium">{yearsUntilRetirement}</span> years until retirement
+          </div>
+        )}
 
-        {/* Retirement Goal */}
-        <CurrencyInput
-          label="Retirement Savings Goal"
-          value={retirementGoal}
-          onChange={(v) => handleChange('retirementGoal', v)}
-        />
+        {/* Retirement Goal (adults only) */}
+        {!isChild && (
+          <CurrencyInput
+            label="Retirement Savings Goal"
+            value={retirementGoal}
+            onChange={(v) => handleChange('retirementGoal', v)}
+          />
+        )}
 
-        {/* Progress bar (only if goal > 0) */}
-        {retirementGoal > 0 && earner.savingsBalance && (
+        {/* Progress bar (adults only, only if goal > 0) */}
+        {!isChild && retirementGoal > 0 && earner.savingsBalance && (
           <RetirementProgress
             current={Number(earner.savingsBalance.generalSavingsBalance) + Number(earner.savingsBalance.fourOneKBalance)}
             goal={retirementGoal}

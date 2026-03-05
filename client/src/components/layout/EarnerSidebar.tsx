@@ -79,25 +79,36 @@ export default function EarnerSidebar() {
         </>
       )}
 
-      {/* Category buttons */}
-      {CATEGORIES.map((cat) => {
-        const isActive = selectedCategory === cat.key;
-        const CatIcon = CATEGORY_ICONS[cat.key];
-        return (
-          <button
-            key={cat.key}
-            onClick={() => setSelectedCategory(cat.key)}
-            title={cat.label}
-            className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
-              isActive
-                ? 'bg-blue-50 text-blue-600 ring-2 ring-blue-500 scale-110'
-                : 'bg-gray-50 text-gray-400 opacity-50 hover:opacity-100 hover:bg-gray-100 hover:text-gray-600 hover:scale-105'
-            }`}
-          >
-            {CatIcon && <CatIcon width={18} height={18} />}
-          </button>
-        );
-      })}
+      {/* Category buttons — filter for children */}
+      {CATEGORIES
+        .filter((cat) => {
+          // When a child is selected, only show All and Savings
+          if (selectedEarnerId !== 'all') {
+            const selected = earners.find((e) => e.id === selectedEarnerId);
+            if (selected?.memberType === 'child') {
+              return cat.key === 'all' || cat.key === 'savings' || cat.key === 'retirement';
+            }
+          }
+          return true;
+        })
+        .map((cat) => {
+          const isActive = selectedCategory === cat.key;
+          const CatIcon = CATEGORY_ICONS[cat.key];
+          return (
+            <button
+              key={cat.key}
+              onClick={() => setSelectedCategory(cat.key)}
+              title={cat.label}
+              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
+                isActive
+                  ? 'bg-blue-50 text-blue-600 ring-2 ring-blue-500 scale-110'
+                  : 'bg-gray-50 text-gray-400 opacity-50 hover:opacity-100 hover:bg-gray-100 hover:text-gray-600 hover:scale-105'
+              }`}
+            >
+              {CatIcon && <CatIcon width={18} height={18} />}
+            </button>
+          );
+        })}
     </aside>
   );
 }
