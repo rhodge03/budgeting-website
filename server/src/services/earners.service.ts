@@ -43,6 +43,7 @@ export async function create(householdId: string, name: string) {
 
 export async function update(id: string, householdId: string, data: {
   name?: string;
+  avatarIcon?: string | null;
   state?: string;
   filingStatus?: string;
   deductionType?: string;

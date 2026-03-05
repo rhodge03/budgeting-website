@@ -42,6 +42,7 @@ model Earner {
   id            String   @id @default(uuid())
   householdId   String   @map("household_id")
   name          String
+  avatarIcon    String?   @map("avatar_icon")
   dateOfBirth   DateTime? @map("date_of_birth")
   state         String   @default("CA")
   filingStatus  String   @default("single") @map("filing_status")

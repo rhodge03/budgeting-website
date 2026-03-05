@@ -20,6 +20,7 @@ export interface Earner {
   id: string;
   householdId: string;
   name: string;
+  avatarIcon: string | null;
   dateOfBirth: string | null;
   state: string;
   filingStatus: FilingStatus;

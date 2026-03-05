@@ -21,7 +21,7 @@ export default function EarnerSidebar() {
     <aside className="w-16 shrink-0 bg-white border-r border-gray-200 flex flex-col items-center py-3 gap-2">
       {earners.map((earner, i) => {
         const isSelected = selectedEarnerId === earner.id;
-        const initial = earner.name.charAt(0).toUpperCase();
+        const hasEmoji = !!earner.avatarIcon;
         const color = COLORS[i % COLORS.length];
 
         return (
@@ -29,13 +29,15 @@ export default function EarnerSidebar() {
             key={earner.id}
             onClick={() => setSelectedEarnerId(earner.id)}
             title={earner.name}
-            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white transition-all ${color} ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+              hasEmoji ? 'bg-gray-100 text-xl' : `${color} text-sm font-bold text-white`
+            } ${
               isSelected
                 ? 'ring-2 ring-blue-600 ring-offset-2 scale-110'
                 : 'opacity-60 hover:opacity-100 hover:scale-105'
             }`}
           >
-            {initial}
+            {earner.avatarIcon || earner.name.charAt(0).toUpperCase()}
           </button>
         );
       })}
