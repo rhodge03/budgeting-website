@@ -47,7 +47,7 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
               label="Withdrawal Age"
               value={withdrawalAge}
               min={0}
-              max={30}
+              max={80}
               onChange={(v) => handleChange('withdrawalAge', v)}
             />
           )}

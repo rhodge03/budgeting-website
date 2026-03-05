@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useHouseholdStore } from '../stores/householdStore';
+import { useEarnerSelectionStore } from '../stores/earnerSelectionStore';
 import { runProjection } from '../utils/projectionEngine';
 import { estimateSocialSecurity } from '../utils/socialSecurityEstimator';
 import ProjectionChart, { DEFAULT_SERIES } from '../components/projections/ProjectionChart';
@@ -7,6 +8,7 @@ import ChartControls from '../components/projections/ChartControls';
 import ProjectionSummary from '../components/projections/ProjectionSummary';
 import ProjectionTable from '../components/projections/ProjectionTable';
 import SocialSecurityDetail from '../components/projections/SocialSecurityDetail';
+import ChildSavingsChart from '../components/projections/ChildSavingsChart';
 
 const STORAGE_KEY = 'projection-chart-settings';
 
@@ -33,6 +35,7 @@ function saveSettings(settings: ChartSettings) {
 
 export default function ProjectionsPage() {
   const { earners, expenseCategories, household } = useHouseholdStore();
+  const selectedEarnerId = useEarnerSelectionStore((s) => s.selectedEarnerId);
 
   const [inflationRate, setInflationRate] = useState(() => loadSettings()?.inflationRate ?? 3);
   const [ssClaimingAge, setSsClaimingAge] = useState(() => loadSettings()?.ssClaimingAge ?? 67);
@@ -85,6 +88,22 @@ export default function ProjectionsPage() {
       claimingAge: ssClaimingAge,
     });
   }, [primary, ssClaimingAge]);
+
+  // Check if a child is selected
+  const selectedChild = selectedEarnerId !== 'all'
+    ? earners.find((e) => e.id === selectedEarnerId && e.memberType === 'child')
+    : undefined;
+
+  if (selectedChild) {
+    return (
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">
+          {selectedChild.name}'s Savings Projection
+        </h2>
+        <ChildSavingsChart earner={selectedChild} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
