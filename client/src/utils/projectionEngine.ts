@@ -87,9 +87,34 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     };
   });
 
+  // Baseline row: starting balances, no processing
+  const startGeneralSavings = earnerState.reduce((s, es) => s + es.generalSavings, 0);
+  const startFourOneK = earnerState.reduce((s, es) => s + es.fourOneK, 0);
+  const startTotal = startGeneralSavings + startFourOneK;
+  results.push({
+    age: currentAge,
+    year: currentYear,
+    generalSavings: Math.round(startGeneralSavings),
+    fourOneK: Math.round(startFourOneK),
+    totalSavings: Math.round(startTotal),
+    totalIncome: 0,
+    totalTax: 0,
+    totalExpenses: 0,
+    totalContributions401k: 0,
+    totalEmployerMatch: 0,
+    netCashFlow: 0,
+    investmentGrowth: 0,
+    fourOneKGrowth: 0,
+    savingsGrowth: 0,
+    capitalGainsTax: 0,
+    totalSavingsReal: Math.round(startTotal),
+    investmentGrowthReal: 0,
+    savingsGrowthReal: 0,
+  });
+
   for (let y = 0; y < yearsToProject; y++) {
-    const age = currentAge + y;
-    const year = currentYear + y;
+    const age = currentAge + y + 1;
+    const year = currentYear + y + 1;
     const inflationFactor = Math.pow(inflationMultiplier, y);
 
     let totalIncome = 0;
@@ -104,7 +129,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     let aggregateFourOneK = 0;
 
     for (const es of earnerState) {
-      const earnerAge = es.currentAge + y;
+      const earnerAge = es.currentAge + y + 1;
       const isRetired = earnerAge >= es.retirementAge;
 
       // Evaluate each income entry individually based on its duration and growth rate
