@@ -4,7 +4,7 @@ export default function Header() {
   const { user, logout } = useAuthStore();
 
   return (
-    <header className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: '#003262' }}>
+    <header className="px-4 py-3 flex items-center justify-between sticky top-0 z-10" style={{ backgroundColor: '#003262' }}>
       <h1 className="text-lg font-semibold text-white">
         When Do I Quit?
       </h1>
