@@ -10,6 +10,7 @@ export default function SignupForm() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const signup = useAuthStore((s) => s.signup);
+  const isGuest = useAuthStore((s) => s.isGuest);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,6 +45,11 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
+      {isGuest && (
+        <div className="bg-blue-50 border border-blue-200 rounded-md px-3 py-2 text-sm text-blue-800">
+          Your existing data will be saved to your new account.
+        </div>
+      )}
       <div>
         <label htmlFor="householdName" className="block text-sm font-medium text-gray-700">
           Household Name

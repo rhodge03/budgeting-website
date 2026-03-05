@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import * as authApi from '../api/auth';
+import * as guestStorage from '../services/guestStorage';
 
 interface AuthUser {
   id: string;
@@ -10,29 +11,38 @@ interface AuthUser {
 interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
+  isGuest: boolean;
   isLoading: boolean;
 
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, householdName?: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
+  enterGuestMode: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isAuthenticated: false,
+  isGuest: false,
   isLoading: true,
 
   login: async (email, password) => {
+    const wasGuest = get().isGuest;
     const result = await authApi.login(email, password);
     localStorage.setItem('accessToken', result.accessToken);
-    set({ user: result.user, isAuthenticated: true });
+    if (wasGuest) guestStorage.clearGuestData();
+    set({ user: result.user, isAuthenticated: true, isGuest: false });
   },
 
   signup: async (email, password, householdName) => {
-    const result = await authApi.signup(email, password, householdName);
+    const wasGuest = get().isGuest;
+    const guestSnapshot = wasGuest ? guestStorage.getSnapshot() : undefined;
+
+    const result = await authApi.signup(email, password, householdName, guestSnapshot);
     localStorage.setItem('accessToken', result.accessToken);
-    set({ user: result.user, isAuthenticated: true });
+    if (wasGuest) guestStorage.clearGuestData();
+    set({ user: result.user, isAuthenticated: true, isGuest: false });
   },
 
   logout: async () => {
@@ -40,7 +50,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       await authApi.logout();
     } finally {
       localStorage.removeItem('accessToken');
-      set({ user: null, isAuthenticated: false });
+      set({ user: null, isAuthenticated: false, isGuest: false });
     }
   },
 
@@ -58,5 +68,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.removeItem('accessToken');
       set({ user: null, isAuthenticated: false, isLoading: false });
     }
+  },
+
+  enterGuestMode: () => {
+    if (!guestStorage.hasGuestData()) {
+      guestStorage.initializeGuest();
+    }
+    set({ isGuest: true, isAuthenticated: false, isLoading: false });
   },
 }));

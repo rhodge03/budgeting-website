@@ -1,5 +1,4 @@
 import { useHouseholdStore } from '../../stores/householdStore';
-import * as rateOfReturnApi from '../../api/rateOfReturn';
 import PercentageInput from '../shared/PercentageInput';
 
 const BENCHMARKS: { key: string; label: string; rate: number }[] = [
@@ -14,7 +13,7 @@ interface Props {
 
 export default function RateOfReturnPanel({ earnerId }: Props) {
   const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
-  const patchEarnerData = useHouseholdStore((s) => s.patchEarnerData);
+  const updateRateOfReturn = useHouseholdStore((s) => s.updateRateOfReturn);
   const ror = earner?.rateOfReturn;
 
   if (!earner) return null;
@@ -23,23 +22,15 @@ export default function RateOfReturnPanel({ earnerId }: Props) {
   const benchmarkType = ror?.benchmarkType || null;
 
   const handleRateChange = async (value: number) => {
-    const updated = { ...ror, annualRate: value, benchmarkType: null } as any;
-    patchEarnerData(earner.id, { rateOfReturn: updated });
-    await rateOfReturnApi.update(earner.id, { annualRate: value, benchmarkType: null });
+    await updateRateOfReturn(earner.id, { annualRate: value, benchmarkType: null });
   };
 
   const handleBenchmarkClick = async (benchmark: typeof BENCHMARKS[number]) => {
-    // If already selected, deselect and keep the rate
     if (benchmarkType === benchmark.key) {
-      const updated = { ...ror, benchmarkType: null } as any;
-      patchEarnerData(earner.id, { rateOfReturn: updated });
-      await rateOfReturnApi.update(earner.id, { benchmarkType: null });
+      await updateRateOfReturn(earner.id, { benchmarkType: null });
       return;
     }
-
-    const updated = { ...ror, annualRate: benchmark.rate, benchmarkType: benchmark.key } as any;
-    patchEarnerData(earner.id, { rateOfReturn: updated });
-    await rateOfReturnApi.update(earner.id, {
+    await updateRateOfReturn(earner.id, {
       annualRate: benchmark.rate,
       benchmarkType: benchmark.key as 'sp500' | 'dow' | 'gold',
     });

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
-import * as earnersApi from '../../api/earners';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { ANIMAL_ICONS, ANIMAL_KEYS } from '../shared/Icons';
 
@@ -37,7 +36,7 @@ function renderAvatarIcon(avatarIcon: string | null | undefined, name: string, s
 }
 
 export default function EarnerManager() {
-  const { earners, addEarner, removeEarner, archiveEarner, setPrimaryEarner, patchEarnerData, updateEarner } =
+  const { earners, addEarner, removeEarner, archiveEarner, setPrimaryEarner, updateEarner } =
     useHouseholdStore();
   const [newName, setNewName] = useState('');
   const [newIcon, setNewIcon] = useState<string | null>(null);
@@ -55,8 +54,7 @@ export default function EarnerManager() {
     const latest = useHouseholdStore.getState().earners;
     const newEarner = latest[latest.length - 1];
     if (newEarner && newIcon) {
-      patchEarnerData(newEarner.id, { avatarIcon: newIcon });
-      await earnersApi.update(newEarner.id, { avatarIcon: newIcon });
+      await updateEarner(newEarner.id, { avatarIcon: newIcon });
     }
     setNewName('');
     setNewIcon(null);
@@ -92,7 +90,6 @@ export default function EarnerManager() {
     if (editIcon !== (earner.avatarIcon || null)) updates.avatarIcon = editIcon;
 
     if (Object.keys(updates).length > 0) {
-      patchEarnerData(editingId, updates);
       await updateEarner(editingId, updates);
     }
     cancelEditing();

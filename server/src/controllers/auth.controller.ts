@@ -13,8 +13,8 @@ const REFRESH_COOKIE_OPTIONS = {
 
 export async function signup(req: Request, res: Response, next: NextFunction) {
   try {
-    const { email, password, householdName } = req.body;
-    const result = await authService.signup(email, password, householdName);
+    const { email, password, householdName, guestSnapshot } = req.body;
+    const result = await authService.signup(email, password, householdName, guestSnapshot);
 
     res.cookie('refreshToken', result.refreshToken, REFRESH_COOKIE_OPTIONS);
     res.status(201).json({

@@ -3,7 +3,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useEffect } from 'react';
 
 export default function ProtectedRoute() {
-  const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
+  const { isAuthenticated, isGuest, isLoading, checkAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
@@ -17,8 +17,8 @@ export default function ProtectedRoute() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  if (!isAuthenticated && !isGuest) {
+    return <Navigate to="/welcome" replace />;
   }
 
   return <Outlet />;

@@ -1,9 +1,11 @@
 import prisma from '../config/database.js';
 import type { PrismaClient } from '../generated/prisma/client.js';
+import type { HouseholdSnapshot } from 'shared';
 import { hashPassword, comparePassword } from '../utils/hash.js';
 import { generateAccessToken, generateRefreshToken, TokenPayload } from '../utils/jwt.js';
 import { ConflictError, UnauthorizedError } from '../utils/errors.js';
 import { DEFAULT_EXPENSE_CATEGORIES } from 'shared';
+import { mergeGuestData } from './merge.service.js';
 
 type TransactionClient = Parameters<Parameters<PrismaClient['$transaction']>[0]>[0];
 
@@ -17,6 +19,7 @@ export async function signup(
   email: string,
   password: string,
   householdName?: string,
+  guestSnapshot?: HouseholdSnapshot,
 ): Promise<AuthTokens> {
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
@@ -25,7 +28,7 @@ export async function signup(
 
   const passwordHash = await hashPassword(password);
 
-  // Create household, user, and default expense categories in a transaction
+  // Create household, user, and seed data in a transaction
   const result = await prisma.$transaction(async (tx: TransactionClient) => {
     const household = await tx.household.create({
       data: { name: householdName || 'My Household' },
@@ -39,24 +42,29 @@ export async function signup(
       },
     });
 
-    // Seed default expense categories
-    for (let i = 0; i < DEFAULT_EXPENSE_CATEGORIES.length; i++) {
-      const cat = DEFAULT_EXPENSE_CATEGORIES[i];
-      await tx.expenseCategory.create({
-        data: {
-          householdId: household.id,
-          name: cat.name,
-          isDefault: true,
-          sortOrder: i,
-          subCategories: {
-            create: cat.subCategories.map((subName, j) => ({
-              name: subName,
-              isDefault: true,
-              sortOrder: j,
-            })),
+    if (guestSnapshot) {
+      // Merge guest data instead of seeding defaults
+      await mergeGuestData(tx, household.id, guestSnapshot);
+    } else {
+      // Seed default expense categories
+      for (let i = 0; i < DEFAULT_EXPENSE_CATEGORIES.length; i++) {
+        const cat = DEFAULT_EXPENSE_CATEGORIES[i];
+        await tx.expenseCategory.create({
+          data: {
+            householdId: household.id,
+            name: cat.name,
+            isDefault: true,
+            sortOrder: i,
+            subCategories: {
+              create: cat.subCategories.map((subName, j) => ({
+                name: subName,
+                isDefault: true,
+                sortOrder: j,
+              })),
+            },
           },
-        },
-      });
+        });
+      }
     }
 
     return { household, user };

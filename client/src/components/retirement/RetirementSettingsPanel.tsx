@@ -1,5 +1,4 @@
 import { useHouseholdStore } from '../../stores/householdStore';
-import * as retirementApi from '../../api/retirement';
 import CurrencyInput from '../shared/CurrencyInput';
 
 interface Props {
@@ -8,7 +7,7 @@ interface Props {
 
 export default function RetirementSettingsPanel({ earnerId }: Props) {
   const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
-  const patchEarnerData = useHouseholdStore((s) => s.patchEarnerData);
+  const updateRetirement = useHouseholdStore((s) => s.updateRetirement);
   const settings = earner?.retirementSettings;
 
   if (!earner) return null;
@@ -20,9 +19,7 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
   const retirementGoal = settings ? Number(settings.retirementGoal) : 0;
 
   const handleChange = async (field: string, value: number) => {
-    const updated = { ...settings, [field]: value } as any;
-    patchEarnerData(earner.id, { retirementSettings: updated });
-    await retirementApi.update(earner.id, { [field]: value });
+    await updateRetirement(earner.id, { [field]: value });
   };
 
   const yearsUntilRetirement = Math.max(0, targetRetirementAge - currentAge);

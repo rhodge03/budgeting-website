@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import TabBar from './TabBar';
+import GuestBanner from './GuestBanner';
 import AdUnit from '../ads/AdUnit';
 import EarnerSidebar from './EarnerSidebar';
 import { useHouseholdStore } from '../../stores/householdStore';
@@ -37,6 +38,7 @@ export default function AppShell() {
 
       {/* Everything else */}
       <div className="flex-1 flex flex-col min-w-0 bg-gray-50/70 backdrop-blur-sm">
+        <GuestBanner />
         <Header />
         <TabBar />
 

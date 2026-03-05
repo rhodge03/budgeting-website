@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import LandingPage from './pages/LandingPage';
 import IncomeRetirementPage from './pages/IncomeRetirementPage';
 import BudgetingPage from './pages/BudgetingPage';
 import ProjectionsPage from './pages/ProjectionsPage';
@@ -11,6 +12,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/welcome" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route element={<ProtectedRoute />}>

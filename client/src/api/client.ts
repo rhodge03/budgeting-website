@@ -32,7 +32,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch {
         localStorage.removeItem('accessToken');
-        window.location.href = '/login';
+        window.location.href = '/welcome';
         return Promise.reject(error);
       }
     }

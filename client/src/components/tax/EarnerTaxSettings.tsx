@@ -1,5 +1,4 @@
 import { useHouseholdStore } from '../../stores/householdStore';
-import * as earnersApi from '../../api/earners';
 import { STATE_TAX_RATES } from 'shared/constants/taxBrackets';
 import type { FilingStatus } from 'shared';
 
@@ -24,13 +23,12 @@ interface Props {
 
 export default function EarnerTaxSettings({ earnerId }: Props) {
   const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
-  const patchEarnerData = useHouseholdStore((s) => s.patchEarnerData);
+  const updateEarner = useHouseholdStore((s) => s.updateEarner);
 
   if (!earner) return null;
 
   const handleChange = async (field: string, value: string) => {
-    patchEarnerData(earner.id, { [field]: value });
-    await earnersApi.update(earner.id, { [field]: value });
+    await updateEarner(earner.id, { [field]: value } as any);
   };
 
   return (

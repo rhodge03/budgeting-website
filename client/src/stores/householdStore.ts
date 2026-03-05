@@ -1,11 +1,20 @@
 import { create } from 'zustand';
-import type { HouseholdSnapshot, Earner, IncomeEntry, ExpenseCategory, ExpenseSubCategory } from 'shared';
+import type { HouseholdSnapshot, Earner, IncomeEntry, SavingsBalance, RetirementSettings, RateOfReturn, ExpenseCategory, ExpenseSubCategory } from 'shared';
 import * as householdApi from '../api/household';
 import * as earnersApi from '../api/earners';
 import * as incomeApi from '../api/income';
+import * as savingsApi from '../api/savings';
+import * as retirementApi from '../api/retirement';
+import * as rateOfReturnApi from '../api/rateOfReturn';
 import * as expensesApi from '../api/expenses';
+import * as guestStorage from '../services/guestStorage';
+import { useAuthStore } from './authStore';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
+
+function isGuestMode(): boolean {
+  return useAuthStore.getState().isGuest;
+}
 
 interface HouseholdState {
   // Data
@@ -42,6 +51,11 @@ interface HouseholdState {
   updateExpenseSubCategory: (id: string, categoryId: string, data: Partial<ExpenseSubCategory>) => Promise<void>;
   removeExpenseSubCategory: (id: string, categoryId: string) => Promise<void>;
 
+  // Settings actions (centralizes persistence for components)
+  updateSavings: (earnerId: string, data: Partial<SavingsBalance>) => Promise<void>;
+  updateRetirement: (earnerId: string, data: Partial<RetirementSettings>) => Promise<void>;
+  updateRateOfReturn: (earnerId: string, data: Partial<RateOfReturn>) => Promise<void>;
+
   // Local earner data updates (sync store without API call)
   patchEarnerData: (earnerId: string, patch: Partial<EarnerWithRelations>) => void;
 }
@@ -57,7 +71,9 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
     const isInitial = get().household === null;
     if (isInitial) set({ isLoading: true, error: null });
     try {
-      const snapshot = await householdApi.getSnapshot();
+      const snapshot = isGuestMode()
+        ? guestStorage.getSnapshot()
+        : await householdApi.getSnapshot();
       set({
         household: snapshot.household,
         earners: snapshot.earners,
@@ -80,14 +96,22 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   updateHousehold: async (data) => {
-    // Optimistic update
     set((state) => ({
       household: state.household ? { ...state.household, ...data } : state.household,
     }));
-    await householdApi.update(data);
+    if (isGuestMode()) {
+      guestStorage.updateHousehold(data);
+    } else {
+      await householdApi.update(data);
+    }
   },
 
   addEarner: async (name) => {
+    if (isGuestMode()) {
+      const earner = guestStorage.createEarner(name);
+      set((state) => ({ earners: [...state.earners, earner] }));
+      return;
+    }
     const earner = await earnersApi.create(name);
     set((state) => ({
       earners: [...state.earners, earner as EarnerWithRelations],
@@ -95,6 +119,13 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   updateEarner: async (id, data) => {
+    if (isGuestMode()) {
+      guestStorage.updateEarner(id, data);
+      set((state) => ({
+        earners: state.earners.map((e) => e.id === id ? { ...e, ...data } : e),
+      }));
+      return;
+    }
     const updated = await earnersApi.update(id, data);
     set((state) => ({
       earners: state.earners.map((e) =>
@@ -104,21 +135,33 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   archiveEarner: async (id) => {
-    await earnersApi.archive(id);
+    if (isGuestMode()) {
+      guestStorage.archiveEarner(id);
+    } else {
+      await earnersApi.archive(id);
+    }
     set((state) => ({
       earners: state.earners.filter((e) => e.id !== id),
     }));
   },
 
   removeEarner: async (id) => {
-    await earnersApi.remove(id);
+    if (isGuestMode()) {
+      guestStorage.removeEarner(id);
+    } else {
+      await earnersApi.remove(id);
+    }
     set((state) => ({
       earners: state.earners.filter((e) => e.id !== id),
     }));
   },
 
   setPrimaryEarner: async (id) => {
-    await earnersApi.setPrimary(id);
+    if (isGuestMode()) {
+      guestStorage.setPrimaryEarner(id);
+    } else {
+      await earnersApi.setPrimary(id);
+    }
     set((state) => ({
       earners: state.earners.map((e) => ({
         ...e,
@@ -128,6 +171,15 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   addIncomeEntry: async (earnerId, data) => {
+    if (isGuestMode()) {
+      const entry = guestStorage.createIncome(earnerId, data);
+      set((state) => ({
+        earners: state.earners.map((e) =>
+          e.id === earnerId ? { ...e, incomeEntries: [...e.incomeEntries, entry] } : e,
+        ),
+      }));
+      return;
+    }
     const entry = await incomeApi.create(earnerId, data);
     set((state) => ({
       earners: state.earners.map((e) =>
@@ -139,6 +191,18 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   updateIncomeEntry: async (entryId, data) => {
+    if (isGuestMode()) {
+      const updated = guestStorage.updateIncome(entryId, data);
+      set((state) => ({
+        earners: state.earners.map((e) => ({
+          ...e,
+          incomeEntries: e.incomeEntries.map((ie) =>
+            ie.id === entryId ? { ...ie, ...updated } : ie,
+          ),
+        })),
+      }));
+      return;
+    }
     const updated = await incomeApi.update(entryId, data);
     set((state) => ({
       earners: state.earners.map((e) => ({
@@ -151,7 +215,11 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   removeIncomeEntry: async (entryId, earnerId) => {
-    await incomeApi.remove(entryId);
+    if (isGuestMode()) {
+      guestStorage.removeIncome(entryId);
+    } else {
+      await incomeApi.remove(entryId);
+    }
     set((state) => ({
       earners: state.earners.map((e) =>
         e.id === earnerId
@@ -162,6 +230,11 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   addExpenseCategory: async (name) => {
+    if (isGuestMode()) {
+      const category = guestStorage.createCategory({ name });
+      set((state) => ({ expenseCategories: [...state.expenseCategories, category] }));
+      return;
+    }
     const category = await expensesApi.createCategory({ name });
     set((state) => ({
       expenseCategories: [...state.expenseCategories, category],
@@ -169,6 +242,13 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   updateExpenseCategory: async (id, data) => {
+    if (isGuestMode()) {
+      const updated = guestStorage.updateCategory(id, data);
+      set((state) => ({
+        expenseCategories: state.expenseCategories.map((c) => c.id === id ? updated : c),
+      }));
+      return;
+    }
     const updated = await expensesApi.updateCategory(id, data);
     set((state) => ({
       expenseCategories: state.expenseCategories.map((c) =>
@@ -178,13 +258,26 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   removeExpenseCategory: async (id) => {
-    await expensesApi.removeCategory(id);
+    if (isGuestMode()) {
+      guestStorage.removeCategory(id);
+    } else {
+      await expensesApi.removeCategory(id);
+    }
     set((state) => ({
       expenseCategories: state.expenseCategories.filter((c) => c.id !== id),
     }));
   },
 
   addExpenseSubCategory: async (categoryId, name) => {
+    if (isGuestMode()) {
+      const sub = guestStorage.createSubCategory(categoryId, { name });
+      set((state) => ({
+        expenseCategories: state.expenseCategories.map((c) =>
+          c.id === categoryId ? { ...c, subCategories: [...c.subCategories, sub] } : c,
+        ),
+      }));
+      return;
+    }
     const sub = await expensesApi.createSubCategory(categoryId, { name });
     set((state) => ({
       expenseCategories: state.expenseCategories.map((c) =>
@@ -196,6 +289,17 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   updateExpenseSubCategory: async (id, categoryId, data) => {
+    if (isGuestMode()) {
+      const updated = guestStorage.updateSubCategory(id, data);
+      set((state) => ({
+        expenseCategories: state.expenseCategories.map((c) =>
+          c.id === categoryId
+            ? { ...c, subCategories: c.subCategories.map((s) => s.id === id ? { ...s, ...updated } : s) }
+            : c,
+        ),
+      }));
+      return;
+    }
     const updated = await expensesApi.updateSubCategory(id, data);
     set((state) => ({
       expenseCategories: state.expenseCategories.map((c) =>
@@ -207,7 +311,11 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   },
 
   removeExpenseSubCategory: async (id, categoryId) => {
-    await expensesApi.removeSubCategory(id);
+    if (isGuestMode()) {
+      guestStorage.removeSubCategory(id);
+    } else {
+      await expensesApi.removeSubCategory(id);
+    }
     set((state) => ({
       expenseCategories: state.expenseCategories.map((c) =>
         c.id === categoryId
@@ -215,6 +323,42 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
           : c,
       ),
     }));
+  },
+
+  updateSavings: async (earnerId, data) => {
+    const earner = get().earners.find((e) => e.id === earnerId);
+    if (!earner) return;
+    const updated = { ...earner.savingsBalance, ...data } as any;
+    get().patchEarnerData(earnerId, { savingsBalance: updated });
+    if (isGuestMode()) {
+      guestStorage.updateSavings(earnerId, data);
+    } else {
+      await savingsApi.update(earnerId, data);
+    }
+  },
+
+  updateRetirement: async (earnerId, data) => {
+    const earner = get().earners.find((e) => e.id === earnerId);
+    if (!earner) return;
+    const updated = { ...earner.retirementSettings, ...data } as any;
+    get().patchEarnerData(earnerId, { retirementSettings: updated });
+    if (isGuestMode()) {
+      guestStorage.updateRetirement(earnerId, data);
+    } else {
+      await retirementApi.update(earnerId, data);
+    }
+  },
+
+  updateRateOfReturn: async (earnerId, data) => {
+    const earner = get().earners.find((e) => e.id === earnerId);
+    if (!earner) return;
+    const updated = { ...earner.rateOfReturn, ...data } as any;
+    get().patchEarnerData(earnerId, { rateOfReturn: updated });
+    if (isGuestMode()) {
+      guestStorage.updateRateOfReturn(earnerId, data);
+    } else {
+      await rateOfReturnApi.update(earnerId, data);
+    }
   },
 
   patchEarnerData: (earnerId, patch) => {

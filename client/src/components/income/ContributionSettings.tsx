@@ -1,5 +1,4 @@
 import { useHouseholdStore } from '../../stores/householdStore';
-import * as savingsApi from '../../api/savings';
 import CurrencyInput from '../shared/CurrencyInput';
 import PercentageInput from '../shared/PercentageInput';
 
@@ -9,18 +8,13 @@ interface Props {
 
 export default function ContributionSettings({ earnerId }: Props) {
   const earner = useHouseholdStore((s) => s.earners.find((e) => e.id === earnerId));
-  const patchEarnerData = useHouseholdStore((s) => s.patchEarnerData);
+  const updateSavings = useHouseholdStore((s) => s.updateSavings);
   const savings = earner?.savingsBalance;
 
   if (!earner || !savings) return null;
 
   const handleChange = async (field: string, value: number) => {
-    // Optimistically update the store
-    patchEarnerData(earner.id, {
-      savingsBalance: { ...savings, [field]: value },
-    });
-    // Persist to API
-    await savingsApi.update(earner.id, { [field]: value });
+    await updateSavings(earner.id, { [field]: value });
   };
 
   return (

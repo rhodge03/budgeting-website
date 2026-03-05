@@ -19,8 +19,8 @@ interface MeResponse {
   };
 }
 
-export async function signup(email: string, password: string, householdName?: string): Promise<AuthResponse> {
-  const { data } = await api.post<AuthResponse>('/auth/signup', { email, password, householdName });
+export async function signup(email: string, password: string, householdName?: string, guestSnapshot?: any): Promise<AuthResponse> {
+  const { data } = await api.post<AuthResponse>('/auth/signup', { email, password, householdName, guestSnapshot });
   return data;
 }
 
