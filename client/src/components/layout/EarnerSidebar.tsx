@@ -50,7 +50,7 @@ export default function EarnerSidebar() {
                 }`}
               >
                 {AnimalIcon ? (
-                  <AnimalIcon width={22} height={22} className="text-gray-700" />
+                  <AnimalIcon width={28} height={28} />
                 ) : (
                   earner.name.charAt(0).toUpperCase()
                 )}

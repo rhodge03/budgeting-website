@@ -68,126 +68,192 @@ export function CalculatorIcon(props: IconProps) {
 }
 
 // ── Animal Avatar Icons ─────────────────────────────────────
-// Designed as filled silhouettes for use in circular avatar buttons.
+// Each animal has a unique color and distinctive shape for easy identification.
 
-const animalDefaults: IconProps = { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'currentColor', stroke: 'none' };
+const ad: IconProps = { width: 24, height: 24, viewBox: '0 0 24 24', stroke: 'none' };
 
+// Fox — Orange (#E8590C)
 export function FoxIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <path d="M4 2 L8 10 L4 14 L8 16 L12 20 L16 16 L20 14 L16 10 L20 2 L14 8 L12 6 L10 8 Z" />
-      <circle cx="9.5" cy="11" r="1" fill="white" />
-      <circle cx="14.5" cy="11" r="1" fill="white" />
+    <svg {...ad} {...props}>
+      <path d="M3 1 L8 9 L3 13 L7 16 L12 21 L17 16 L21 13 L16 9 L21 1 L15 7 L12 5 L9 7 Z" fill="#E8590C" />
+      <path d="M8 12 L12 18 L16 12 L12 14 Z" fill="white" />
+      <circle cx="9" cy="10" r="1.5" fill="white" />
+      <circle cx="15" cy="10" r="1.5" fill="white" />
+      <circle cx="9" cy="10" r="0.8" fill="#1a1a1a" />
+      <circle cx="15" cy="10" r="0.8" fill="#1a1a1a" />
+      <ellipse cx="12" cy="14.5" rx="1" ry="0.7" fill="#1a1a1a" />
     </svg>
   );
 }
 
+// Cat — Purple (#7C3AED)
 export function CatIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <path d="M4 6 L6 2 L9 7 L15 7 L18 2 L20 6 L20 14 Q20 20 12 20 Q4 20 4 14 Z" />
-      <circle cx="9" cy="12" r="1.2" fill="white" />
-      <circle cx="15" cy="12" r="1.2" fill="white" />
-      <ellipse cx="12" cy="15" rx="1" ry="0.7" fill="white" />
+    <svg {...ad} {...props}>
+      <path d="M4 7 L6 1 L10 7 L14 7 L18 1 L20 7 L20 15 Q20 22 12 22 Q4 22 4 15 Z" fill="#7C3AED" />
+      <circle cx="9" cy="12" r="2" fill="#EDE9FE" />
+      <circle cx="15" cy="12" r="2" fill="#EDE9FE" />
+      <circle cx="9" cy="12" r="1" fill="#1a1a1a" />
+      <circle cx="15" cy="12" r="1" fill="#1a1a1a" />
+      <ellipse cx="12" cy="16" rx="1.2" ry="0.8" fill="#F9A8D4" />
+      <line x1="4" y1="14" x2="1" y2="13" stroke="#7C3AED" strokeWidth="1" />
+      <line x1="4" y1="15.5" x2="1" y2="15.5" stroke="#7C3AED" strokeWidth="1" />
+      <line x1="20" y1="14" x2="23" y2="13" stroke="#7C3AED" strokeWidth="1" />
+      <line x1="20" y1="15.5" x2="23" y2="15.5" stroke="#7C3AED" strokeWidth="1" />
     </svg>
   );
 }
 
+// Dog — Brown (#92400E)
 export function DogIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <path d="M5 5 Q3 3 2 6 L3 12 L4 14 Q4 20 12 20 Q20 20 20 14 L21 12 L22 6 Q21 3 19 5 L17 7 L7 7 Z" />
-      <circle cx="9" cy="11" r="1.2" fill="white" />
-      <circle cx="15" cy="11" r="1.2" fill="white" />
-      <ellipse cx="12" cy="15" rx="2" ry="1.2" fill="white" />
+    <svg {...ad} {...props}>
+      <path d="M6 6 Q3 2 2 6 L3 11 L4 14 Q4 21 12 21 Q20 21 20 14 L21 11 L22 6 Q21 2 18 6 L17 8 L7 8 Z" fill="#92400E" />
+      <ellipse cx="7" cy="5" rx="3" ry="4" fill="#78350F" />
+      <ellipse cx="17" cy="5" rx="3" ry="4" fill="#78350F" />
+      <circle cx="9" cy="12" r="1.5" fill="white" />
+      <circle cx="15" cy="12" r="1.5" fill="white" />
+      <circle cx="9" cy="12" r="0.8" fill="#1a1a1a" />
+      <circle cx="15" cy="12" r="0.8" fill="#1a1a1a" />
+      <ellipse cx="12" cy="16" rx="2.5" ry="1.5" fill="#D4A574" />
+      <ellipse cx="12" cy="15.5" rx="1" ry="0.6" fill="#1a1a1a" />
+      <ellipse cx="12" cy="18" rx="1" ry="0.5" fill="#F87171" />
     </svg>
   );
 }
 
+// Bear — Dark Brown (#451A03)
 export function BearIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <circle cx="5" cy="6" r="3" />
-      <circle cx="19" cy="6" r="3" />
-      <ellipse cx="12" cy="13" rx="9" ry="8" />
-      <circle cx="9" cy="11" r="1.2" fill="white" />
-      <circle cx="15" cy="11" r="1.2" fill="white" />
-      <ellipse cx="12" cy="15" rx="2.5" ry="1.8" fill="white" />
-      <ellipse cx="12" cy="15.5" rx="1" ry="0.6" />
+    <svg {...ad} {...props}>
+      <circle cx="5" cy="5" r="3.5" fill="#78350F" />
+      <circle cx="19" cy="5" r="3.5" fill="#78350F" />
+      <circle cx="5" cy="5" r="1.8" fill="#92400E" />
+      <circle cx="19" cy="5" r="1.8" fill="#92400E" />
+      <ellipse cx="12" cy="13" rx="9" ry="9" fill="#78350F" />
+      <circle cx="9" cy="11" r="1.5" fill="white" />
+      <circle cx="15" cy="11" r="1.5" fill="white" />
+      <circle cx="9" cy="11" r="0.8" fill="#1a1a1a" />
+      <circle cx="15" cy="11" r="0.8" fill="#1a1a1a" />
+      <ellipse cx="12" cy="15.5" rx="3" ry="2.2" fill="#D4A574" />
+      <ellipse cx="12" cy="15" rx="1.2" ry="0.8" fill="#1a1a1a" />
     </svg>
   );
 }
 
+// Rabbit — Pink (#EC4899)
 export function RabbitIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <ellipse cx="9" cy="6" rx="2" ry="5.5" />
-      <ellipse cx="15" cy="6" rx="2" ry="5.5" />
-      <ellipse cx="12" cy="15" rx="7" ry="6.5" />
-      <circle cx="9.5" cy="13.5" r="1" fill="white" />
-      <circle cx="14.5" cy="13.5" r="1" fill="white" />
-      <ellipse cx="12" cy="16.5" rx="1" ry="0.7" fill="white" />
+    <svg {...ad} {...props}>
+      <ellipse cx="9" cy="5" rx="2.5" ry="6" fill="#EC4899" />
+      <ellipse cx="15" cy="5" rx="2.5" ry="6" fill="#EC4899" />
+      <ellipse cx="9" cy="5" rx="1.2" ry="4" fill="#FBCFE8" />
+      <ellipse cx="15" cy="5" rx="1.2" ry="4" fill="#FBCFE8" />
+      <ellipse cx="12" cy="15" rx="7.5" ry="7" fill="#EC4899" />
+      <circle cx="9" cy="13.5" r="1.5" fill="white" />
+      <circle cx="15" cy="13.5" r="1.5" fill="white" />
+      <circle cx="9" cy="13.5" r="0.8" fill="#1a1a1a" />
+      <circle cx="15" cy="13.5" r="0.8" fill="#1a1a1a" />
+      <ellipse cx="12" cy="17" rx="1" ry="0.7" fill="#FBCFE8" />
+      <circle cx="8" cy="16" r="1.5" fill="#FBCFE8" opacity="0.6" />
+      <circle cx="16" cy="16" r="1.5" fill="#FBCFE8" opacity="0.6" />
     </svg>
   );
 }
 
+// Owl — Gold (#B45309)
 export function OwlIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <path d="M4 8 L6 3 L9 6 L12 4 L15 6 L18 3 L20 8 Q22 14 20 18 Q18 22 12 22 Q6 22 4 18 Q2 14 4 8 Z" />
-      <circle cx="9" cy="12" r="2.5" fill="white" />
-      <circle cx="15" cy="12" r="2.5" fill="white" />
-      <circle cx="9" cy="12" r="1.2" />
-      <circle cx="15" cy="12" r="1.2" />
-      <path d="M11 16 L12 18 L13 16" fill="white" stroke="none" />
+    <svg {...ad} {...props}>
+      <path d="M4 8 L6 2 L9 6 L12 4 L15 6 L18 2 L20 8 Q22 14 20 18 Q18 22 12 22 Q6 22 4 18 Q2 14 4 8 Z" fill="#B45309" />
+      <path d="M6 10 Q6 18 12 20 Q18 18 18 10 Z" fill="#FDE68A" />
+      <circle cx="9" cy="11" r="3" fill="white" />
+      <circle cx="15" cy="11" r="3" fill="white" />
+      <circle cx="9" cy="11" r="1.5" fill="#B45309" />
+      <circle cx="15" cy="11" r="1.5" fill="#B45309" />
+      <circle cx="9" cy="11" r="0.7" fill="#1a1a1a" />
+      <circle cx="15" cy="11" r="0.7" fill="#1a1a1a" />
+      <path d="M11 15.5 L12 17.5 L13 15.5" fill="#E8590C" />
     </svg>
   );
 }
 
+// Penguin — Teal/Dark (#134E4A)
 export function PenguinIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <ellipse cx="12" cy="13" rx="8" ry="9" />
-      <ellipse cx="12" cy="14" rx="5" ry="7" fill="white" />
-      <circle cx="9.5" cy="10" r="1" />
-      <circle cx="14.5" cy="10" r="1" />
-      <path d="M11 13 L12 14.5 L13 13" fill="orange" stroke="none" />
+    <svg {...ad} {...props}>
+      <ellipse cx="12" cy="13" rx="8.5" ry="9.5" fill="#134E4A" />
+      <ellipse cx="12" cy="14" rx="5.5" ry="7.5" fill="white" />
+      <circle cx="9" cy="9.5" r="1.5" fill="white" />
+      <circle cx="15" cy="9.5" r="1.5" fill="white" />
+      <circle cx="9" cy="9.5" r="0.8" fill="#1a1a1a" />
+      <circle cx="15" cy="9.5" r="0.8" fill="#1a1a1a" />
+      <path d="M10.5 13 L12 15 L13.5 13" fill="#F59E0B" />
+      <ellipse cx="4" cy="14" rx="1.5" ry="4" fill="#134E4A" transform="rotate(-15 4 14)" />
+      <ellipse cx="20" cy="14" rx="1.5" ry="4" fill="#134E4A" transform="rotate(15 20 14)" />
     </svg>
   );
 }
 
+// Lion — Amber (#D97706)
 export function LionIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <circle cx="12" cy="12" r="10" opacity="0.4" />
-      <ellipse cx="12" cy="13" rx="7" ry="7.5" />
-      <circle cx="9.5" cy="11.5" r="1" fill="white" />
-      <circle cx="14.5" cy="11.5" r="1" fill="white" />
-      <ellipse cx="12" cy="15" rx="1.5" ry="1" fill="white" />
+    <svg {...ad} {...props}>
+      <circle cx="12" cy="12" r="11" fill="#D97706" />
+      <circle cx="12" cy="12" r="11" fill="#92400E" opacity="0.3" />
+      {/* Mane spikes */}
+      <circle cx="12" cy="1" r="2.5" fill="#D97706" />
+      <circle cx="5" cy="4" r="2.5" fill="#D97706" />
+      <circle cx="19" cy="4" r="2.5" fill="#D97706" />
+      <circle cx="2" cy="10" r="2.5" fill="#D97706" />
+      <circle cx="22" cy="10" r="2.5" fill="#D97706" />
+      <circle cx="3" cy="17" r="2.5" fill="#D97706" />
+      <circle cx="21" cy="17" r="2.5" fill="#D97706" />
+      {/* Face */}
+      <ellipse cx="12" cy="13" rx="7" ry="7.5" fill="#FBBF24" />
+      <circle cx="9" cy="11" r="1.5" fill="white" />
+      <circle cx="15" cy="11" r="1.5" fill="white" />
+      <circle cx="9" cy="11" r="0.8" fill="#1a1a1a" />
+      <circle cx="15" cy="11" r="0.8" fill="#1a1a1a" />
+      <ellipse cx="12" cy="14.5" rx="1.5" ry="1" fill="#D97706" />
+      <line x1="12" y1="15.5" x2="12" y2="17" stroke="#D97706" strokeWidth="1" />
     </svg>
   );
 }
 
+// Wolf — Slate (#475569)
 export function WolfIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <path d="M3 4 L7 9 L5 12 Q4 18 12 20 Q20 18 19 12 L17 9 L21 4 L17 7 L12 5 L7 7 Z" />
-      <circle cx="9" cy="12" r="1" fill="white" />
-      <circle cx="15" cy="12" r="1" fill="white" />
-      <path d="M10 16 L12 18 L14 16" fill="white" stroke="none" />
+    <svg {...ad} {...props}>
+      <path d="M3 3 L7 10 L5 13 Q4 19 12 21 Q20 19 19 13 L17 10 L21 3 L17 8 L12 6 L7 8 Z" fill="#475569" />
+      <path d="M7 10 L12 8 L17 10 L12 12 Z" fill="#94A3B8" />
+      <circle cx="9" cy="11.5" r="1.5" fill="#FEF9C3" />
+      <circle cx="15" cy="11.5" r="1.5" fill="#FEF9C3" />
+      <circle cx="9" cy="11.5" r="0.8" fill="#1a1a1a" />
+      <circle cx="15" cy="11.5" r="0.8" fill="#1a1a1a" />
+      <ellipse cx="12" cy="16" rx="1.5" ry="1" fill="#1E293B" />
+      <path d="M10 18 L12 20 L14 18" fill="#94A3B8" />
     </svg>
   );
 }
 
+// Deer — Forest Green (#166534)
 export function DeerIcon(props: IconProps) {
   return (
-    <svg {...animalDefaults} {...props}>
-      <path d="M7 2 L7 5 L5 3" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M17 2 L17 5 L19 3" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <ellipse cx="12" cy="14" rx="7" ry="7.5" />
-      <circle cx="9.5" cy="12.5" r="1" fill="white" />
-      <circle cx="14.5" cy="12.5" r="1" fill="white" />
-      <ellipse cx="12" cy="16" rx="1.2" ry="0.8" fill="white" />
+    <svg {...ad} {...props}>
+      {/* Antlers */}
+      <path d="M8 8 L7 4 L5 2 M7 4 L9 2" fill="none" stroke="#92400E" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M16 8 L17 4 L19 2 M17 4 L15 2" fill="none" stroke="#92400E" strokeWidth="1.5" strokeLinecap="round" />
+      {/* Head */}
+      <ellipse cx="12" cy="14" rx="7" ry="8" fill="#166534" />
+      {/* Inner face */}
+      <ellipse cx="12" cy="15" rx="4" ry="5" fill="#22C55E" opacity="0.3" />
+      <circle cx="9" cy="12.5" r="1.5" fill="white" />
+      <circle cx="15" cy="12.5" r="1.5" fill="white" />
+      <circle cx="9" cy="12.5" r="0.8" fill="#1a1a1a" />
+      <circle cx="15" cy="12.5" r="0.8" fill="#1a1a1a" />
+      <ellipse cx="12" cy="17" rx="1.5" ry="1" fill="#15803D" />
     </svg>
   );
 }
