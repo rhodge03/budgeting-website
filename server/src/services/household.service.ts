@@ -25,7 +25,7 @@ export async function getSnapshot(householdId: string) {
       where: { householdId },
       orderBy: { sortOrder: 'asc' },
     }),
-    prisma.homePurchase.findUnique({ where: { householdId } }),
+    prisma.homePurchase.findUnique({ where: { householdId } }).catch(() => null),
   ]);
 
   return { household, earners, expenseCategories, expenseScenarios, homePurchase };
