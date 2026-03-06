@@ -37,7 +37,7 @@ export default function AppShell() {
       <EarnerSidebar />
 
       {/* Everything else */}
-      <div className="flex-1 flex flex-col min-w-0 bg-gray-50/70 backdrop-blur-sm">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden bg-gray-50/70 backdrop-blur-sm">
         <GuestBanner />
         <Header />
         <TabBar />
