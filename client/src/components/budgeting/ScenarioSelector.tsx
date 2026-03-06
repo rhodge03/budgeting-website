@@ -71,7 +71,7 @@ export default function ScenarioSelector() {
         <dialog
           ref={dialogRef}
           onClose={handleClose}
-          className="rounded-lg shadow-xl p-0 backdrop:bg-black/40 min-w-[360px] max-w-md"
+          className="rounded-lg shadow-xl p-0 backdrop:bg-black/40 min-w-[360px] max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0"
         >
           <div className="p-5">
             {/* Header */}
@@ -93,10 +93,11 @@ export default function ScenarioSelector() {
                 {expenseScenarios.map((s) => (
                   <div
                     key={s.id}
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg border ${
+                    onClick={() => editingId !== s.id && handleSwitch(s.id)}
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg border transition-colors ${
                       activeId === s.id
                         ? 'border-blue-300 bg-blue-50'
-                        : 'border-gray-200 bg-white'
+                        : 'border-gray-200 bg-white hover:bg-gray-50 cursor-pointer'
                     }`}
                   >
                     <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -113,6 +114,7 @@ export default function ScenarioSelector() {
                             if (e.key === 'Escape') { setEditingId(null); setEditName(''); }
                           }}
                           onBlur={() => handleRename(s.id)}
+                          onClick={(e) => e.stopPropagation()}
                           autoFocus
                           className="px-2 py-0.5 text-sm border border-blue-400 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 flex-1"
                         />
@@ -123,41 +125,28 @@ export default function ScenarioSelector() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1.5 ml-3 shrink-0">
-                      {activeId !== s.id && editingId !== s.id && (
+                    {editingId !== s.id && (
+                      <div className="flex items-center gap-1.5 ml-3 shrink-0">
                         <button
-                          onClick={() => handleSwitch(s.id)}
-                          className="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100 transition-colors"
+                          onClick={(e) => { e.stopPropagation(); setEditingId(s.id); setEditName(s.name); }}
+                          className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100"
+                          title="Rename"
                         >
-                          Switch
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
                         </button>
-                      )}
-                      {activeId === s.id && editingId !== s.id && (
-                        <span className="text-xs text-blue-600 font-medium px-1">Active</span>
-                      )}
-                      {editingId !== s.id && (
-                        <>
-                          <button
-                            onClick={() => { setEditingId(s.id); setEditName(s.name); }}
-                            className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100"
-                            title="Rename"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => handleDelete(s.id)}
-                            className="p-1 text-gray-400 hover:text-red-500 rounded hover:bg-red-50"
-                            title="Delete"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </>
-                      )}
-                    </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDelete(s.id); }}
+                          className="p-1 text-gray-400 hover:text-red-500 rounded hover:bg-red-50"
+                          title="Delete"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
