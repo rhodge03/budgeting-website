@@ -367,8 +367,279 @@ export function DeerIcon(props: IconProps) {
   );
 }
 
-// Map of animal key → component for lookup by stored avatarIcon string
+// ── People Avatar Icons ──────────────────────────────────────
+
+// Man 1 — short hair, warm skin
+export function Man1Icon(props: IconProps) {
+  return (
+    <svg {...ad} {...props}>
+      {/* Hair */}
+      <path d="M5 10 Q5 4 12 3 Q19 4 19 10 L18 10 Q18 6 12 5 Q6 6 6 10 Z" fill="#4A3728" />
+      {/* Head */}
+      <ellipse cx="12" cy="12" rx="7" ry="8" fill="#D4A574" />
+      {/* Ears */}
+      <ellipse cx="5" cy="12" rx="1.5" ry="2" fill="#C49564" />
+      <ellipse cx="19" cy="12" rx="1.5" ry="2" fill="#C49564" />
+      {/* Hair sides */}
+      <path d="M5 10 Q5 8 6 7 L6 10 Z" fill="#4A3728" />
+      <path d="M19 10 Q19 8 18 7 L18 10 Z" fill="#4A3728" />
+      {/* Eyebrows */}
+      <path d="M8 9.5 Q9.5 8.8 11 9.5" fill="none" stroke="#4A3728" strokeWidth="0.7" />
+      <path d="M13 9.5 Q14.5 8.8 16 9.5" fill="none" stroke="#4A3728" strokeWidth="0.7" />
+      {/* Eyes */}
+      <ellipse cx="9.5" cy="11.5" rx="1" ry="1.1" fill="#3A2818" />
+      <ellipse cx="14.5" cy="11.5" rx="1" ry="1.1" fill="#3A2818" />
+      <ellipse cx="9.8" cy="11.1" rx="0.3" ry="0.25" fill="white" opacity="0.4" />
+      <ellipse cx="14.8" cy="11.1" rx="0.3" ry="0.25" fill="white" opacity="0.4" />
+      {/* Nose */}
+      <path d="M12 12 L11.5 14.5 L12.5 14.5" fill="none" stroke="#B88A60" strokeWidth="0.6" strokeLinecap="round" />
+      {/* Mouth */}
+      <path d="M10 16.5 Q12 17.5 14 16.5" fill="none" stroke="#B07860" strokeWidth="0.6" />
+      {/* Neck/shoulders */}
+      <path d="M9 20 L9 22 Q6 22 3 24 L21 24 Q18 22 15 22 L15 20" fill="#5A7A9A" />
+      <rect x="9" y="19" width="6" height="3" rx="1" fill="#D4A574" />
+    </svg>
+  );
+}
+
+// Man 2 — beard, darker skin
+export function Man2Icon(props: IconProps) {
+  return (
+    <svg {...ad} {...props}>
+      {/* Hair — thicker, slightly curly */}
+      <path d="M5 11 Q4 5 12 3 Q20 5 19 11 L18 9 Q17 5 12 4.5 Q7 5 6 9 Z" fill="#1A1008" />
+      {/* Head */}
+      <ellipse cx="12" cy="12" rx="7" ry="8" fill="#8B6842" />
+      {/* Ears */}
+      <ellipse cx="5" cy="12" rx="1.5" ry="2" fill="#7A5A38" />
+      <ellipse cx="19" cy="12" rx="1.5" ry="2" fill="#7A5A38" />
+      {/* Hair sides */}
+      <path d="M5 11 Q5 9 6 8 L6 11 Z" fill="#1A1008" />
+      <path d="M19 11 Q19 9 18 8 L18 11 Z" fill="#1A1008" />
+      {/* Eyebrows — thicker */}
+      <path d="M8 9.5 Q9.5 8.5 11 9.5" fill="none" stroke="#1A1008" strokeWidth="0.9" />
+      <path d="M13 9.5 Q14.5 8.5 16 9.5" fill="none" stroke="#1A1008" strokeWidth="0.9" />
+      {/* Eyes */}
+      <ellipse cx="9.5" cy="11.5" rx="1" ry="1.1" fill="#1A0E04" />
+      <ellipse cx="14.5" cy="11.5" rx="1" ry="1.1" fill="#1A0E04" />
+      <ellipse cx="9.8" cy="11.1" rx="0.3" ry="0.25" fill="white" opacity="0.35" />
+      <ellipse cx="14.8" cy="11.1" rx="0.3" ry="0.25" fill="white" opacity="0.35" />
+      {/* Nose */}
+      <path d="M12 12 L11.3 14.5 Q12 15 12.7 14.5" fill="none" stroke="#6A4A2A" strokeWidth="0.6" strokeLinecap="round" />
+      {/* Beard */}
+      <path d="M7 15 Q7 19 12 20 Q17 19 17 15 Q15 16 12 16.5 Q9 16 7 15 Z" fill="#1A1008" />
+      {/* Mouth (visible through beard) */}
+      <path d="M10 16 Q12 17 14 16" fill="none" stroke="#6A4A38" strokeWidth="0.5" />
+      {/* Neck/shoulders */}
+      <path d="M9 20 L9 22 Q6 22 3 24 L21 24 Q18 22 15 22 L15 20" fill="#6A8A5A" />
+      <rect x="9" y="19" width="6" height="2.5" rx="1" fill="#8B6842" />
+    </svg>
+  );
+}
+
+// Woman 1 — long hair, light skin
+export function Woman1Icon(props: IconProps) {
+  return (
+    <svg {...ad} {...props}>
+      {/* Hair — long, flowing past shoulders */}
+      <path d="M4 9 Q3 4 12 2 Q21 4 20 9 L21 16 Q20 20 18 22 L17 22 L17 14 Q17 10 18 9 Q17 6 12 4 Q7 6 6 9 Q7 10 7 14 L7 22 L6 22 Q4 20 3 16 Z" fill="#6A4020" />
+      {/* Head */}
+      <ellipse cx="12" cy="12" rx="6.5" ry="7.5" fill="#F0C8A8" />
+      {/* Ears (behind hair) */}
+      <ellipse cx="5.5" cy="12.5" rx="1.2" ry="1.8" fill="#E0B898" />
+      <ellipse cx="18.5" cy="12.5" rx="1.2" ry="1.8" fill="#E0B898" />
+      {/* Bangs */}
+      <path d="M6 9 Q8 7 12 7 Q16 7 18 9 Q16 8 12 8.5 Q8 8 6 9 Z" fill="#6A4020" />
+      {/* Eyebrows — thinner, arched */}
+      <path d="M8 9.8 Q9.5 9 11 9.8" fill="none" stroke="#6A4020" strokeWidth="0.5" />
+      <path d="M13 9.8 Q14.5 9 16 9.8" fill="none" stroke="#6A4020" strokeWidth="0.5" />
+      {/* Eyes — slightly larger with lashes */}
+      <ellipse cx="9.5" cy="11.5" rx="1.2" ry="1.2" fill="#4A7040" />
+      <ellipse cx="14.5" cy="11.5" rx="1.2" ry="1.2" fill="#4A7040" />
+      <ellipse cx="9.5" cy="11.5" rx="0.6" ry="0.7" fill="#1A0E04" />
+      <ellipse cx="14.5" cy="11.5" rx="0.6" ry="0.7" fill="#1A0E04" />
+      <ellipse cx="9.8" cy="11.1" rx="0.25" ry="0.2" fill="white" opacity="0.5" />
+      <ellipse cx="14.8" cy="11.1" rx="0.25" ry="0.2" fill="white" opacity="0.5" />
+      {/* Upper lashes */}
+      <path d="M8 10.5 Q9.5 10 11 10.5" fill="none" stroke="#4A3020" strokeWidth="0.4" />
+      <path d="M13 10.5 Q14.5 10 16 10.5" fill="none" stroke="#4A3020" strokeWidth="0.4" />
+      {/* Nose */}
+      <path d="M12 12.5 L11.7 14 L12.3 14" fill="none" stroke="#D0A080" strokeWidth="0.5" strokeLinecap="round" />
+      {/* Mouth — lips */}
+      <path d="M10 16 Q12 17 14 16" fill="#C88080" />
+      <path d="M10 16 Q12 16.5 14 16" fill="#D09090" />
+      {/* Neck/shoulders */}
+      <path d="M9.5 19.5 L9.5 21 Q7 21.5 4 24 L20 24 Q17 21.5 14.5 21 L14.5 19.5" fill="#8A5A7A" />
+      <rect x="9.5" y="18.5" width="5" height="2.5" rx="1" fill="#F0C8A8" />
+    </svg>
+  );
+}
+
+// Woman 2 — curly hair, dark skin
+export function Woman2Icon(props: IconProps) {
+  return (
+    <svg {...ad} {...props}>
+      {/* Hair — voluminous, curly */}
+      <path d="M3 12 Q2 5 12 2 Q22 5 21 12 Q22 16 20 18 L19 14 Q20 10 19 8 Q18 5 12 3.5 Q6 5 5 8 Q4 10 5 14 L4 18 Q2 16 3 12 Z" fill="#1A0E04" />
+      {/* Curl texture */}
+      <circle cx="4" cy="10" r="1.5" fill="#2A1A0A" />
+      <circle cx="20" cy="10" r="1.5" fill="#2A1A0A" />
+      <circle cx="3.5" cy="14" r="1.2" fill="#2A1A0A" />
+      <circle cx="20.5" cy="14" r="1.2" fill="#2A1A0A" />
+      {/* Head */}
+      <ellipse cx="12" cy="13" rx="6.5" ry="7" fill="#6A4428" />
+      {/* Ears */}
+      <ellipse cx="5.5" cy="13" rx="1.2" ry="1.8" fill="#5A3820" />
+      <ellipse cx="18.5" cy="13" rx="1.2" ry="1.8" fill="#5A3820" />
+      {/* Eyebrows */}
+      <path d="M8 10.5 Q9.5 9.7 11 10.5" fill="none" stroke="#1A0E04" strokeWidth="0.5" />
+      <path d="M13 10.5 Q14.5 9.7 16 10.5" fill="none" stroke="#1A0E04" strokeWidth="0.5" />
+      {/* Eyes */}
+      <ellipse cx="9.5" cy="12.2" rx="1.2" ry="1.2" fill="#4A2818" />
+      <ellipse cx="14.5" cy="12.2" rx="1.2" ry="1.2" fill="#4A2818" />
+      <ellipse cx="9.5" cy="12.2" rx="0.6" ry="0.7" fill="#1A0E04" />
+      <ellipse cx="14.5" cy="12.2" rx="0.6" ry="0.7" fill="#1A0E04" />
+      <ellipse cx="9.8" cy="11.8" rx="0.25" ry="0.2" fill="white" opacity="0.35" />
+      <ellipse cx="14.8" cy="11.8" rx="0.25" ry="0.2" fill="white" opacity="0.35" />
+      {/* Upper lashes */}
+      <path d="M8 11.2 Q9.5 10.7 11 11.2" fill="none" stroke="#1A0E04" strokeWidth="0.4" />
+      <path d="M13 11.2 Q14.5 10.7 16 11.2" fill="none" stroke="#1A0E04" strokeWidth="0.4" />
+      {/* Nose */}
+      <path d="M12 13 L11.3 15 Q12 15.5 12.7 15" fill="none" stroke="#4A3018" strokeWidth="0.6" strokeLinecap="round" />
+      {/* Mouth — full lips */}
+      <path d="M9.5 17 Q12 18.5 14.5 17" fill="#8A4040" />
+      <path d="M9.5 17 Q12 17.5 14.5 17" fill="#9A5050" />
+      {/* Earrings */}
+      <circle cx="5.5" cy="15.5" r="0.6" fill="#C4A040" />
+      <circle cx="18.5" cy="15.5" r="0.6" fill="#C4A040" />
+      {/* Neck/shoulders */}
+      <path d="M9.5 20 L9.5 21.5 Q7 22 4 24 L20 24 Q17 22 14.5 21.5 L14.5 20" fill="#C47040" />
+      <rect x="9.5" y="19" width="5" height="2.5" rx="1" fill="#6A4428" />
+    </svg>
+  );
+}
+
+// Boy — child, messy hair
+export function BoyIcon(props: IconProps) {
+  return (
+    <svg {...ad} {...props}>
+      {/* Hair — messy/spiky */}
+      <path d="M6 10 Q5 5 12 4 Q19 5 18 10" fill="#7A5A30" />
+      <path d="M7 6 L6 4 L8 5.5" fill="#7A5A30" />
+      <path d="M11 5 L10.5 3 L12 4.5" fill="#7A5A30" />
+      <path d="M15 5 L15.5 3 L14 4.5" fill="#7A5A30" />
+      <path d="M17 6 L18 4 L16 5.5" fill="#7A5A30" />
+      {/* Head — rounder, bigger relative to body (child proportions) */}
+      <ellipse cx="12" cy="12.5" rx="7" ry="7.5" fill="#E8C0A0" />
+      {/* Ears */}
+      <ellipse cx="5" cy="13" rx="1.5" ry="2" fill="#D8B090" />
+      <ellipse cx="19" cy="13" rx="1.5" ry="2" fill="#D8B090" />
+      {/* Eyebrows — lighter */}
+      <path d="M8 10.5 Q9.5 10 11 10.5" fill="none" stroke="#7A5A30" strokeWidth="0.4" />
+      <path d="M13 10.5 Q14.5 10 16 10.5" fill="none" stroke="#7A5A30" strokeWidth="0.4" />
+      {/* Eyes — bigger (child-like) */}
+      <ellipse cx="9.5" cy="12.5" rx="1.4" ry="1.5" fill="#4A7A90" />
+      <ellipse cx="14.5" cy="12.5" rx="1.4" ry="1.5" fill="#4A7A90" />
+      <ellipse cx="9.5" cy="12.5" rx="0.7" ry="0.8" fill="#1A0E04" />
+      <ellipse cx="14.5" cy="12.5" rx="0.7" ry="0.8" fill="#1A0E04" />
+      <ellipse cx="9.9" cy="12" rx="0.4" ry="0.35" fill="white" opacity="0.5" />
+      <ellipse cx="14.9" cy="12" rx="0.4" ry="0.35" fill="white" opacity="0.5" />
+      {/* Nose — small, button */}
+      <ellipse cx="12" cy="15" rx="0.8" ry="0.5" fill="#D0A080" />
+      {/* Mouth — small smile */}
+      <path d="M10.5 17 Q12 18 13.5 17" fill="none" stroke="#C08070" strokeWidth="0.5" />
+      {/* Neck/shirt */}
+      <path d="M9.5 20 L9.5 22 Q7 22 4 24 L20 24 Q17 22 14.5 22 L14.5 20" fill="#5090C0" />
+      <rect x="9.5" y="19" width="5" height="2" rx="1" fill="#E8C0A0" />
+    </svg>
+  );
+}
+
+// Girl — child, pigtails
+export function GirlIcon(props: IconProps) {
+  return (
+    <svg {...ad} {...props}>
+      {/* Pigtails */}
+      <ellipse cx="3" cy="11" rx="2.5" ry="3.5" fill="#8A4020" />
+      <ellipse cx="21" cy="11" rx="2.5" ry="3.5" fill="#8A4020" />
+      {/* Hair bands */}
+      <ellipse cx="5" cy="9" rx="1" ry="0.6" fill="#D06080" />
+      <ellipse cx="19" cy="9" rx="1" ry="0.6" fill="#D06080" />
+      {/* Hair — bangs */}
+      <path d="M6 10 Q5 5 12 4 Q19 5 18 10 Q16 8 12 7.5 Q8 8 6 10 Z" fill="#8A4020" />
+      {/* Head */}
+      <ellipse cx="12" cy="13" rx="6.5" ry="7" fill="#F0C8A8" />
+      {/* Ears */}
+      <ellipse cx="5.5" cy="13" rx="1.2" ry="1.8" fill="#E0B898" />
+      <ellipse cx="18.5" cy="13" rx="1.2" ry="1.8" fill="#E0B898" />
+      {/* Bangs fringe */}
+      <path d="M7 10 Q9 11 12 10 Q15 11 17 10 Q15 9 12 9.5 Q9 9 7 10 Z" fill="#8A4020" />
+      {/* Eyebrows */}
+      <path d="M8 11 Q9.5 10.3 11 11" fill="none" stroke="#8A4020" strokeWidth="0.4" />
+      <path d="M13 11 Q14.5 10.3 16 11" fill="none" stroke="#8A4020" strokeWidth="0.4" />
+      {/* Eyes — big (child-like) */}
+      <ellipse cx="9.5" cy="13" rx="1.4" ry="1.5" fill="#6A8A40" />
+      <ellipse cx="14.5" cy="13" rx="1.4" ry="1.5" fill="#6A8A40" />
+      <ellipse cx="9.5" cy="13" rx="0.7" ry="0.8" fill="#1A0E04" />
+      <ellipse cx="14.5" cy="13" rx="0.7" ry="0.8" fill="#1A0E04" />
+      <ellipse cx="9.9" cy="12.5" rx="0.4" ry="0.35" fill="white" opacity="0.5" />
+      <ellipse cx="14.9" cy="12.5" rx="0.4" ry="0.35" fill="white" opacity="0.5" />
+      {/* Nose */}
+      <ellipse cx="12" cy="15.5" rx="0.7" ry="0.4" fill="#E0B090" />
+      {/* Mouth — small smile */}
+      <path d="M10.5 17.5 Q12 18.5 13.5 17.5" fill="none" stroke="#C08070" strokeWidth="0.5" />
+      {/* Cheek blush */}
+      <ellipse cx="7.5" cy="15.5" rx="1.2" ry="0.8" fill="#E8A090" opacity="0.4" />
+      <ellipse cx="16.5" cy="15.5" rx="1.2" ry="0.8" fill="#E8A090" opacity="0.4" />
+      {/* Neck/dress */}
+      <path d="M9.5 20 L9.5 22 Q7 22 4 24 L20 24 Q17 22 14.5 22 L14.5 20" fill="#D06080" />
+      <rect x="9.5" y="19.5" width="5" height="2" rx="1" fill="#F0C8A8" />
+    </svg>
+  );
+}
+
+// Baby — infant, round face
+export function BabyIcon(props: IconProps) {
+  return (
+    <svg {...ad} {...props}>
+      {/* Head — very round (baby proportions) */}
+      <circle cx="12" cy="12" r="9" fill="#F0D0B0" />
+      {/* Ears */}
+      <ellipse cx="3.5" cy="12.5" rx="1.5" ry="2" fill="#E0C0A0" />
+      <ellipse cx="20.5" cy="12.5" rx="1.5" ry="2" fill="#E0C0A0" />
+      {/* Wisp of hair */}
+      <path d="M9 4 Q10 2 12 3 Q14 2 15 4" fill="none" stroke="#A08050" strokeWidth="1" strokeLinecap="round" />
+      <path d="M10 3.5 Q12 1.5 14 3.5" fill="none" stroke="#A08050" strokeWidth="0.8" strokeLinecap="round" />
+      {/* Eyes — very big, round (baby-like) */}
+      <ellipse cx="9" cy="12" rx="1.8" ry="2" fill="#5A8AA0" />
+      <ellipse cx="15" cy="12" rx="1.8" ry="2" fill="#5A8AA0" />
+      <ellipse cx="9" cy="12" rx="1" ry="1.1" fill="#1A0E04" />
+      <ellipse cx="15" cy="12" rx="1" ry="1.1" fill="#1A0E04" />
+      <ellipse cx="9.5" cy="11.3" rx="0.5" ry="0.4" fill="white" opacity="0.5" />
+      <ellipse cx="15.5" cy="11.3" rx="0.5" ry="0.4" fill="white" opacity="0.5" />
+      {/* Nose — tiny button */}
+      <ellipse cx="12" cy="14.5" rx="0.7" ry="0.4" fill="#E0B090" />
+      {/* Mouth — small, open */}
+      <ellipse cx="12" cy="16.5" rx="1.2" ry="0.8" fill="#D8A0A0" />
+      <ellipse cx="12" cy="16.2" rx="1" ry="0.4" fill="#F0D0B0" />
+      {/* Cheeks */}
+      <ellipse cx="6.5" cy="14.5" rx="1.5" ry="1" fill="#F0B0A0" opacity="0.4" />
+      <ellipse cx="17.5" cy="14.5" rx="1.5" ry="1" fill="#F0B0A0" opacity="0.4" />
+      {/* Onesie collar */}
+      <path d="M8 20 Q12 21 16 20 Q15 22 12 22 Q9 22 8 20 Z" fill="#90C0A0" />
+    </svg>
+  );
+}
+
+// Map of avatar key → component for lookup by stored avatarIcon string
 export const ANIMAL_ICONS: Record<string, (props: IconProps) => React.JSX.Element> = {
+  man1: Man1Icon,
+  man2: Man2Icon,
+  woman1: Woman1Icon,
+  woman2: Woman2Icon,
+  boy: BoyIcon,
+  girl: GirlIcon,
+  baby: BabyIcon,
   fox: FoxIcon,
   cat: CatIcon,
   dog: DogIcon,
