@@ -36,12 +36,12 @@ export function computeHomePurchaseMonthly(hp: HomePurchase): HomePurchaseMonthl
   const propertyTax =
     hp.propertyTaxMode === 'percent'
       ? (hp.homePrice * hp.propertyTax / 100) / 12
-      : hp.propertyTax;
+      : hp.propertyTax / 12;
 
   const homeInsurance =
     hp.homeInsuranceMode === 'percent'
       ? (hp.homePrice * hp.homeInsurance / 100) / 12
-      : hp.homeInsurance;
+      : hp.homeInsurance / 12;
 
   const repairs = (hp.homePrice * hp.repairsPct / 100) / 12;
 
