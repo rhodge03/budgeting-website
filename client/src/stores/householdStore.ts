@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { HouseholdSnapshot, Earner, IncomeEntry, SavingsBalance, RetirementSettings, RateOfReturn, ExpenseCategory, ExpenseSubCategory, ExpenseScenario, MemberType } from 'shared';
+import type { HouseholdSnapshot, Earner, IncomeEntry, SavingsBalance, RetirementSettings, RateOfReturn, ExpenseCategory, ExpenseSubCategory, ExpenseScenario, HomePurchase, MemberType } from 'shared';
 import * as householdApi from '../api/household';
 import * as earnersApi from '../api/earners';
 import * as incomeApi from '../api/income';
@@ -8,6 +8,7 @@ import * as retirementApi from '../api/retirement';
 import * as rateOfReturnApi from '../api/rateOfReturn';
 import * as expensesApi from '../api/expenses';
 import * as scenariosApi from '../api/expenseScenarios';
+import * as homePurchaseApi from '../api/homePurchase';
 import * as guestStorage from '../services/guestStorage';
 import { useAuthStore } from './authStore';
 
@@ -23,6 +24,7 @@ interface HouseholdState {
   earners: EarnerWithRelations[];
   expenseCategories: ExpenseCategory[];
   expenseScenarios: ExpenseScenario[];
+  homePurchase: HomePurchase | null;
 
   // Status
   isLoading: boolean;
@@ -64,6 +66,10 @@ interface HouseholdState {
   updateRetirement: (earnerId: string, data: Partial<RetirementSettings>) => Promise<void>;
   updateRateOfReturn: (earnerId: string, data: Partial<RateOfReturn>) => Promise<void>;
 
+  // Home purchase actions
+  upsertHomePurchase: (data: Omit<HomePurchase, 'id' | 'householdId'>) => Promise<void>;
+  removeHomePurchase: () => Promise<void>;
+
   // Local earner data updates (sync store without API call)
   patchEarnerData: (earnerId: string, patch: Partial<EarnerWithRelations>) => void;
 }
@@ -73,6 +79,7 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   earners: [],
   expenseCategories: [],
   expenseScenarios: [],
+  homePurchase: null,
   isLoading: false,
   error: null,
 
@@ -88,6 +95,7 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
         earners: snapshot.earners,
         expenseCategories: snapshot.expenseCategories,
         expenseScenarios: snapshot.expenseScenarios ?? [],
+        homePurchase: snapshot.homePurchase ?? null,
         isLoading: false,
       });
     } catch (err: any) {
@@ -101,6 +109,7 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
       earners: [],
       expenseCategories: [],
       expenseScenarios: [],
+      homePurchase: null,
       isLoading: false,
       error: null,
     });
@@ -426,6 +435,25 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
     } else {
       await rateOfReturnApi.update(earnerId, data);
     }
+  },
+
+  upsertHomePurchase: async (data) => {
+    if (isGuestMode()) {
+      const hp = guestStorage.upsertHomePurchase(data);
+      set({ homePurchase: hp });
+      return;
+    }
+    const hp = await homePurchaseApi.upsert(data);
+    set({ homePurchase: hp });
+  },
+
+  removeHomePurchase: async () => {
+    if (isGuestMode()) {
+      guestStorage.removeHomePurchase();
+    } else {
+      await homePurchaseApi.remove();
+    }
+    set({ homePurchase: null });
   },
 
   patchEarnerData: (earnerId, patch) => {

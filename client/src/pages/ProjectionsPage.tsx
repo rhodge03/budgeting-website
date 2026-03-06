@@ -34,7 +34,7 @@ function saveSettings(settings: ChartSettings) {
 }
 
 export default function ProjectionsPage() {
-  const { earners, expenseCategories, household } = useHouseholdStore();
+  const { earners, expenseCategories, household, homePurchase } = useHouseholdStore();
   const selectedEarnerId = useEarnerSelectionStore((s) => s.selectedEarnerId);
 
   const [inflationRate, setInflationRate] = useState(() => loadSettings()?.inflationRate ?? 3);
@@ -75,8 +75,9 @@ export default function ProjectionsPage() {
         expenseBuffer: Number(household?.expenseBuffer ?? 0) || Number(localStorage.getItem('expense-buffer') ?? 0),
         inflationRate,
         maxAge,
+        homePurchase,
       }),
-    [earners, expenseCategories, household?.expenseBuffer, inflationRate, maxAge],
+    [earners, expenseCategories, household?.expenseBuffer, inflationRate, maxAge, homePurchase],
   );
 
   const ssEstimate = useMemo(() => {

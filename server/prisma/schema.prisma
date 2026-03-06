@@ -21,6 +21,7 @@ model Household {
   earners           Earner[]
   expenseCategories ExpenseCategory[]
   expenseScenarios  ExpenseScenario[]
+  homePurchase      HomePurchase?
 
   @@map("households")
 }
@@ -167,6 +168,31 @@ model ExpenseScenario {
   household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
 
   @@map("expense_scenarios")
+}
+
+// ─── HOME PURCHASE ───────────────────────────────────
+
+model HomePurchase {
+  id                String   @id @default(uuid())
+  householdId       String   @unique @map("household_id")
+  homePrice         Decimal  @db.Decimal(14, 2) @map("home_price")
+  downPayment       Decimal  @db.Decimal(14, 2) @map("down_payment")
+  interestRate      Decimal  @db.Decimal(5, 3) @map("interest_rate")
+  loanTermYears     Int      @default(30) @map("loan_term_years")
+  closingCosts      Decimal  @default(3) @db.Decimal(12, 2) @map("closing_costs")
+  closingCostMode   String   @default("percent") @map("closing_cost_mode")
+  propertyTax       Decimal  @default(1.2) @db.Decimal(12, 2) @map("property_tax")
+  propertyTaxMode   String   @default("percent") @map("property_tax_mode")
+  homeInsurance     Decimal  @default(0.5) @db.Decimal(12, 2) @map("home_insurance")
+  homeInsuranceMode String   @default("percent") @map("home_insurance_mode")
+  repairsPct        Decimal  @default(1.0) @db.Decimal(5, 2) @map("repairs_pct")
+  appreciationRate  Decimal  @default(3.0) @db.Decimal(5, 2) @map("appreciation_rate")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@map("home_purchases")
 }
 
 // ─── EXPENSES (SHARED / HOUSEHOLD LEVEL) ──────────────

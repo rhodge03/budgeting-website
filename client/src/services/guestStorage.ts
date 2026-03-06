@@ -8,6 +8,7 @@ import type {
   ExpenseCategory,
   ExpenseSubCategory,
   ExpenseScenario,
+  HomePurchase,
   MemberType,
 } from 'shared';
 import { DEFAULT_EXPENSE_CATEGORIES } from 'shared';
@@ -27,6 +28,8 @@ export function getSnapshot(): HouseholdSnapshot {
   if (snapshot.household.activeExpenseScenarioId === undefined) {
     snapshot.household.activeExpenseScenarioId = null;
   }
+  // Migrate older guest data that lacks homePurchase
+  if ((snapshot as any).homePurchase === undefined) snapshot.homePurchase = null;
   return snapshot;
 }
 
@@ -70,6 +73,7 @@ export function initializeGuest(): HouseholdSnapshot {
     earners: [],
     expenseCategories,
     expenseScenarios: [],
+    homePurchase: null,
   };
 
   saveSnapshot(snapshot);
@@ -444,4 +448,24 @@ export function saveCurrentScenario(): void {
     active.expenseBuffer = snapshot.household.expenseBuffer;
     saveSnapshot(snapshot);
   }
+}
+
+// ── Home Purchase ───────────────────────────────────
+
+export function upsertHomePurchase(data: Omit<HomePurchase, 'id' | 'householdId'>): HomePurchase {
+  const snapshot = getSnapshot();
+  const hp: HomePurchase = {
+    id: snapshot.homePurchase?.id ?? crypto.randomUUID(),
+    householdId: snapshot.household.id,
+    ...data,
+  };
+  snapshot.homePurchase = hp;
+  saveSnapshot(snapshot);
+  return hp;
+}
+
+export function removeHomePurchase(): void {
+  const snapshot = getSnapshot();
+  snapshot.homePurchase = null;
+  saveSnapshot(snapshot);
 }

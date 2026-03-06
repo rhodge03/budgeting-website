@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
+import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 import CategoryGroup from './CategoryGroup';
 import ScenarioSelector from './ScenarioSelector';
 
 const BUFFER_STORAGE_KEY = 'expense-buffer';
 
 export default function BudgetPanel() {
-  const { household, earners, expenseCategories, addExpenseCategory, updateHousehold } = useHouseholdStore();
+  const { household, earners, expenseCategories, homePurchase, addExpenseCategory, updateHousehold } = useHouseholdStore();
   const [showMonthly, setShowMonthly] = useState(true);
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
@@ -31,10 +32,20 @@ export default function BudgetPanel() {
     } catch { return 0; }
   })();
 
-  const totalMonthly = expenseCategories.reduce(
-    (sum, cat) => sum + cat.subCategories.reduce((s, sub) => s + Number(sub.amount), 0),
-    0,
+  const hpMonthly = useMemo(
+    () => (homePurchase ? computeHomePurchaseMonthly(homePurchase) : null),
+    [homePurchase],
   );
+
+  const totalMonthly = expenseCategories.reduce(
+    (sum, cat) => {
+      const subs = cat.name === 'Housing' && homePurchase
+        ? cat.subCategories.filter((s) => !HOME_PURCHASE_LOCKED_NAMES.includes(s.name))
+        : cat.subCategories;
+      return sum + subs.reduce((s, sub) => s + Number(sub.amount), 0);
+    },
+    0,
+  ) + (hpMonthly?.total ?? 0);
   const childSavingsMonthly = earners
     .filter((e) => e.memberType === 'child')
     .reduce((s, e) => s + Number(e.savingsBalance?.monthlyContribution ?? 0), 0);

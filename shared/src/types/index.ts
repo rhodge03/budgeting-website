@@ -113,6 +113,42 @@ export interface ExpenseScenario {
   sortOrder: number;
 }
 
+export type AmountMode = 'percent' | 'dollar';
+
+export interface HomePurchase {
+  id: string;
+  householdId: string;
+  homePrice: number;
+  downPayment: number;
+  interestRate: number;
+  loanTermYears: number;
+  closingCosts: number;
+  closingCostMode: AmountMode;
+  propertyTax: number;
+  propertyTaxMode: AmountMode;
+  homeInsurance: number;
+  homeInsuranceMode: AmountMode;
+  repairsPct: number;
+  appreciationRate: number;
+}
+
+export interface HomePurchaseMonthly {
+  mortgagePI: number;
+  propertyTax: number;
+  homeInsurance: number;
+  repairs: number;
+  total: number;
+}
+
+export interface HomeEquityYear {
+  year: number;
+  homeValue: number;
+  loanBalance: number;
+  equity: number;
+  totalPaid: number;
+  totalInterest: number;
+}
+
 export interface HouseholdSnapshot {
   household: Household;
   earners: (Earner & {
@@ -124,4 +160,5 @@ export interface HouseholdSnapshot {
   })[];
   expenseCategories: ExpenseCategory[];
   expenseScenarios: ExpenseScenario[];
+  homePurchase: HomePurchase | null;
 }

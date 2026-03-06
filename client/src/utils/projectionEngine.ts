@@ -1,5 +1,6 @@
 import { calculateTax, calculateCapitalGainsTax } from './taxCalculator';
-import type { HouseholdSnapshot } from 'shared';
+import type { HouseholdSnapshot, HomePurchase } from 'shared';
+import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
 
@@ -33,6 +34,7 @@ export interface ProjectionInputs {
   expenseBuffer: number;  // percentage
   inflationRate: number;  // percentage, e.g. 3
   maxAge: number;         // project until this age (default 100)
+  homePurchase?: HomePurchase | null;
 }
 
 export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
@@ -51,11 +53,19 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
   const results: ProjectionYear[] = [];
   const inflationMultiplier = 1 + inflationRate / 100;
 
-  // Monthly expenses (before buffer)
+  // Monthly expenses (before buffer), accounting for home purchase locked subs
+  const hpMonthlyTotal = inputs.homePurchase
+    ? computeHomePurchaseMonthly(inputs.homePurchase).total
+    : 0;
   const monthlyExpenses = expenseCategories.reduce(
-    (sum, cat) => sum + cat.subCategories.reduce((s, sub) => s + Number(sub.amount), 0),
+    (sum, cat) => {
+      const subs = cat.name === 'Housing' && inputs.homePurchase
+        ? cat.subCategories.filter((s) => !HOME_PURCHASE_LOCKED_NAMES.includes(s.name))
+        : cat.subCategories;
+      return sum + subs.reduce((s, sub) => s + Number(sub.amount), 0);
+    },
     0,
-  );
+  ) + hpMonthlyTotal;
   const annualExpenses = monthlyExpenses * 12 * (1 + expenseBuffer / 100);
 
   // Per-earner tracking
