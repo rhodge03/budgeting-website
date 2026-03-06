@@ -110,6 +110,7 @@ export interface ExpenseScenario {
   name: string;
   expenseData: ExpenseCategory[];
   expenseBuffer: number;
+  homePurchase: HomePurchase | null;
   sortOrder: number;
 }
 

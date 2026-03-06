@@ -1,5 +1,5 @@
 import api from './client';
-import type { ExpenseScenario, Household, ExpenseCategory } from 'shared';
+import type { ExpenseScenario, Household, ExpenseCategory, HomePurchase } from 'shared';
 
 export async function list(): Promise<ExpenseScenario[]> {
   const { data } = await api.get('/expense-scenarios');
@@ -24,6 +24,7 @@ export async function switchTo(id: string): Promise<{
   household: Household;
   expenseCategories: ExpenseCategory[];
   expenseScenarios: ExpenseScenario[];
+  homePurchase: HomePurchase | null;
 }> {
   const { data } = await api.post(`/expense-scenarios/${id}/switch`);
   return data;

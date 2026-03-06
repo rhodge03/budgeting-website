@@ -97,7 +97,7 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
           expenseBuffer: scenario.expenseBuffer,
           inflationRate,
           maxAge,
-          homePurchase,
+          homePurchase: scenario.homePurchase,
         }),
       });
     }

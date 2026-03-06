@@ -382,6 +382,7 @@ export function createScenario(name: string): ExpenseScenario {
     name,
     expenseData: JSON.parse(JSON.stringify(snapshot.expenseCategories)),
     expenseBuffer: snapshot.household.expenseBuffer,
+    homePurchase: snapshot.homePurchase ? JSON.parse(JSON.stringify(snapshot.homePurchase)) : null,
     sortOrder: snapshot.expenseScenarios.length,
   };
   snapshot.expenseScenarios.push(scenario);
@@ -411,23 +412,26 @@ export function switchScenario(id: string): {
   household: HouseholdSnapshot['household'];
   expenseCategories: ExpenseCategory[];
   expenseScenarios: ExpenseScenario[];
+  homePurchase: HouseholdSnapshot['homePurchase'];
 } {
   const snapshot = getSnapshot();
   const target = snapshot.expenseScenarios.find((s) => s.id === id);
   if (!target) throw new Error('Scenario not found');
 
-  // Auto-save current expenses into the previously active scenario
+  // Auto-save current expenses + home purchase into the previously active scenario
   if (snapshot.household.activeExpenseScenarioId && snapshot.household.activeExpenseScenarioId !== id) {
     const prev = snapshot.expenseScenarios.find((s) => s.id === snapshot.household.activeExpenseScenarioId);
     if (prev) {
       prev.expenseData = JSON.parse(JSON.stringify(snapshot.expenseCategories));
       prev.expenseBuffer = snapshot.household.expenseBuffer;
+      prev.homePurchase = snapshot.homePurchase ? JSON.parse(JSON.stringify(snapshot.homePurchase)) : null;
     }
   }
 
-  // Load target scenario's expenses
+  // Load target scenario's expenses + home purchase
   snapshot.expenseCategories = JSON.parse(JSON.stringify(target.expenseData));
   snapshot.household.expenseBuffer = target.expenseBuffer;
+  snapshot.homePurchase = target.homePurchase ? JSON.parse(JSON.stringify(target.homePurchase)) : null;
   snapshot.household.activeExpenseScenarioId = id;
   snapshot.household.updatedAt = new Date().toISOString();
 
@@ -436,6 +440,7 @@ export function switchScenario(id: string): {
     household: snapshot.household,
     expenseCategories: snapshot.expenseCategories,
     expenseScenarios: snapshot.expenseScenarios,
+    homePurchase: snapshot.homePurchase,
   };
 }
 
@@ -446,6 +451,7 @@ export function saveCurrentScenario(): void {
   if (active) {
     active.expenseData = JSON.parse(JSON.stringify(snapshot.expenseCategories));
     active.expenseBuffer = snapshot.household.expenseBuffer;
+    active.homePurchase = snapshot.homePurchase ? JSON.parse(JSON.stringify(snapshot.homePurchase)) : null;
     saveSnapshot(snapshot);
   }
 }

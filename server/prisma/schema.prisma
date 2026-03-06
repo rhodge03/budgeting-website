@@ -161,6 +161,7 @@ model ExpenseScenario {
   name          String
   expenseData   Json     @map("expense_data")
   expenseBuffer Decimal  @default(0) @db.Decimal(5, 2) @map("expense_buffer")
+  homePurchase  Json?    @map("home_purchase_data")
   sortOrder     Int      @default(0) @map("sort_order")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")

@@ -390,6 +390,7 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
         household: result.household,
         expenseCategories: result.expenseCategories,
         expenseScenarios: result.expenseScenarios,
+        homePurchase: result.homePurchase ?? null,
       });
       return;
     }
@@ -398,6 +399,7 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
       household: result.household,
       expenseCategories: result.expenseCategories,
       expenseScenarios: result.expenseScenarios,
+      homePurchase: result.homePurchase ?? null,
     });
   },
 
