@@ -16,60 +16,76 @@ interface Props {
   retirementAge?: number;
 }
 
-const fmtAxis = (v: number) => `$${(Math.abs(v) / 1000).toFixed(0)}k`;
-const fmtTooltip = (n: number) =>
-  `$${Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+const fmtAxis = (v: number) => {
+  const sign = v >= 0 ? '' : '-';
+  return `${sign}$${(Math.abs(v) / 1000).toFixed(0)}k`;
+};
+const fmtTooltip = (n: number) => {
+  const sign = n >= 0 ? '+' : '-';
+  return `${sign}$${Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+};
 
 export default function CompareDifference({ scenarios, baselineId, retirementAge }: Props) {
   if (scenarios.length < 2) {
     return <p className="text-sm text-gray-400 text-center py-8">Select at least 2 scenarios to compare</p>;
   }
 
-  // Use baseline (top) vs first other scenario (bottom)
-  const top = scenarios.find((s) => s.id === baselineId) ?? scenarios[0];
-  const bottom = scenarios.find((s) => s.id !== top.id)!;
+  const scenarioA = scenarios.find((s) => s.id === baselineId) ?? scenarios[0];
+  const scenarioB = scenarios.find((s) => s.id !== scenarioA.id)!;
 
-  const maxLen = Math.max(top.data.length, bottom.data.length);
-  const data: Record<string, number>[] = [];
+  const maxLen = Math.max(scenarioA.data.length, scenarioB.data.length);
+  const data: { age: number; delta: number }[] = [];
 
   for (let i = 0; i < maxLen; i++) {
-    const age = top.data[i]?.age ?? bottom.data[i]?.age ?? i;
-    const topVal = top.data[i]?.netWorth ?? 0;
-    const bottomVal = bottom.data[i]?.netWorth ?? 0;
-    data.push({
-      age,
-      top: topVal,
-      bottom: -bottomVal, // negate so it renders below zero
-    });
+    const age = scenarioA.data[i]?.age ?? scenarioB.data[i]?.age ?? i;
+    const aVal = scenarioA.data[i]?.netWorth ?? 0;
+    const bVal = scenarioB.data[i]?.netWorth ?? 0;
+    // Positive = scenario A is ahead, negative = scenario B is ahead
+    data.push({ age, delta: aVal - bVal });
   }
 
   return (
     <div>
-      <div className="flex items-center justify-center gap-6 text-xs mb-2">
+      <div className="flex items-center justify-center gap-4 text-xs mb-2">
         <span className="flex items-center gap-1.5">
-          <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: top.color }} />
-          <span className="font-medium">{top.name}</span>
-          <span className="text-gray-400">(top)</span>
+          <span className="text-green-600 font-medium">+ Above zero</span>
+          <span className="text-gray-400">=</span>
+          <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: scenarioA.color }} />
+          <span className="font-medium">{scenarioA.name}</span>
+          <span className="text-gray-400">is ahead</span>
         </span>
+        <span className="text-gray-300">|</span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ backgroundColor: bottom.color }} />
-          <span className="font-medium">{bottom.name}</span>
-          <span className="text-gray-400">(bottom)</span>
+          <span className="text-red-500 font-medium">- Below zero</span>
+          <span className="text-gray-400">=</span>
+          <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: scenarioB.color }} />
+          <span className="font-medium">{scenarioB.name}</span>
+          <span className="text-gray-400">is ahead</span>
         </span>
       </div>
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+          <defs>
+            <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#16a34a" stopOpacity={0.3} />
+              <stop offset="50%" stopColor="#16a34a" stopOpacity={0.05} />
+              <stop offset="50%" stopColor="#dc2626" stopOpacity={0.05} />
+              <stop offset="100%" stopColor="#dc2626" stopOpacity={0.3} />
+            </linearGradient>
+          </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis dataKey="age" tick={{ fontSize: 11 }} />
           <YAxis
             tickFormatter={fmtAxis}
             tick={{ fontSize: 11 }}
-            width={60}
+            width={70}
           />
           <Tooltip
-            formatter={(value: number | undefined, name: string | undefined) => {
+            formatter={(value: number | undefined) => {
               if (value == null) return '';
-              const label = name === 'top' ? top.name : bottom.name;
+              const label = value >= 0
+                ? `${scenarioA.name} ahead by`
+                : `${scenarioB.name} ahead by`;
               return [fmtTooltip(value), label];
             }}
             labelFormatter={(age) => `Age ${age}`}
@@ -83,24 +99,12 @@ export default function CompareDifference({ scenarios, baselineId, retirementAge
               label={{ value: 'Retire', position: 'top', fontSize: 10, fill: '#d97706' }}
             />
           )}
-          {/* Top scenario: positive values above zero */}
           <Area
             type="monotone"
-            dataKey="top"
-            name="top"
-            stroke={top.color}
-            fill={top.color}
-            fillOpacity={0.25}
-            strokeWidth={2}
-          />
-          {/* Bottom scenario: negative values below zero */}
-          <Area
-            type="monotone"
-            dataKey="bottom"
-            name="bottom"
-            stroke={bottom.color}
-            fill={bottom.color}
-            fillOpacity={0.25}
+            dataKey="delta"
+            name="Difference"
+            stroke="#6b7280"
+            fill="url(#splitColor)"
             strokeWidth={2}
           />
         </AreaChart>
