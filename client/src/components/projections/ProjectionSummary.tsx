@@ -20,7 +20,7 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
 
   const finalYear = data[data.length - 1];
   const goalPct = retirementGoal && retirementGoal > 0
-    ? Math.min((atRetirement.totalSavings / retirementGoal) * 100, 999)
+    ? Math.min((atRetirement.netWorth / retirementGoal) * 100, 999)
     : null;
 
   return (
@@ -28,20 +28,26 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
       {/* At Retirement */}
       <div className="bg-white rounded border border-gray-200 p-4">
         <p className="text-xs text-gray-500 mb-1">At Retirement (Age {atRetirement.age})</p>
-        <p className="text-lg font-semibold text-gray-900">{fmt(atRetirement.totalSavings)}</p>
+        <p className="text-lg font-semibold text-gray-900">{fmt(atRetirement.netWorth)}</p>
         <div className="text-xs text-gray-500 mt-1">
           <span>401(k): {fmt(atRetirement.fourOneK)}</span>
           <span className="mx-1">|</span>
           <span>Savings: {fmt(atRetirement.generalSavings)}</span>
+          {atRetirement.homeEquity > 0 && (
+            <>
+              <span className="mx-1">|</span>
+              <span>Equity: {fmt(atRetirement.homeEquity)}</span>
+            </>
+          )}
         </div>
       </div>
 
       {/* At End of Projection */}
       <div className="bg-white rounded border border-gray-200 p-4">
         <p className="text-xs text-gray-500 mb-1">At Age {finalYear.age}</p>
-        <p className="text-lg font-semibold text-gray-900">{fmt(finalYear.totalSavings)}</p>
+        <p className="text-lg font-semibold text-gray-900">{fmt(finalYear.netWorth)}</p>
         <p className="text-xs text-gray-500 mt-1">
-          Real value: {fmt(finalYear.totalSavingsReal)}
+          Real value: {fmt(finalYear.netWorthReal)}
         </p>
       </div>
 

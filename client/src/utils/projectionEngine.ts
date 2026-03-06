@@ -1,6 +1,6 @@
 import { calculateTax, calculateCapitalGainsTax } from './taxCalculator';
 import type { HouseholdSnapshot, HomePurchase } from 'shared';
-import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
+import { computeHomePurchaseMonthly, computeMonthlyMortgage, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
 
@@ -11,6 +11,9 @@ export interface ProjectionYear {
   generalSavings: number;
   fourOneK: number;
   totalSavings: number;
+  // Home equity
+  homeEquity: number;     // home value - loan balance (0 if no home purchase)
+  netWorth: number;       // totalSavings + homeEquity
   // Annual flows
   totalIncome: number;
   totalTax: number;
@@ -24,6 +27,7 @@ export interface ProjectionYear {
   capitalGainsTax: number;  // tax on realized gains from selling investments
   // Inflation-adjusted
   totalSavingsReal: number;
+  netWorthReal: number;
   investmentGrowthReal: number; // interest/gains adjusted for inflation
   savingsGrowthReal: number;    // savings interest adjusted for inflation
 }
@@ -105,16 +109,32 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     };
   });
 
+  // Home equity tracking
+  const hp = inputs.homePurchase;
+  let homeValue = hp ? Number(hp.homePrice) : 0;
+  const hpAppreciationMul = hp ? 1 + Number(hp.appreciationRate) / 100 : 1;
+  let loanBalance = hp ? Number(hp.homePrice) - Number(hp.downPayment) : 0;
+  const hpMonthlyRate = hp ? Number(hp.interestRate) / 100 / 12 : 0;
+  const hpMonthlyPayment = hp
+    ? computeMonthlyMortgage(loanBalance, Number(hp.interestRate), hp.loanTermYears)
+    : 0;
+  const hpLoanTermYears = hp?.loanTermYears ?? 30;
+
+  const startEquity = homeValue - loanBalance;
+
   // Baseline row: starting balances, no processing
   const startGeneralSavings = earnerState.reduce((s, es) => s + es.generalSavings, 0);
   const startFourOneK = earnerState.reduce((s, es) => s + es.fourOneK, 0);
   const startTotal = startGeneralSavings + startFourOneK;
+  const startNetWorth = startTotal + startEquity;
   results.push({
     age: currentAge,
     year: currentYear,
     generalSavings: Math.round(startGeneralSavings),
     fourOneK: Math.round(startFourOneK),
     totalSavings: Math.round(startTotal),
+    homeEquity: Math.round(startEquity),
+    netWorth: Math.round(startNetWorth),
     totalIncome: 0,
     totalTax: 0,
     totalExpenses: 0,
@@ -126,6 +146,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     savingsGrowth: 0,
     capitalGainsTax: 0,
     totalSavingsReal: Math.round(startTotal),
+    netWorthReal: Math.round(startNetWorth),
     investmentGrowthReal: 0,
     savingsGrowthReal: 0,
   });
@@ -299,12 +320,32 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
     aggregateGeneralSavings = earnerState.reduce((s, es) => s + es.generalSavings, 0);
     const totalSavings = aggregateGeneralSavings + aggregateFourOneK;
 
+    // Home equity: appreciate home value, pay down loan
+    if (hp && y < hpLoanTermYears) {
+      for (let m = 0; m < 12; m++) {
+        if (loanBalance <= 0) break;
+        const interestPmt = loanBalance * hpMonthlyRate;
+        const principalPmt = Math.min(hpMonthlyPayment - interestPmt, loanBalance);
+        loanBalance -= principalPmt;
+      }
+      if (loanBalance < 0.01) loanBalance = 0;
+    } else if (hp && y >= hpLoanTermYears) {
+      loanBalance = 0;
+    }
+    if (hp) {
+      homeValue = Number(hp.homePrice) * Math.pow(hpAppreciationMul, y + 1);
+    }
+    const homeEquity = homeValue - loanBalance;
+    const netWorth = totalSavings + homeEquity;
+
     results.push({
       age,
       year,
       generalSavings: Math.round(aggregateGeneralSavings),
       fourOneK: Math.round(aggregateFourOneK),
       totalSavings: Math.round(totalSavings),
+      homeEquity: Math.round(homeEquity),
+      netWorth: Math.round(netWorth),
       totalIncome: Math.round(totalIncome),
       totalTax: Math.round(totalTax),
       totalExpenses: Math.round(yearExpenses),
@@ -316,6 +357,7 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       savingsGrowth: Math.round(totalSavingsGrowth),
       capitalGainsTax: Math.round(totalCapGainsTax),
       totalSavingsReal: Math.round(totalSavings / inflationFactor),
+      netWorthReal: Math.round(netWorth / inflationFactor),
       investmentGrowthReal: Math.round(totalInvestmentGrowth / inflationFactor),
       savingsGrowthReal: Math.round(totalSavingsGrowth / inflationFactor),
     });

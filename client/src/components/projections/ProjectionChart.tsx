@@ -23,7 +23,9 @@ export interface ChartSeries {
 export const AVAILABLE_SERIES: ChartSeries[] = [
   { key: 'fourOneK',              label: '401(k) Balance',             color: '#3b82f6', fill: '#93c5fd', stackId: 'balance' },
   { key: 'generalSavings',       label: 'Savings Balance',            color: '#10b981', fill: '#6ee7b7', stackId: 'balance' },
+  { key: 'homeEquity',           label: 'Home Equity',                color: '#f59e0b', fill: '#fde68a', stackId: 'balance' },
   { key: 'totalSavings',         label: 'Total Balance',              color: '#1f2937' },
+  { key: 'netWorth',             label: 'Net Worth',                  color: '#0f172a' },
   { key: 'totalIncome',          label: 'Income',                     color: '#6366f1' },
   { key: 'totalTax',             label: 'Taxes',                      color: '#ef4444' },
   { key: 'totalExpenses',        label: 'Expenses',                   color: '#f97316' },
@@ -33,9 +35,10 @@ export const AVAILABLE_SERIES: ChartSeries[] = [
   { key: 'savingsGrowth',        label: 'Savings Interest',           color: '#a855f7' },
   { key: 'investmentGrowth',     label: 'Total Interest',             color: '#7c3aed' },
   { key: 'netCashFlow',          label: 'Net Cash Flow',              color: '#22c55e' },
-  { key: 'totalSavingsReal',     label: 'Total (Inflation-Adj.)',     color: '#f59e0b', dashed: true },
+  { key: 'totalSavingsReal',     label: 'Total (Inflation-Adj.)',     color: '#d97706', dashed: true },
+  { key: 'netWorthReal',         label: 'Net Worth (Infl-Adj.)',      color: '#78350f', dashed: true },
   { key: 'investmentGrowthReal', label: 'Interest (Inflation-Adj.)',  color: '#fbbf24', dashed: true },
-  { key: 'savingsGrowthReal',   label: 'Sav. Interest (Infl-Adj.)', color: '#d97706', dashed: true },
+  { key: 'savingsGrowthReal',   label: 'Sav. Interest (Infl-Adj.)', color: '#92400e', dashed: true },
 ];
 
 export const DEFAULT_SERIES: string[] = [

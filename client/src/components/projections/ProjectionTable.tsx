@@ -41,7 +41,8 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
               <th className="px-3 py-2 text-right font-medium">Net Cash</th>
               <th className="px-3 py-2 text-right font-medium">401(k)</th>
               <th className="px-3 py-2 text-right font-medium">Savings</th>
-              <th className="px-3 py-2 text-right font-medium">Total</th>
+              <th className="px-3 py-2 text-right font-medium">Home Equity</th>
+              <th className="px-3 py-2 text-right font-medium">Net Worth</th>
               <th className="px-3 py-2 text-right font-medium">Real Value</th>
             </tr>
           </thead>
@@ -70,8 +71,9 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
                   </td>
                   <td className="px-3 py-1.5 text-right text-blue-600">${fmt(row.fourOneK)}</td>
                   <td className="px-3 py-1.5 text-right text-green-600">${fmt(row.generalSavings)}</td>
-                  <td className="px-3 py-1.5 text-right font-medium text-gray-900">${fmt(row.totalSavings)}</td>
-                  <td className="px-3 py-1.5 text-right text-gray-500">${fmt(row.totalSavingsReal)}</td>
+                  <td className="px-3 py-1.5 text-right text-amber-600">{row.homeEquity > 0 ? `$${fmt(row.homeEquity)}` : '—'}</td>
+                  <td className="px-3 py-1.5 text-right font-medium text-gray-900">${fmt(row.netWorth)}</td>
+                  <td className="px-3 py-1.5 text-right text-gray-500">${fmt(row.netWorthReal)}</td>
                 </tr>
               );
             })}
