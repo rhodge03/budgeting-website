@@ -1,7 +1,7 @@
 import prisma from '../config/database.js';
 
 export async function getSnapshot(householdId: string) {
-  const [household, earners, expenseCategories] = await Promise.all([
+  const [household, earners, expenseCategories, expenseScenarios] = await Promise.all([
     prisma.household.findUnique({ where: { id: householdId } }),
     prisma.earner.findMany({
       where: { householdId, isArchived: false },
@@ -21,9 +21,13 @@ export async function getSnapshot(householdId: string) {
         subCategories: { orderBy: { sortOrder: 'asc' } },
       },
     }),
+    prisma.expenseScenario.findMany({
+      where: { householdId },
+      orderBy: { sortOrder: 'asc' },
+    }),
   ]);
 
-  return { household, earners, expenseCategories };
+  return { household, earners, expenseCategories, expenseScenarios };
 }
 
 export async function updateHousehold(householdId: string, data: {

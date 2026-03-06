@@ -10,15 +10,17 @@ datasource db {
 // ─── AUTH & HOUSEHOLD ─────────────────────────────────
 
 model Household {
-  id              String   @id @default(uuid())
-  name            String   @default("My Household")
-  expenseBuffer   Decimal  @default(0) @db.Decimal(5, 2) @map("expense_buffer")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id                       String   @id @default(uuid())
+  name                     String   @default("My Household")
+  expenseBuffer            Decimal  @default(0) @db.Decimal(5, 2) @map("expense_buffer")
+  activeExpenseScenarioId  String?  @map("active_expense_scenario_id")
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
 
   users             User[]
   earners           Earner[]
   expenseCategories ExpenseCategory[]
+  expenseScenarios  ExpenseScenario[]
 
   @@map("households")
 }
@@ -148,6 +150,23 @@ model ItemizedDeduction {
   earner Earner @relation(fields: [earnerId], references: [id], onDelete: Cascade)
 
   @@map("itemized_deductions")
+}
+
+// ─── EXPENSE SCENARIOS ──────────────────────────────────
+
+model ExpenseScenario {
+  id            String   @id @default(uuid())
+  householdId   String   @map("household_id")
+  name          String
+  expenseData   Json     @map("expense_data")
+  expenseBuffer Decimal  @default(0) @db.Decimal(5, 2) @map("expense_buffer")
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@map("expense_scenarios")
 }
 
 // ─── EXPENSES (SHARED / HOUSEHOLD LEVEL) ──────────────

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { HouseholdSnapshot, Earner, IncomeEntry, SavingsBalance, RetirementSettings, RateOfReturn, ExpenseCategory, ExpenseSubCategory, MemberType } from 'shared';
+import type { HouseholdSnapshot, Earner, IncomeEntry, SavingsBalance, RetirementSettings, RateOfReturn, ExpenseCategory, ExpenseSubCategory, ExpenseScenario, MemberType } from 'shared';
 import * as householdApi from '../api/household';
 import * as earnersApi from '../api/earners';
 import * as incomeApi from '../api/income';
@@ -7,6 +7,7 @@ import * as savingsApi from '../api/savings';
 import * as retirementApi from '../api/retirement';
 import * as rateOfReturnApi from '../api/rateOfReturn';
 import * as expensesApi from '../api/expenses';
+import * as scenariosApi from '../api/expenseScenarios';
 import * as guestStorage from '../services/guestStorage';
 import { useAuthStore } from './authStore';
 
@@ -21,6 +22,7 @@ interface HouseholdState {
   household: HouseholdSnapshot['household'] | null;
   earners: EarnerWithRelations[];
   expenseCategories: ExpenseCategory[];
+  expenseScenarios: ExpenseScenario[];
 
   // Status
   isLoading: boolean;
@@ -51,6 +53,12 @@ interface HouseholdState {
   updateExpenseSubCategory: (id: string, categoryId: string, data: Partial<ExpenseSubCategory>) => Promise<void>;
   removeExpenseSubCategory: (id: string, categoryId: string) => Promise<void>;
 
+  // Expense scenario actions
+  createScenario: (name: string) => Promise<void>;
+  renameScenario: (id: string, name: string) => Promise<void>;
+  removeScenario: (id: string) => Promise<void>;
+  switchScenario: (id: string) => Promise<void>;
+
   // Settings actions (centralizes persistence for components)
   updateSavings: (earnerId: string, data: Partial<SavingsBalance>) => Promise<void>;
   updateRetirement: (earnerId: string, data: Partial<RetirementSettings>) => Promise<void>;
@@ -64,6 +72,7 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
   household: null,
   earners: [],
   expenseCategories: [],
+  expenseScenarios: [],
   isLoading: false,
   error: null,
 
@@ -78,6 +87,7 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
         household: snapshot.household,
         earners: snapshot.earners,
         expenseCategories: snapshot.expenseCategories,
+        expenseScenarios: snapshot.expenseScenarios ?? [],
         isLoading: false,
       });
     } catch (err: any) {
@@ -90,6 +100,7 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
       household: null,
       earners: [],
       expenseCategories: [],
+      expenseScenarios: [],
       isLoading: false,
       error: null,
     });
@@ -323,6 +334,62 @@ export const useHouseholdStore = create<HouseholdState>((set, get) => ({
           : c,
       ),
     }));
+  },
+
+  createScenario: async (name) => {
+    if (isGuestMode()) {
+      const scenario = guestStorage.createScenario(name);
+      set((state) => ({ expenseScenarios: [...state.expenseScenarios, scenario] }));
+      return;
+    }
+    const scenario = await scenariosApi.create({ name });
+    set((state) => ({ expenseScenarios: [...state.expenseScenarios, scenario] }));
+  },
+
+  renameScenario: async (id, name) => {
+    if (isGuestMode()) {
+      const updated = guestStorage.renameScenario(id, name);
+      set((state) => ({
+        expenseScenarios: state.expenseScenarios.map((s) => s.id === id ? updated : s),
+      }));
+      return;
+    }
+    const updated = await scenariosApi.rename(id, name);
+    set((state) => ({
+      expenseScenarios: state.expenseScenarios.map((s) => s.id === id ? updated : s),
+    }));
+  },
+
+  removeScenario: async (id) => {
+    if (isGuestMode()) {
+      guestStorage.removeScenario(id);
+    } else {
+      await scenariosApi.remove(id);
+    }
+    set((state) => ({
+      expenseScenarios: state.expenseScenarios.filter((s) => s.id !== id),
+      household: state.household?.activeExpenseScenarioId === id
+        ? { ...state.household, activeExpenseScenarioId: null }
+        : state.household,
+    }));
+  },
+
+  switchScenario: async (id) => {
+    if (isGuestMode()) {
+      const result = guestStorage.switchScenario(id);
+      set({
+        household: result.household,
+        expenseCategories: result.expenseCategories,
+        expenseScenarios: result.expenseScenarios,
+      });
+      return;
+    }
+    const result = await scenariosApi.switchTo(id);
+    set({
+      household: result.household,
+      expenseCategories: result.expenseCategories,
+      expenseScenarios: result.expenseScenarios,
+    });
   },
 
   updateSavings: async (earnerId, data) => {

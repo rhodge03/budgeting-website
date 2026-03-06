@@ -7,6 +7,7 @@ import type {
   RateOfReturn,
   ExpenseCategory,
   ExpenseSubCategory,
+  ExpenseScenario,
   MemberType,
 } from 'shared';
 import { DEFAULT_EXPENSE_CATEGORIES } from 'shared';
@@ -20,7 +21,13 @@ type EarnerWithRelations = HouseholdSnapshot['earners'][number];
 export function getSnapshot(): HouseholdSnapshot {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return initializeGuest();
-  return JSON.parse(raw);
+  const snapshot = JSON.parse(raw) as HouseholdSnapshot;
+  // Migrate older guest data that lacks scenario fields
+  if (!snapshot.expenseScenarios) snapshot.expenseScenarios = [];
+  if (snapshot.household.activeExpenseScenarioId === undefined) {
+    snapshot.household.activeExpenseScenarioId = null;
+  }
+  return snapshot;
 }
 
 function saveSnapshot(snapshot: HouseholdSnapshot): void {
@@ -56,11 +63,13 @@ export function initializeGuest(): HouseholdSnapshot {
       id: householdId,
       name: 'My Household',
       expenseBuffer: 0,
+      activeExpenseScenarioId: null,
       createdAt: now,
       updatedAt: now,
     },
     earners: [],
     expenseCategories,
+    expenseScenarios: [],
   };
 
   saveSnapshot(snapshot);
@@ -356,5 +365,83 @@ export function removeSubCategory(id: string): void {
       saveSnapshot(snapshot);
       return;
     }
+  }
+}
+
+// ── Expense Scenarios ───────────────────────────────
+
+export function createScenario(name: string): ExpenseScenario {
+  const snapshot = getSnapshot();
+  const scenario: ExpenseScenario = {
+    id: crypto.randomUUID(),
+    householdId: snapshot.household.id,
+    name,
+    expenseData: JSON.parse(JSON.stringify(snapshot.expenseCategories)),
+    expenseBuffer: snapshot.household.expenseBuffer,
+    sortOrder: snapshot.expenseScenarios.length,
+  };
+  snapshot.expenseScenarios.push(scenario);
+  saveSnapshot(snapshot);
+  return scenario;
+}
+
+export function renameScenario(id: string, name: string): ExpenseScenario {
+  const snapshot = getSnapshot();
+  const scenario = snapshot.expenseScenarios.find((s) => s.id === id);
+  if (!scenario) throw new Error('Scenario not found');
+  scenario.name = name;
+  saveSnapshot(snapshot);
+  return scenario;
+}
+
+export function removeScenario(id: string): void {
+  const snapshot = getSnapshot();
+  snapshot.expenseScenarios = snapshot.expenseScenarios.filter((s) => s.id !== id);
+  if (snapshot.household.activeExpenseScenarioId === id) {
+    snapshot.household.activeExpenseScenarioId = null;
+  }
+  saveSnapshot(snapshot);
+}
+
+export function switchScenario(id: string): {
+  household: HouseholdSnapshot['household'];
+  expenseCategories: ExpenseCategory[];
+  expenseScenarios: ExpenseScenario[];
+} {
+  const snapshot = getSnapshot();
+  const target = snapshot.expenseScenarios.find((s) => s.id === id);
+  if (!target) throw new Error('Scenario not found');
+
+  // Auto-save current expenses into the previously active scenario
+  if (snapshot.household.activeExpenseScenarioId && snapshot.household.activeExpenseScenarioId !== id) {
+    const prev = snapshot.expenseScenarios.find((s) => s.id === snapshot.household.activeExpenseScenarioId);
+    if (prev) {
+      prev.expenseData = JSON.parse(JSON.stringify(snapshot.expenseCategories));
+      prev.expenseBuffer = snapshot.household.expenseBuffer;
+    }
+  }
+
+  // Load target scenario's expenses
+  snapshot.expenseCategories = JSON.parse(JSON.stringify(target.expenseData));
+  snapshot.household.expenseBuffer = target.expenseBuffer;
+  snapshot.household.activeExpenseScenarioId = id;
+  snapshot.household.updatedAt = new Date().toISOString();
+
+  saveSnapshot(snapshot);
+  return {
+    household: snapshot.household,
+    expenseCategories: snapshot.expenseCategories,
+    expenseScenarios: snapshot.expenseScenarios,
+  };
+}
+
+export function saveCurrentScenario(): void {
+  const snapshot = getSnapshot();
+  if (!snapshot.household.activeExpenseScenarioId) return;
+  const active = snapshot.expenseScenarios.find((s) => s.id === snapshot.household.activeExpenseScenarioId);
+  if (active) {
+    active.expenseData = JSON.parse(JSON.stringify(snapshot.expenseCategories));
+    active.expenseBuffer = snapshot.household.expenseBuffer;
+    saveSnapshot(snapshot);
   }
 }

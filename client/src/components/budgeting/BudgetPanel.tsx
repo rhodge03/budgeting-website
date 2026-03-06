@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import CategoryGroup from './CategoryGroup';
+import ScenarioSelector from './ScenarioSelector';
 
 const BUFFER_STORAGE_KEY = 'expense-buffer';
 
@@ -103,6 +104,9 @@ export default function BudgetPanel() {
           + Add Category
         </button>
       </div>
+
+      {/* Expense Scenarios */}
+      <ScenarioSelector />
 
       {/* Add category input */}
       {adding && (

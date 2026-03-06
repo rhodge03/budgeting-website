@@ -7,6 +7,7 @@ import savingsRoutes from './savings.routes.js';
 import retirementRoutes from './retirement.routes.js';
 import rateOfReturnRoutes from './rateOfReturn.routes.js';
 import expenseRoutes from './expense.routes.js';
+import expenseScenarioRoutes from './expenseScenario.routes.js';
 import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
@@ -19,5 +20,6 @@ router.use('/savings', authenticate, savingsRoutes);
 router.use('/retirement', authenticate, retirementRoutes);
 router.use('/rate-of-return', authenticate, rateOfReturnRoutes);
 router.use('/expenses', authenticate, expenseRoutes);
+router.use('/expense-scenarios', authenticate, expenseScenarioRoutes);
 
 export default router;

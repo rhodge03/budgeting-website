@@ -4,6 +4,7 @@ export interface Household {
   id: string;
   name: string;
   expenseBuffer: number;
+  activeExpenseScenarioId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -103,6 +104,15 @@ export interface ExpenseSubCategory {
   sortOrder: number;
 }
 
+export interface ExpenseScenario {
+  id: string;
+  householdId: string;
+  name: string;
+  expenseData: ExpenseCategory[];
+  expenseBuffer: number;
+  sortOrder: number;
+}
+
 export interface HouseholdSnapshot {
   household: Household;
   earners: (Earner & {
@@ -113,4 +123,5 @@ export interface HouseholdSnapshot {
     itemizedDeductions: ItemizedDeduction[];
   })[];
   expenseCategories: ExpenseCategory[];
+  expenseScenarios: ExpenseScenario[];
 }
