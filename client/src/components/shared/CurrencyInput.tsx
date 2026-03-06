@@ -71,7 +71,7 @@ export default function CurrencyInput({
           onFocus={handleFocus}
           onBlur={handleBlur}
           disabled={disabled}
-          className="w-full pl-7 pr-3 py-2 text-sm text-right border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          className="w-full pl-7 pr-3 py-2 text-sm text-right border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
         />
       </div>
     </div>

@@ -70,7 +70,7 @@ export default function ChartControls({
             <button
               key={s.key}
               onClick={() => onToggleSeries(s.key)}
-              className={`px-2 py-0.5 text-[11px] rounded-full border transition-colors ${
+              className={`px-2 py-0.5 text-[11px] rounded border transition-colors ${
                 active
                   ? 'text-white border-transparent'
                   : 'text-gray-500 border-gray-300 bg-white hover:bg-gray-50'

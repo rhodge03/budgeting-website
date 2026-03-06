@@ -46,7 +46,7 @@ export default function IncomePanel({ earnerId }: Props) {
   const totalIncome = entries.reduce((sum, e) => sum + Number(e.amount), 0);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
           Income Sources
@@ -140,7 +140,7 @@ function IncomeEntryRow({
   };
 
   return (
-    <div className="border border-gray-100 rounded-md p-2 space-y-2">
+    <div className="border border-gray-100 rounded p-2 space-y-2">
       {/* Row 1: Label + remove */}
       <div className="flex items-center gap-2">
         <input
@@ -148,7 +148,7 @@ function IncomeEntryRow({
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           onBlur={handleLabelBlur}
-          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Income label"
         />
         <button
@@ -176,7 +176,7 @@ function IncomeEntryRow({
             onBlur={handleDurationBlur}
             placeholder={"\u221E"}
             title="Duration in years (empty = until retirement)"
-            className="w-12 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-12 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <span className="text-xs text-gray-500">yr</span>
         </div>
@@ -191,7 +191,7 @@ function IncomeEntryRow({
             onBlur={handleGrowthBlur}
             placeholder="0"
             title="Annual growth rate % (empty = 0%)"
-            className="w-14 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-14 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <span className="text-xs text-gray-500">%/yr</span>
         </div>
@@ -200,7 +200,7 @@ function IncomeEntryRow({
             type="checkbox"
             checked={entry.isTaxable}
             onChange={(e) => onUpdate({ isTaxable: e.target.checked })}
-            className="rounded border-gray-300"
+            className="rounded-sm border-gray-300"
           />
           Taxable
         </label>

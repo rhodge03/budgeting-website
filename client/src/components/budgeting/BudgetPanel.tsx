@@ -59,7 +59,7 @@ export default function BudgetPanel() {
       {/* Header with toggle and total */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex rounded-md border border-gray-300 overflow-hidden text-sm">
+          <div className="flex rounded border border-gray-300 overflow-hidden text-sm">
             <button
               onClick={() => setShowMonthly(true)}
               className={`px-3 py-1.5 transition-colors ${
@@ -118,11 +118,11 @@ export default function BudgetPanel() {
             onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
             placeholder="Category name"
             autoFocus
-            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={handleAddCategory}
-            className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Add
           </button>
@@ -158,7 +158,7 @@ export default function BudgetPanel() {
         const totalChildMonthly = childContributions.reduce((s, c) => s + c.monthly, 0);
         const displayChildTotal = showMonthly ? totalChildMonthly : totalChildMonthly * 12;
         return (
-          <div className="bg-white rounded-lg border border-purple-200 overflow-hidden">
+          <div className="bg-white rounded border border-purple-200 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 bg-purple-50">
               <h3 className="text-sm font-semibold text-purple-900">Child Savings</h3>
               <span className="text-sm font-medium text-purple-700">
@@ -184,7 +184,7 @@ export default function BudgetPanel() {
       })()}
 
       {expenseCategories.length === 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded border border-gray-200 p-8 text-center">
           <p className="text-sm text-gray-500">No expense categories yet. Add one to start budgeting.</p>
         </div>
       )}

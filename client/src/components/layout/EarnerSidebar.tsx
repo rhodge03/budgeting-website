@@ -41,7 +41,7 @@ export default function EarnerSidebar() {
                 key={earner.id}
                 onClick={() => setSelectedEarnerId(earner.id)}
                 title={earner.name}
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                className={`w-10 h-10 rounded flex items-center justify-center transition-all ${
                   AnimalIcon ? 'bg-gray-100' : `${color} text-sm font-bold text-white`
                 } ${
                   isSelected
@@ -65,7 +65,7 @@ export default function EarnerSidebar() {
           <button
             onClick={() => setSelectedEarnerId('all')}
             title="Both Combined"
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all bg-gray-600 text-white text-xs font-bold ${
+            className={`w-10 h-10 rounded flex items-center justify-center transition-all bg-gray-600 text-white text-xs font-bold ${
               selectedEarnerId === 'all'
                 ? 'ring-2 ring-blue-600 ring-offset-2 scale-110'
                 : 'opacity-60 hover:opacity-100 hover:scale-105'
@@ -99,7 +99,7 @@ export default function EarnerSidebar() {
               key={cat.key}
               onClick={() => setSelectedCategory(cat.key)}
               title={cat.label}
-              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
+              className={`w-10 h-10 rounded flex items-center justify-center transition-all ${
                 isActive
                   ? 'bg-blue-50 text-blue-600 ring-2 ring-blue-500 scale-110'
                   : 'bg-gray-50 text-gray-400 opacity-50 hover:opacity-100 hover:bg-gray-100 hover:text-gray-600 hover:scale-105'

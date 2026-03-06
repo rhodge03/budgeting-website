@@ -14,7 +14,7 @@ function IconPicker({ selectedIcon, onSelect }: { selectedIcon: string | null; o
             key={key}
             onClick={() => onSelect(key)}
             title={key.charAt(0).toUpperCase() + key.slice(1)}
-            className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
+            className={`w-9 h-9 rounded flex items-center justify-center transition-all ${
               selectedIcon === key
                 ? 'bg-blue-100 ring-2 ring-blue-500 scale-110'
                 : 'bg-gray-50 hover:bg-gray-100 hover:scale-105'
@@ -99,7 +99,7 @@ export default function EarnerManager() {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
           Household
@@ -117,10 +117,10 @@ export default function EarnerManager() {
       {isAdding && (
         <div className="mb-4 space-y-3">
           {/* Member type toggle */}
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5 w-fit">
+          <div className="flex gap-1 bg-gray-100 rounded p-0.5 w-fit">
             <button
               onClick={() => setNewMemberType('adult')}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+              className={`px-3 py-1.5 text-xs font-medium rounded transition-all ${
                 newMemberType === 'adult'
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-700'
@@ -130,7 +130,7 @@ export default function EarnerManager() {
             </button>
             <button
               onClick={() => setNewMemberType('child')}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+              className={`px-3 py-1.5 text-xs font-medium rounded transition-all ${
                 newMemberType === 'child'
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-700'
@@ -148,17 +148,17 @@ export default function EarnerManager() {
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
               placeholder="Name"
               autoFocus
-              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               onClick={handleAdd}
-              className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
             >
               Add
             </button>
             <button
               onClick={() => { setIsAdding(false); setNewName(''); setNewIcon(null); setNewMemberType('adult'); }}
-              className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             >
               Cancel
             </button>
@@ -177,7 +177,7 @@ export default function EarnerManager() {
           <div key={earner.id}>
             {editingId === earner.id ? (
               /* ── Edit mode ── */
-              <div className="py-2 px-3 rounded-md bg-blue-50 border border-blue-200 space-y-3">
+              <div className="py-2 px-3 rounded bg-blue-50 border border-blue-200 space-y-3">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -185,17 +185,17 @@ export default function EarnerManager() {
                     onChange={(e) => setEditName(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
                     autoFocus
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     onClick={handleSaveEdit}
-                    className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                    className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
                   >
                     Save
                   </button>
                   <button
                     onClick={cancelEditing}
-                    className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                    className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
                   >
                     Cancel
                   </button>
@@ -209,21 +209,21 @@ export default function EarnerManager() {
               </div>
             ) : (
               /* ── Display mode ── */
-              <div className="flex items-center justify-between py-2 px-3 rounded-md hover:bg-gray-50">
+              <div className="flex items-center justify-between py-2 px-3 rounded hover:bg-gray-50">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-600">
+                  <div className="w-7 h-7 flex items-center justify-center rounded bg-gray-100 text-sm font-bold text-gray-600">
                     {renderAvatarIcon(earner.avatarIcon, earner.name, 20)}
                   </div>
                   <span className="text-sm font-medium text-gray-900">
                     {earner.name}
                   </span>
                   {earner.isPrimary && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
                       Primary
                     </span>
                   )}
                   {earner.memberType === 'child' && (
-                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
                       Child
                     </span>
                   )}

@@ -71,7 +71,7 @@ export default function ScenarioSelector() {
         <dialog
           ref={dialogRef}
           onClose={handleClose}
-          className="rounded-lg shadow-xl p-0 backdrop:bg-black/40 min-w-[360px] max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0"
+          className="rounded shadow-xl p-0 backdrop:bg-black/40 min-w-[360px] max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0"
         >
           <div className="p-5">
             {/* Header */}
@@ -94,7 +94,7 @@ export default function ScenarioSelector() {
                   <div
                     key={s.id}
                     onClick={() => editingId !== s.id && handleSwitch(s.id)}
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg border transition-colors ${
+                    className={`flex items-center justify-between px-3 py-2.5 rounded border transition-colors ${
                       activeId === s.id
                         ? 'border-blue-300 bg-blue-50'
                         : 'border-gray-200 bg-white hover:bg-gray-50 cursor-pointer'
@@ -102,7 +102,7 @@ export default function ScenarioSelector() {
                   >
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       {activeId === s.id && (
-                        <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+                        <span className="w-2 h-2 rounded-sm bg-blue-600 shrink-0" />
                       )}
                       {editingId === s.id ? (
                         <input
@@ -169,11 +169,11 @@ export default function ScenarioSelector() {
                   }}
                   placeholder="Scenario name"
                   autoFocus
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   onClick={handleCreate}
-                  className="px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  className="px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                   Save
                 </button>
@@ -187,7 +187,7 @@ export default function ScenarioSelector() {
             ) : (
               <button
                 onClick={() => setCreating(true)}
-                className="w-full px-3 py-2 text-sm font-medium text-blue-600 border border-dashed border-blue-300 rounded-md hover:bg-blue-50 transition-colors"
+                className="w-full px-3 py-2 text-sm font-medium text-blue-600 border border-dashed border-blue-300 rounded hover:bg-blue-50 transition-colors"
               >
                 + Save Current Expenses as Scenario
               </button>

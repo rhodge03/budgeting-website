@@ -32,7 +32,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded border border-gray-200 p-4">
       <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
         Tax Settings
       </h3>
@@ -46,7 +46,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           <select
             value={earner.state}
             onChange={(e) => handleChange('state', e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {STATES.map((s) => (
               <option key={s.code} value={s.code}>
@@ -64,7 +64,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           <select
             value={earner.filingStatus}
             onChange={(e) => handleChange('filingStatus', e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {FILING_STATUSES.map((fs) => (
               <option key={fs.value} value={fs.value}>
@@ -79,7 +79,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           <label className="block text-xs font-medium text-gray-600 mb-1">
             Deduction Type
           </label>
-          <div className="flex rounded-md border border-gray-300 overflow-hidden">
+          <div className="flex rounded border border-gray-300 overflow-hidden">
             <button
               onClick={() => handleChange('deductionType', 'standard')}
               className={`flex-1 px-3 py-2 text-sm transition-colors ${

@@ -145,7 +145,7 @@ export default function ChildSavingsChart({ earner }: Props) {
 
   if (data.length === 0) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+      <div className="bg-white rounded border border-gray-200 p-8 text-center">
         <p className="text-sm text-gray-500">Set age and savings details to see projections.</p>
       </div>
     );
@@ -183,7 +183,7 @@ export default function ChildSavingsChart({ earner }: Props) {
               <button
                 key={s.key}
                 onClick={() => handleToggle(s.key)}
-                className={`px-2 py-0.5 text-[11px] rounded-full border transition-colors ${
+                className={`px-2 py-0.5 text-[11px] rounded border transition-colors ${
                   active
                     ? 'text-white border-transparent'
                     : 'text-gray-500 border-gray-300 bg-white hover:bg-gray-50'
@@ -200,7 +200,7 @@ export default function ChildSavingsChart({ earner }: Props) {
       {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {atWithdrawal && (
-          <div className="bg-white rounded-lg border border-purple-200 p-4">
+          <div className="bg-white rounded border border-purple-200 p-4">
             <p className="text-xs text-gray-500 uppercase tracking-wide">At Withdrawal (Age {withdrawalAge})</p>
             <p className="text-2xl font-bold text-purple-700 mt-1">
               ${atWithdrawal.balance.toLocaleString('en-US')}
@@ -212,13 +212,13 @@ export default function ChildSavingsChart({ earner }: Props) {
             </p>
           </div>
         )}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white rounded border border-gray-200 p-4">
           <p className="text-xs text-gray-500 uppercase tracking-wide">Total Contributed</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">
             ${(atWithdrawal ?? finalYear).totalContributed.toLocaleString('en-US')}
           </p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white rounded border border-gray-200 p-4">
           <p className="text-xs text-gray-500 uppercase tracking-wide">Cumulative Interest</p>
           <p className="text-2xl font-bold text-green-600 mt-1">
             ${(atWithdrawal ?? finalYear).cumulativeInterest.toLocaleString('en-US')}
@@ -230,7 +230,7 @@ export default function ChildSavingsChart({ earner }: Props) {
       </div>
 
       {/* Chart */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white rounded border border-gray-200 p-4">
         <ResponsiveContainer width="100%" height={400}>
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -277,7 +277,7 @@ export default function ChildSavingsChart({ earner }: Props) {
       </div>
 
       {/* Year-by-year table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded border border-gray-200 overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <h3 className="text-sm font-semibold text-gray-900">Year-by-Year Breakdown</h3>
           <button

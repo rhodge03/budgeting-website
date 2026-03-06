@@ -26,7 +26,7 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       {/* At Retirement */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white rounded border border-gray-200 p-4">
         <p className="text-xs text-gray-500 mb-1">At Retirement (Age {atRetirement.age})</p>
         <p className="text-lg font-semibold text-gray-900">{fmt(atRetirement.totalSavings)}</p>
         <div className="text-xs text-gray-500 mt-1">
@@ -37,7 +37,7 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
       </div>
 
       {/* At End of Projection */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white rounded border border-gray-200 p-4">
         <p className="text-xs text-gray-500 mb-1">At Age {finalYear.age}</p>
         <p className="text-lg font-semibold text-gray-900">{fmt(finalYear.totalSavings)}</p>
         <p className="text-xs text-gray-500 mt-1">
@@ -46,15 +46,15 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
       </div>
 
       {/* Goal Progress */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white rounded border border-gray-200 p-4">
         <p className="text-xs text-gray-500 mb-1">Retirement Goal</p>
         {retirementGoal && retirementGoal > 0 ? (
           <>
             <p className="text-lg font-semibold text-gray-900">{fmt(retirementGoal)}</p>
             <div className="mt-1.5">
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-sm h-2">
                 <div
-                  className={`h-2 rounded-full transition-all ${
+                  className={`h-2 rounded-sm transition-all ${
                     (goalPct ?? 0) >= 100 ? 'bg-green-500' : 'bg-blue-500'
                   }`}
                   style={{ width: `${Math.min(goalPct ?? 0, 100)}%` }}
@@ -69,7 +69,7 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
       </div>
 
       {/* Social Security */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white rounded border border-gray-200 p-4">
         <p className="text-xs text-gray-500 mb-1">Est. Social Security</p>
         {ssEstimate ? (
           <>

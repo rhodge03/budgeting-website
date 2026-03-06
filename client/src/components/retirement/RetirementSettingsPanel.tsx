@@ -27,7 +27,7 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
   const yearsUntilRetirement = Math.max(0, targetRetirementAge - currentAge);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded border border-gray-200 p-4">
       <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
         {isChild ? 'Age & Withdrawal' : 'Retirement Settings'}
       </h3>
@@ -124,7 +124,7 @@ function AgeSlider({
           max={max}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+          className="flex-1 h-2 bg-gray-200 rounded appearance-none cursor-pointer accent-blue-600"
         />
         <input
           type="number"
@@ -135,7 +135,7 @@ function AgeSlider({
             const v = Number(e.target.value);
             if (v >= min && v <= max) onChange(v);
           }}
-          className="w-16 px-2 py-1 text-sm text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-16 px-2 py-1 text-sm text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
     </div>
@@ -152,9 +152,9 @@ function RetirementProgress({ current, goal }: { current: number; goal: number }
         </span>
         <span>{pct.toFixed(1)}% of goal</span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div className="w-full bg-gray-200 rounded-sm h-2.5">
         <div
-          className={`h-2.5 rounded-full ${pct >= 100 ? 'bg-green-500' : 'bg-blue-600'}`}
+          className={`h-2.5 rounded-sm ${pct >= 100 ? 'bg-green-500' : 'bg-blue-600'}`}
           style={{ width: `${pct}%` }}
         />
       </div>

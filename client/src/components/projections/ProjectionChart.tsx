@@ -61,7 +61,7 @@ const tooltipFormatter = (value: number | undefined) =>
 export default function ProjectionChart({ data, enabledSeries, retirementAge, retirementGoal }: Props) {
   if (data.length === 0) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+      <div className="bg-white rounded border border-gray-200 p-8 text-center">
         <p className="text-sm text-gray-500">
           Add earner details (income, savings, retirement age) to see projections.
         </p>
@@ -72,7 +72,7 @@ export default function ProjectionChart({ data, enabledSeries, retirementAge, re
   const activeSeries = AVAILABLE_SERIES.filter((s) => enabledSeries.has(s.key));
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded border border-gray-200 p-4">
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />

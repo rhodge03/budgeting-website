@@ -21,7 +21,7 @@ export default function LandingPage() {
         backgroundPosition: 'center',
       }}
     >
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-10 max-w-md w-full text-center">
+      <div className="bg-white/90 backdrop-blur-sm rounded shadow-xl p-10 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">When Do I Quit?</h1>
         <p className="text-gray-600 mb-8">
           Plan your household finances and see when you can retire.
@@ -29,7 +29,7 @@ export default function LandingPage() {
 
         <button
           onClick={handleTryFree}
-          className="w-full rounded-md bg-blue-600 px-4 py-3 text-white font-medium hover:bg-blue-700 transition-colors mb-4"
+          className="w-full rounded bg-blue-600 px-4 py-3 text-white font-medium hover:bg-blue-700 transition-colors mb-4"
         >
           {hasExisting ? 'Continue Where You Left Off' : 'Try It Free — No Account Needed'}
         </button>

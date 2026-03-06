@@ -60,7 +60,7 @@ export default function TaxSummaryPanel({ earnerId }: Props) {
   const stateName = STATE_TAX_RATES[earner.state]?.name ?? earner.state;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded border border-gray-200 p-4">
       <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
         Tax Breakdown {isJoint && '(Joint)'}
       </h3>

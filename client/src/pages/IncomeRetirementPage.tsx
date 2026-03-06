@@ -54,17 +54,17 @@ export default function IncomeRetirementPage() {
             <div key={earner.id} className="space-y-4">
               {showBadge && (
                 <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <div className="w-2 h-2 rounded-sm bg-blue-500" />
                   <h3 className="text-lg font-semibold text-gray-800">
                     {earner.name}
                   </h3>
                   {earner.isPrimary && (
-                    <span className="text-xs font-normal text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-normal text-blue-600 bg-blue-50 px-2 py-0.5 rounded-sm">
                       Primary
                     </span>
                   )}
                   {isChild && (
-                    <span className="text-xs font-normal text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-normal text-purple-600 bg-purple-50 px-2 py-0.5 rounded-sm">
                       Child
                     </span>
                   )}
@@ -94,7 +94,7 @@ export default function IncomeRetirementPage() {
       </div>
 
       {earners.length === 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded border border-gray-200 p-8 text-center">
           <p className="text-sm text-gray-500">Add a member to get started.</p>
         </div>
       )}

@@ -20,7 +20,7 @@ export default function ContributionSettings({ earnerId }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white rounded border border-gray-200 p-4">
       <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
         {isChild ? 'Savings' : 'Savings & 401(k)'}
       </h3>
