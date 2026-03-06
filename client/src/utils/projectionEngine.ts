@@ -1,6 +1,6 @@
 import { calculateTax, calculateCapitalGainsTax } from './taxCalculator';
 import type { HouseholdSnapshot, HomePurchase } from 'shared';
-import { computeHomePurchaseMonthly, computeMonthlyMortgage, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
+import { computeHomePurchaseMonthly, computeMonthlyMortgage, computeClosingCosts, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
 
@@ -130,6 +130,17 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
   const hpLoanTermYears = hp?.loanTermYears ?? 30;
 
   const startEquity = homeValue - loanBalance;
+
+  // Deduct down payment + closing costs from primary earner's general savings
+  if (hp && earnerState.length > 0) {
+    const downPayment = Number(hp.downPayment);
+    const closingCosts = computeClosingCosts(hp);
+    const totalUpfront = downPayment + closingCosts;
+    const es0 = earnerState[0];
+    es0.generalSavings -= totalUpfront;
+    // Reduce cost basis proportionally (selling investments to fund the purchase)
+    es0.costBasis = Math.max(0, es0.costBasis - totalUpfront);
+  }
 
   // Baseline row: starting balances, no processing
   const startGeneralSavings = earnerState.reduce((s, es) => s + es.generalSavings, 0);
