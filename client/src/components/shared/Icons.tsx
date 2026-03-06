@@ -68,192 +68,267 @@ export function CalculatorIcon(props: IconProps) {
 }
 
 // ── Animal Avatar Icons ─────────────────────────────────────
-// Each animal has a unique color and distinctive shape for easy identification.
+// Each animal uses natural, subdued colors and realistic proportions.
 
 const ad: IconProps = { width: 24, height: 24, viewBox: '0 0 24 24', stroke: 'none' };
 
-// Fox — Orange (#E8590C)
+// Fox — Russet (#A0674B)
 export function FoxIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <path d="M3 1 L8 9 L3 13 L7 16 L12 21 L17 16 L21 13 L16 9 L21 1 L15 7 L12 5 L9 7 Z" fill="#E8590C" />
-      <path d="M8 12 L12 18 L16 12 L12 14 Z" fill="white" />
-      <circle cx="9" cy="10" r="1.5" fill="white" />
-      <circle cx="15" cy="10" r="1.5" fill="white" />
-      <circle cx="9" cy="10" r="0.8" fill="#1a1a1a" />
-      <circle cx="15" cy="10" r="0.8" fill="#1a1a1a" />
-      <ellipse cx="12" cy="14.5" rx="1" ry="0.7" fill="#1a1a1a" />
+      {/* Ears */}
+      <path d="M5.5 2.5 L8.5 8 L3 8.5 Z" fill="#A0674B" />
+      <path d="M18.5 2.5 L21 8.5 L15.5 8 Z" fill="#A0674B" />
+      <path d="M6.3 4 L8 7.5 L4.5 7.8 Z" fill="#C09070" />
+      <path d="M17.7 4 L19.5 7.8 L16 7.5 Z" fill="#C09070" />
+      {/* Head */}
+      <ellipse cx="12" cy="14" rx="8" ry="8" fill="#A0674B" />
+      {/* Muzzle/cheeks */}
+      <path d="M7.5 14.5 Q12 13 16.5 14.5 L14.5 20 Q12 21.5 9.5 20 Z" fill="#DACED0" />
+      {/* Eyes */}
+      <ellipse cx="9" cy="12" rx="1.1" ry="1.3" fill="#1E1710" />
+      <ellipse cx="15" cy="12" rx="1.1" ry="1.3" fill="#1E1710" />
+      <ellipse cx="9.3" cy="11.5" rx="0.35" ry="0.45" fill="white" opacity="0.4" />
+      <ellipse cx="15.3" cy="11.5" rx="0.35" ry="0.45" fill="white" opacity="0.4" />
+      {/* Nose */}
+      <ellipse cx="12" cy="16.5" rx="1.2" ry="0.9" fill="#1E1710" />
+      <path d="M12 17.4 L12 18.5" stroke="#1E1710" strokeWidth="0.6" />
     </svg>
   );
 }
 
-// Cat — Purple (#7C3AED)
+// Cat — Warm Gray (#7A7370)
 export function CatIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <path d="M4 7 L6 1 L10 7 L14 7 L18 1 L20 7 L20 15 Q20 22 12 22 Q4 22 4 15 Z" fill="#7C3AED" />
-      <circle cx="9" cy="12" r="2" fill="#EDE9FE" />
-      <circle cx="15" cy="12" r="2" fill="#EDE9FE" />
-      <circle cx="9" cy="12" r="1" fill="#1a1a1a" />
-      <circle cx="15" cy="12" r="1" fill="#1a1a1a" />
-      <ellipse cx="12" cy="16" rx="1.2" ry="0.8" fill="#F9A8D4" />
-      <line x1="4" y1="14" x2="1" y2="13" stroke="#7C3AED" strokeWidth="1" />
-      <line x1="4" y1="15.5" x2="1" y2="15.5" stroke="#7C3AED" strokeWidth="1" />
-      <line x1="20" y1="14" x2="23" y2="13" stroke="#7C3AED" strokeWidth="1" />
-      <line x1="20" y1="15.5" x2="23" y2="15.5" stroke="#7C3AED" strokeWidth="1" />
+      {/* Ears */}
+      <path d="M5 7.5 L7 1.5 L10.5 7.5 Z" fill="#7A7370" />
+      <path d="M13.5 7.5 L17 1.5 L19 7.5 Z" fill="#7A7370" />
+      <path d="M6.2 6 L7.5 3 L9.5 6.5 Z" fill="#9B9490" />
+      <path d="M14.5 6.5 L16.5 3 L17.8 6 Z" fill="#9B9490" />
+      {/* Head */}
+      <ellipse cx="12" cy="14" rx="8.5" ry="8.5" fill="#7A7370" />
+      {/* Lighter muzzle */}
+      <ellipse cx="12" cy="16.5" rx="3.5" ry="2.8" fill="#9B9490" />
+      {/* Eyes — vertical pupils */}
+      <ellipse cx="8.8" cy="12.5" rx="1.6" ry="1.8" fill="#C4B99A" />
+      <ellipse cx="15.2" cy="12.5" rx="1.6" ry="1.8" fill="#C4B99A" />
+      <ellipse cx="8.8" cy="12.5" rx="0.5" ry="1.4" fill="#1E1710" />
+      <ellipse cx="15.2" cy="12.5" rx="0.5" ry="1.4" fill="#1E1710" />
+      {/* Nose */}
+      <path d="M11 16 L12 17 L13 16 Z" fill="#B09090" />
+      {/* Whiskers */}
+      <line x1="5" y1="15" x2="1.5" y2="14.2" stroke="#9B9490" strokeWidth="0.6" />
+      <line x1="5" y1="16.5" x2="1.5" y2="16.5" stroke="#9B9490" strokeWidth="0.6" />
+      <line x1="19" y1="15" x2="22.5" y2="14.2" stroke="#9B9490" strokeWidth="0.6" />
+      <line x1="19" y1="16.5" x2="22.5" y2="16.5" stroke="#9B9490" strokeWidth="0.6" />
     </svg>
   );
 }
 
-// Dog — Brown (#92400E)
+// Dog — Tawny Brown (#8B7355)
 export function DogIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <path d="M6 6 Q3 2 2 6 L3 11 L4 14 Q4 21 12 21 Q20 21 20 14 L21 11 L22 6 Q21 2 18 6 L17 8 L7 8 Z" fill="#92400E" />
-      <ellipse cx="7" cy="5" rx="3" ry="4" fill="#78350F" />
-      <ellipse cx="17" cy="5" rx="3" ry="4" fill="#78350F" />
-      <circle cx="9" cy="12" r="1.5" fill="white" />
-      <circle cx="15" cy="12" r="1.5" fill="white" />
-      <circle cx="9" cy="12" r="0.8" fill="#1a1a1a" />
-      <circle cx="15" cy="12" r="0.8" fill="#1a1a1a" />
-      <ellipse cx="12" cy="16" rx="2.5" ry="1.5" fill="#D4A574" />
-      <ellipse cx="12" cy="15.5" rx="1" ry="0.6" fill="#1a1a1a" />
-      <ellipse cx="12" cy="18" rx="1" ry="0.5" fill="#F87171" />
+      {/* Floppy ears */}
+      <ellipse cx="5.5" cy="10" rx="3.5" ry="6" fill="#6B5B45" transform="rotate(-10 5.5 10)" />
+      <ellipse cx="18.5" cy="10" rx="3.5" ry="6" fill="#6B5B45" transform="rotate(10 18.5 10)" />
+      {/* Head */}
+      <ellipse cx="12" cy="12.5" rx="7.5" ry="8" fill="#8B7355" />
+      {/* Forehead patch */}
+      <ellipse cx="12" cy="9.5" rx="3" ry="2.5" fill="#6B5B45" />
+      {/* Muzzle */}
+      <ellipse cx="12" cy="17" rx="3.5" ry="2.8" fill="#BBA88A" />
+      {/* Eyes */}
+      <ellipse cx="9" cy="12" rx="1.3" ry="1.4" fill="#1E1710" />
+      <ellipse cx="15" cy="12" rx="1.3" ry="1.4" fill="#1E1710" />
+      <ellipse cx="9.4" cy="11.5" rx="0.4" ry="0.5" fill="white" opacity="0.35" />
+      <ellipse cx="15.4" cy="11.5" rx="0.4" ry="0.5" fill="white" opacity="0.35" />
+      {/* Nose */}
+      <ellipse cx="12" cy="16" rx="1.4" ry="1" fill="#1E1710" />
+      <ellipse cx="12" cy="16" rx="0.4" ry="0.2" fill="#3A3028" />
     </svg>
   );
 }
 
-// Bear — Dark Brown (#451A03)
+// Bear — Dark Umber (#5C4033)
 export function BearIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <circle cx="5" cy="5" r="3.5" fill="#78350F" />
-      <circle cx="19" cy="5" r="3.5" fill="#78350F" />
-      <circle cx="5" cy="5" r="1.8" fill="#92400E" />
-      <circle cx="19" cy="5" r="1.8" fill="#92400E" />
-      <ellipse cx="12" cy="13" rx="9" ry="9" fill="#78350F" />
-      <circle cx="9" cy="11" r="1.5" fill="white" />
-      <circle cx="15" cy="11" r="1.5" fill="white" />
-      <circle cx="9" cy="11" r="0.8" fill="#1a1a1a" />
-      <circle cx="15" cy="11" r="0.8" fill="#1a1a1a" />
-      <ellipse cx="12" cy="15.5" rx="3" ry="2.2" fill="#D4A574" />
-      <ellipse cx="12" cy="15" rx="1.2" ry="0.8" fill="#1a1a1a" />
+      {/* Round ears */}
+      <circle cx="5.5" cy="5.5" r="3.2" fill="#5C4033" />
+      <circle cx="18.5" cy="5.5" r="3.2" fill="#5C4033" />
+      <circle cx="5.5" cy="5.5" r="1.6" fill="#7A5C4A" />
+      <circle cx="18.5" cy="5.5" r="1.6" fill="#7A5C4A" />
+      {/* Head */}
+      <ellipse cx="12" cy="13.5" rx="9" ry="8.5" fill="#5C4033" />
+      {/* Muzzle */}
+      <ellipse cx="12" cy="16" rx="3.5" ry="2.8" fill="#7A5C4A" />
+      {/* Eyes */}
+      <ellipse cx="8.5" cy="12" rx="1" ry="1.1" fill="#1E1710" />
+      <ellipse cx="15.5" cy="12" rx="1" ry="1.1" fill="#1E1710" />
+      <ellipse cx="8.7" cy="11.6" rx="0.3" ry="0.4" fill="white" opacity="0.3" />
+      <ellipse cx="15.7" cy="11.6" rx="0.3" ry="0.4" fill="white" opacity="0.3" />
+      {/* Nose */}
+      <ellipse cx="12" cy="15.5" rx="1.3" ry="0.9" fill="#1E1710" />
+      <path d="M12 16.4 L12 17.5" stroke="#1E1710" strokeWidth="0.6" />
     </svg>
   );
 }
 
-// Rabbit — Pink (#EC4899)
+// Rabbit — Warm Taupe (#9B8E7E)
 export function RabbitIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <ellipse cx="9" cy="5" rx="2.5" ry="6" fill="#EC4899" />
-      <ellipse cx="15" cy="5" rx="2.5" ry="6" fill="#EC4899" />
-      <ellipse cx="9" cy="5" rx="1.2" ry="4" fill="#FBCFE8" />
-      <ellipse cx="15" cy="5" rx="1.2" ry="4" fill="#FBCFE8" />
-      <ellipse cx="12" cy="15" rx="7.5" ry="7" fill="#EC4899" />
-      <circle cx="9" cy="13.5" r="1.5" fill="white" />
-      <circle cx="15" cy="13.5" r="1.5" fill="white" />
-      <circle cx="9" cy="13.5" r="0.8" fill="#1a1a1a" />
-      <circle cx="15" cy="13.5" r="0.8" fill="#1a1a1a" />
-      <ellipse cx="12" cy="17" rx="1" ry="0.7" fill="#FBCFE8" />
-      <circle cx="8" cy="16" r="1.5" fill="#FBCFE8" opacity="0.6" />
-      <circle cx="16" cy="16" r="1.5" fill="#FBCFE8" opacity="0.6" />
+      {/* Tall ears */}
+      <ellipse cx="8.5" cy="5" rx="2.2" ry="6.5" fill="#9B8E7E" />
+      <ellipse cx="15.5" cy="5" rx="2.2" ry="6.5" fill="#9B8E7E" />
+      <ellipse cx="8.5" cy="5" rx="1" ry="4.5" fill="#C4B5A5" />
+      <ellipse cx="15.5" cy="5" rx="1" ry="4.5" fill="#C4B5A5" />
+      {/* Head */}
+      <ellipse cx="12" cy="15.5" rx="7" ry="6.5" fill="#9B8E7E" />
+      {/* Cheeks */}
+      <ellipse cx="8" cy="16.5" rx="2.5" ry="2" fill="#B0A494" />
+      <ellipse cx="16" cy="16.5" rx="2.5" ry="2" fill="#B0A494" />
+      {/* Eyes */}
+      <ellipse cx="9" cy="14" rx="1.2" ry="1.3" fill="#1E1710" />
+      <ellipse cx="15" cy="14" rx="1.2" ry="1.3" fill="#1E1710" />
+      <ellipse cx="9.3" cy="13.5" rx="0.35" ry="0.45" fill="white" opacity="0.4" />
+      <ellipse cx="15.3" cy="13.5" rx="0.35" ry="0.45" fill="white" opacity="0.4" />
+      {/* Nose */}
+      <path d="M11.2 16.8 L12 17.5 L12.8 16.8 Z" fill="#C0A0A0" />
+      {/* Mouth lines */}
+      <path d="M12 17.5 Q10.5 19 9.5 18.5" fill="none" stroke="#7A7068" strokeWidth="0.5" />
+      <path d="M12 17.5 Q13.5 19 14.5 18.5" fill="none" stroke="#7A7068" strokeWidth="0.5" />
     </svg>
   );
 }
 
-// Owl — Gold (#B45309)
+// Owl — Olive Brown (#6E6350)
 export function OwlIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <path d="M4 8 L6 2 L9 6 L12 4 L15 6 L18 2 L20 8 Q22 14 20 18 Q18 22 12 22 Q6 22 4 18 Q2 14 4 8 Z" fill="#B45309" />
-      <path d="M6 10 Q6 18 12 20 Q18 18 18 10 Z" fill="#FDE68A" />
-      <circle cx="9" cy="11" r="3" fill="white" />
-      <circle cx="15" cy="11" r="3" fill="white" />
-      <circle cx="9" cy="11" r="1.5" fill="#B45309" />
-      <circle cx="15" cy="11" r="1.5" fill="#B45309" />
-      <circle cx="9" cy="11" r="0.7" fill="#1a1a1a" />
-      <circle cx="15" cy="11" r="0.7" fill="#1a1a1a" />
-      <path d="M11 15.5 L12 17.5 L13 15.5" fill="#E8590C" />
+      {/* Ear tufts */}
+      <path d="M5 7 L6.5 2 L9 7" fill="#6E6350" />
+      <path d="M15 7 L17.5 2 L19 7" fill="#6E6350" />
+      {/* Body */}
+      <ellipse cx="12" cy="14" rx="9" ry="8.5" fill="#6E6350" />
+      {/* Facial disc */}
+      <ellipse cx="12" cy="13" rx="6.5" ry="6" fill="#8A7E6A" />
+      {/* Eye rings */}
+      <circle cx="9" cy="12" r="2.8" fill="#BEB5A0" />
+      <circle cx="15" cy="12" r="2.8" fill="#BEB5A0" />
+      {/* Eyes */}
+      <circle cx="9" cy="12" r="1.6" fill="#C4953A" />
+      <circle cx="15" cy="12" r="1.6" fill="#C4953A" />
+      <circle cx="9" cy="12" r="0.8" fill="#1E1710" />
+      <circle cx="15" cy="12" r="0.8" fill="#1E1710" />
+      <ellipse cx="9.3" cy="11.5" rx="0.25" ry="0.3" fill="white" opacity="0.4" />
+      <ellipse cx="15.3" cy="11.5" rx="0.25" ry="0.3" fill="white" opacity="0.4" />
+      {/* Beak */}
+      <path d="M11.2 15 L12 17 L12.8 15 Z" fill="#9A8560" />
+      {/* Breast pattern */}
+      <path d="M8 18 Q12 21 16 18" fill="none" stroke="#8A7E6A" strokeWidth="0.6" />
+      <path d="M9 19.5 Q12 22 15 19.5" fill="none" stroke="#8A7E6A" strokeWidth="0.6" />
     </svg>
   );
 }
 
-// Penguin — Teal/Dark (#134E4A)
+// Penguin — Dark Slate (#3D4F5F)
 export function PenguinIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <ellipse cx="12" cy="13" rx="8.5" ry="9.5" fill="#134E4A" />
-      <ellipse cx="12" cy="14" rx="5.5" ry="7.5" fill="white" />
-      <circle cx="9" cy="9.5" r="1.5" fill="white" />
-      <circle cx="15" cy="9.5" r="1.5" fill="white" />
-      <circle cx="9" cy="9.5" r="0.8" fill="#1a1a1a" />
-      <circle cx="15" cy="9.5" r="0.8" fill="#1a1a1a" />
-      <path d="M10.5 13 L12 15 L13.5 13" fill="#F59E0B" />
-      <ellipse cx="4" cy="14" rx="1.5" ry="4" fill="#134E4A" transform="rotate(-15 4 14)" />
-      <ellipse cx="20" cy="14" rx="1.5" ry="4" fill="#134E4A" transform="rotate(15 20 14)" />
+      {/* Body */}
+      <ellipse cx="12" cy="13.5" rx="8" ry="9" fill="#3D4F5F" />
+      {/* White belly */}
+      <ellipse cx="12" cy="15" rx="5" ry="6.5" fill="#E8E4E0" />
+      {/* Flippers */}
+      <ellipse cx="4.5" cy="14" rx="1.5" ry="4.5" fill="#3D4F5F" transform="rotate(-12 4.5 14)" />
+      <ellipse cx="19.5" cy="14" rx="1.5" ry="4.5" fill="#3D4F5F" transform="rotate(12 19.5 14)" />
+      {/* Eyes */}
+      <ellipse cx="9.5" cy="10" rx="1" ry="1.1" fill="#1E1710" />
+      <ellipse cx="14.5" cy="10" rx="1" ry="1.1" fill="#1E1710" />
+      <ellipse cx="9.7" cy="9.6" rx="0.3" ry="0.35" fill="white" opacity="0.4" />
+      <ellipse cx="14.7" cy="9.6" rx="0.3" ry="0.35" fill="white" opacity="0.4" />
+      {/* Beak */}
+      <path d="M10.5 12.5 L12 14 L13.5 12.5 Z" fill="#A0845A" />
     </svg>
   );
 }
 
-// Lion — Amber (#D97706)
+// Lion — Muted Gold (#9A7D4A)
 export function LionIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <circle cx="12" cy="12" r="11" fill="#D97706" />
-      <circle cx="12" cy="12" r="11" fill="#92400E" opacity="0.3" />
-      {/* Mane spikes */}
-      <circle cx="12" cy="1" r="2.5" fill="#D97706" />
-      <circle cx="5" cy="4" r="2.5" fill="#D97706" />
-      <circle cx="19" cy="4" r="2.5" fill="#D97706" />
-      <circle cx="2" cy="10" r="2.5" fill="#D97706" />
-      <circle cx="22" cy="10" r="2.5" fill="#D97706" />
-      <circle cx="3" cy="17" r="2.5" fill="#D97706" />
-      <circle cx="21" cy="17" r="2.5" fill="#D97706" />
+      {/* Mane */}
+      <circle cx="12" cy="12" r="11" fill="#7A6238" />
+      {/* Mane texture */}
+      <circle cx="12" cy="1.5" r="2.5" fill="#9A7D4A" />
+      <circle cx="5.5" cy="4" r="2.5" fill="#9A7D4A" />
+      <circle cx="18.5" cy="4" r="2.5" fill="#9A7D4A" />
+      <circle cx="2.5" cy="10" r="2.5" fill="#9A7D4A" />
+      <circle cx="21.5" cy="10" r="2.5" fill="#9A7D4A" />
+      <circle cx="4" cy="17" r="2.5" fill="#9A7D4A" />
+      <circle cx="20" cy="17" r="2.5" fill="#9A7D4A" />
       {/* Face */}
-      <ellipse cx="12" cy="13" rx="7" ry="7.5" fill="#FBBF24" />
-      <circle cx="9" cy="11" r="1.5" fill="white" />
-      <circle cx="15" cy="11" r="1.5" fill="white" />
-      <circle cx="9" cy="11" r="0.8" fill="#1a1a1a" />
-      <circle cx="15" cy="11" r="0.8" fill="#1a1a1a" />
-      <ellipse cx="12" cy="14.5" rx="1.5" ry="1" fill="#D97706" />
-      <line x1="12" y1="15.5" x2="12" y2="17" stroke="#D97706" strokeWidth="1" />
+      <ellipse cx="12" cy="13" rx="6.5" ry="7" fill="#C4A76A" />
+      {/* Eyes */}
+      <ellipse cx="9.5" cy="11.5" rx="1" ry="1.1" fill="#1E1710" />
+      <ellipse cx="14.5" cy="11.5" rx="1" ry="1.1" fill="#1E1710" />
+      <ellipse cx="9.7" cy="11.1" rx="0.3" ry="0.35" fill="white" opacity="0.3" />
+      <ellipse cx="14.7" cy="11.1" rx="0.3" ry="0.35" fill="white" opacity="0.3" />
+      {/* Nose */}
+      <ellipse cx="12" cy="14.5" rx="1.3" ry="0.9" fill="#7A6238" />
+      <path d="M12 15.4 L12 16.8" stroke="#7A6238" strokeWidth="0.6" />
+      {/* Mouth */}
+      <path d="M12 16.8 Q10.5 17.8 10 17.2" fill="none" stroke="#7A6238" strokeWidth="0.5" />
+      <path d="M12 16.8 Q13.5 17.8 14 17.2" fill="none" stroke="#7A6238" strokeWidth="0.5" />
     </svg>
   );
 }
 
-// Wolf — Slate (#475569)
+// Wolf — Cool Gray (#5A6370)
 export function WolfIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
-      <path d="M3 3 L7 10 L5 13 Q4 19 12 21 Q20 19 19 13 L17 10 L21 3 L17 8 L12 6 L7 8 Z" fill="#475569" />
-      <path d="M7 10 L12 8 L17 10 L12 12 Z" fill="#94A3B8" />
-      <circle cx="9" cy="11.5" r="1.5" fill="#FEF9C3" />
-      <circle cx="15" cy="11.5" r="1.5" fill="#FEF9C3" />
-      <circle cx="9" cy="11.5" r="0.8" fill="#1a1a1a" />
-      <circle cx="15" cy="11.5" r="0.8" fill="#1a1a1a" />
-      <ellipse cx="12" cy="16" rx="1.5" ry="1" fill="#1E293B" />
-      <path d="M10 18 L12 20 L14 18" fill="#94A3B8" />
+      {/* Ears */}
+      <path d="M4 3.5 L7.5 9 L3 10 Z" fill="#5A6370" />
+      <path d="M20 3.5 L21 10 L16.5 9 Z" fill="#5A6370" />
+      <path d="M5.2 5 L7 8.5 L4 9 Z" fill="#74808C" />
+      <path d="M18.8 5 L20 9 L17 8.5 Z" fill="#74808C" />
+      {/* Head */}
+      <ellipse cx="12" cy="13.5" rx="8.5" ry="8.5" fill="#5A6370" />
+      {/* Lighter face */}
+      <path d="M7 13 L12 11 L17 13 L14 19.5 Q12 21 10 19.5 Z" fill="#8A949E" />
+      {/* Eyes — amber */}
+      <ellipse cx="8.8" cy="12" rx="1.2" ry="1.3" fill="#C4A855" />
+      <ellipse cx="15.2" cy="12" rx="1.2" ry="1.3" fill="#C4A855" />
+      <ellipse cx="8.8" cy="12" rx="0.6" ry="0.8" fill="#1E1710" />
+      <ellipse cx="15.2" cy="12" rx="0.6" ry="0.8" fill="#1E1710" />
+      {/* Nose */}
+      <ellipse cx="12" cy="16.5" rx="1.3" ry="0.9" fill="#1E1710" />
     </svg>
   );
 }
 
-// Deer — Forest Green (#166534)
+// Deer — Sage (#6B7F5E)
 export function DeerIcon(props: IconProps) {
   return (
     <svg {...ad} {...props}>
       {/* Antlers */}
-      <path d="M8 8 L7 4 L5 2 M7 4 L9 2" fill="none" stroke="#92400E" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M16 8 L17 4 L19 2 M17 4 L15 2" fill="none" stroke="#92400E" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M8 8 L7 4.5 L5 2.5 M7 4.5 L9 2.5" fill="none" stroke="#7A6550" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M16 8 L17 4.5 L19 2.5 M17 4.5 L15 2.5" fill="none" stroke="#7A6550" strokeWidth="1.3" strokeLinecap="round" />
       {/* Head */}
-      <ellipse cx="12" cy="14" rx="7" ry="8" fill="#166534" />
-      {/* Inner face */}
-      <ellipse cx="12" cy="15" rx="4" ry="5" fill="#22C55E" opacity="0.3" />
-      <circle cx="9" cy="12.5" r="1.5" fill="white" />
-      <circle cx="15" cy="12.5" r="1.5" fill="white" />
-      <circle cx="9" cy="12.5" r="0.8" fill="#1a1a1a" />
-      <circle cx="15" cy="12.5" r="0.8" fill="#1a1a1a" />
-      <ellipse cx="12" cy="17" rx="1.5" ry="1" fill="#15803D" />
+      <ellipse cx="12" cy="14.5" rx="7" ry="7.5" fill="#6B7F5E" />
+      {/* Lighter face */}
+      <ellipse cx="12" cy="16" rx="3.5" ry="4" fill="#8A9C7A" />
+      {/* Eyes */}
+      <ellipse cx="9" cy="13" rx="1.2" ry="1.4" fill="#1E1710" />
+      <ellipse cx="15" cy="13" rx="1.2" ry="1.4" fill="#1E1710" />
+      <ellipse cx="9.3" cy="12.5" rx="0.35" ry="0.45" fill="white" opacity="0.35" />
+      <ellipse cx="15.3" cy="12.5" rx="0.35" ry="0.45" fill="white" opacity="0.35" />
+      {/* Nose */}
+      <ellipse cx="12" cy="17.5" rx="1.3" ry="0.9" fill="#3D4A35" />
     </svg>
   );
 }
