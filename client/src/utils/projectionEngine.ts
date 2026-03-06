@@ -58,10 +58,16 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
   const inflationMultiplier = 1 + inflationRate / 100;
 
   // Monthly expenses (before buffer), accounting for home purchase locked subs
-  const hpMonthlyTotal = inputs.homePurchase
-    ? computeHomePurchaseMonthly(inputs.homePurchase).total
+  const hpMonthly = inputs.homePurchase
+    ? computeHomePurchaseMonthly(inputs.homePurchase)
+    : null;
+  // Mortgage PI is fixed-rate (no inflation) and stops after loan payoff
+  const hpMortgageAnnual = (hpMonthly?.mortgagePI ?? 0) * 12;
+  // Other housing costs (tax, insurance, maintenance) inflate normally
+  const hpOtherAnnual = hpMonthly
+    ? (hpMonthly.propertyTax + hpMonthly.homeInsurance + hpMonthly.repairs) * 12
     : 0;
-  const monthlyExpenses = expenseCategories.reduce(
+  const baseMonthlyExpenses = expenseCategories.reduce(
     (sum, cat) => {
       const subs = cat.name === 'Housing' && inputs.homePurchase
         ? cat.subCategories.filter((s) => !HOME_PURCHASE_LOCKED_NAMES.includes(s.name))
@@ -69,8 +75,11 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       return sum + subs.reduce((s, sub) => s + Number(sub.amount), 0);
     },
     0,
-  ) + hpMonthlyTotal;
-  const annualExpenses = monthlyExpenses * 12 * (1 + expenseBuffer / 100);
+  );
+  // Inflateable annual expenses = non-mortgage expenses + other housing costs (all inflate)
+  const inflatableAnnual = (baseMonthlyExpenses * 12 + hpOtherAnnual) * (1 + expenseBuffer / 100);
+  // Fixed annual expenses = mortgage PI (no inflation, stops at payoff)
+  const fixedMortgageAnnual = hpMortgageAnnual * (1 + expenseBuffer / 100);
 
   // Per-earner tracking
   const earnerState = earners.map((earner) => {
@@ -232,8 +241,9 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
       }
     }
 
-    // Household expenses grow with inflation
-    const yearExpenses = annualExpenses * inflationFactor;
+    // Household expenses: inflatable costs grow with inflation, mortgage PI is fixed and stops at payoff
+    const mortgageThisYear = (hp && y < hpLoanTermYears) ? fixedMortgageAnnual : 0;
+    const yearExpenses = inflatableAnnual * inflationFactor + mortgageThisYear;
 
     // Net cash flow = income - taxes - expenses - 401k contributions - child savings contributions
     const netCash = totalIncome - totalTax - yearExpenses - totalContributions401k - totalChildContributions;
