@@ -16,12 +16,12 @@ interface MilestoneRow {
 export default function CompareSummary({ scenarios, retirementAge }: Props) {
   const rows: MilestoneRow[] = [];
 
-  // Monthly expenses (from first year's totalExpenses / 12)
+  // Monthly expenses (from first projected year, index 1 — index 0 is the baseline row)
   rows.push({
     label: 'Monthly Expenses',
     values: scenarios.map((s) => {
-      const first = s.data[0];
-      return first ? first.totalExpenses / 12 : 0;
+      const firstYear = s.data[1];
+      return firstYear ? firstYear.totalExpenses / 12 : 0;
     }),
     highlight: 'low',
   });
@@ -30,8 +30,8 @@ export default function CompareSummary({ scenarios, retirementAge }: Props) {
   rows.push({
     label: 'Annual Expenses',
     values: scenarios.map((s) => {
-      const first = s.data[0];
-      return first ? first.totalExpenses : 0;
+      const firstYear = s.data[1];
+      return firstYear ? firstYear.totalExpenses : 0;
     }),
     highlight: 'low',
   });
