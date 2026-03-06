@@ -87,17 +87,19 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
 
     for (const scenario of expenseScenarios) {
       if (!selectedIds.has(scenario.id)) continue;
+      // If this is the active scenario, use live data instead of stale snapshot
+      const isActive = scenario.id === household?.activeExpenseScenarioId;
       results.push({
         id: scenario.id,
         name: scenario.name,
         color: SCENARIO_COLORS[colorIdx++ % SCENARIO_COLORS.length],
         data: runProjection({
           earners,
-          expenseCategories: scenario.expenseData,
-          expenseBuffer: scenario.expenseBuffer,
+          expenseCategories: isActive ? expenseCategories : scenario.expenseData,
+          expenseBuffer: isActive ? currentBuffer : scenario.expenseBuffer,
           inflationRate,
           maxAge,
-          homePurchase: scenario.homePurchase,
+          homePurchase: isActive ? homePurchase : scenario.homePurchase,
         }),
       });
     }
