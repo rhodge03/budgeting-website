@@ -9,6 +9,7 @@ import ProjectionSummary from '../components/projections/ProjectionSummary';
 import ProjectionTable from '../components/projections/ProjectionTable';
 import SocialSecurityDetail from '../components/projections/SocialSecurityDetail';
 import ChildSavingsChart from '../components/projections/ChildSavingsChart';
+import ScenarioCompare from '../components/projections/ScenarioCompare';
 
 const STORAGE_KEY = 'projection-chart-settings';
 
@@ -144,6 +145,15 @@ export default function ProjectionsPage() {
 
       {/* Year-by-Year Table */}
       <ProjectionTable data={projectionData} retirementAge={retirementAge} />
+
+      {/* Scenario Comparison */}
+      <ScenarioCompare
+        earners={earners}
+        homePurchase={homePurchase}
+        inflationRate={inflationRate}
+        maxAge={maxAge}
+        retirementAge={retirementAge}
+      />
     </div>
   );
 }
