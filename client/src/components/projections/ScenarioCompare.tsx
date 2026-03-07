@@ -1,28 +1,35 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import { runProjection, type ProjectionInputs, type ProjectionYear } from '../../utils/projectionEngine';
+import type { ExpenseCategory, HomePurchase } from 'shared';
 import CompareOverlay from './CompareOverlay';
 import CompareSummary from './CompareSummary';
 import CompareSideBySide from './CompareSideBySide';
 import CompareDifference from './CompareDifference';
+import CompareHousing from './CompareHousing';
 
 export interface ScenarioProjection {
   name: string;
   id: string;
   color: string;
   data: ProjectionYear[];
+  expenseCategories: ExpenseCategory[];
+  homePurchase: HomePurchase | null;
+  expenseBuffer: number;
 }
 
 const SCENARIO_COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
 const STORAGE_KEY = 'scenario-compare-settings';
 
-type ViewMode = 'overlay' | 'summary' | 'sideBySide' | 'difference';
+type ViewMode = 'overlay' | 'summary' | 'sideBySide' | 'difference' | 'housing' | 'housingUtilities';
 
 const VIEW_LABELS: Record<ViewMode, string> = {
   overlay: 'Overlay',
   summary: 'Summary Table',
   sideBySide: 'Side by Side',
   difference: 'Difference',
+  housing: 'Housing Costs',
+  housingUtilities: 'Housing + Utilities',
 };
 
 interface SavedSettings {
@@ -82,6 +89,9 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
         name: 'Current',
         color: SCENARIO_COLORS[colorIdx++ % SCENARIO_COLORS.length],
         data: runProjection({ earners, expenseCategories, expenseBuffer: currentBuffer, inflationRate, maxAge, homePurchase }),
+        expenseCategories,
+        homePurchase: homePurchase ?? null,
+        expenseBuffer: currentBuffer,
       });
     }
 
@@ -89,18 +99,24 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
       if (!selectedIds.has(scenario.id)) continue;
       // If this is the active scenario, use live data instead of stale snapshot
       const isActive = scenario.id === household?.activeExpenseScenarioId;
+      const scenarioCategories = isActive ? expenseCategories : scenario.expenseData;
+      const scenarioHP = isActive ? (homePurchase ?? null) : (scenario.homePurchase ?? null);
+      const scenarioBuffer = isActive ? currentBuffer : scenario.expenseBuffer;
       results.push({
         id: scenario.id,
         name: scenario.name,
         color: SCENARIO_COLORS[colorIdx++ % SCENARIO_COLORS.length],
         data: runProjection({
           earners,
-          expenseCategories: isActive ? expenseCategories : scenario.expenseData,
-          expenseBuffer: isActive ? currentBuffer : scenario.expenseBuffer,
+          expenseCategories: scenarioCategories,
+          expenseBuffer: scenarioBuffer,
           inflationRate,
           maxAge,
-          homePurchase: isActive ? homePurchase : scenario.homePurchase,
+          homePurchase: scenarioHP,
         }),
+        expenseCategories: scenarioCategories,
+        homePurchase: scenarioHP,
+        expenseBuffer: scenarioBuffer,
       });
     }
 
@@ -189,6 +205,10 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
           <CompareSummary scenarios={scenarios} retirementAge={retirementAge} />
         ) : viewMode === 'sideBySide' ? (
           <CompareSideBySide scenarios={scenarios} retirementAge={retirementAge} />
+        ) : viewMode === 'housing' ? (
+          <CompareHousing scenarios={scenarios} inflationRate={inflationRate} retirementAge={retirementAge} includeUtilities={false} />
+        ) : viewMode === 'housingUtilities' ? (
+          <CompareHousing scenarios={scenarios} inflationRate={inflationRate} retirementAge={retirementAge} includeUtilities={true} />
         ) : (
           <CompareDifference scenarios={scenarios} baselineId={effectiveBaseline} retirementAge={retirementAge} />
         )}
