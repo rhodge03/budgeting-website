@@ -30,7 +30,7 @@ export default function ScrollPicker({
   const [typedValue, setTypedValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Generate values array
+  // Generate values array, inserting custom value if off-step
   const values = useMemo(() => {
     const arr: number[] = [];
     const count = Math.round((max - min) / step);
@@ -38,13 +38,20 @@ export default function ScrollPicker({
       const v = min + i * step;
       arr.push(Number(v.toFixed(resolvedDecimals)));
     }
+    // If value is off-step but within range, insert it at the right position
+    if (value >= min && value <= max && !arr.some((v) => Math.abs(v - value) < step / 2)) {
+      arr.push(value);
+      arr.sort((a, b) => a - b);
+    }
     return arr;
-  }, [min, max, step, resolvedDecimals]);
+  }, [min, max, step, resolvedDecimals, value]);
 
-  // Find index of current value
+  // Find index of current value (exact match first, then nearest step)
   const currentIndex = useMemo(() => {
-    const idx = values.findIndex((v) => Math.abs(v - value) < step / 2);
-    return idx >= 0 ? idx : 0;
+    const exact = values.findIndex((v) => v === value);
+    if (exact >= 0) return exact;
+    const close = values.findIndex((v) => Math.abs(v - value) < step / 2);
+    return close >= 0 ? close : 0;
   }, [values, value, step]);
 
   // Scroll to value on mount and when value changes externally
@@ -182,7 +189,7 @@ export default function ScrollPicker({
                 startTyping();
               }}
             >
-              {v.toFixed(resolvedDecimals)}{suffix}
+              {v.toFixed(Math.max(resolvedDecimals, (String(v).split('.')[1] || '').length))}{suffix}
             </div>
           );
         })}
