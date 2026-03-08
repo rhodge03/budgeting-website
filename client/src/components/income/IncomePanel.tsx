@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import Card from '../shared/Card';
 import CurrencyInput from '../shared/CurrencyInput';
+import ScrollPicker from '../shared/ScrollPicker';
 import EmptyState from '../shared/EmptyState';
 import SectionHeader from '../shared/SectionHeader';
 import type { IncomeEntry } from 'shared';
@@ -112,9 +113,7 @@ function IncomeEntryRow({
   const [durationStr, setDurationStr] = useState(
     entry.durationYears != null ? String(entry.durationYears) : '',
   );
-  const [growthStr, setGrowthStr] = useState(
-    entry.growthRate != null ? String(entry.growthRate) : '',
-  );
+  const growthRate = Number(entry.growthRate ?? 0);
 
   const handleLabelBlur = () => {
     if (label !== entry.label) {
@@ -137,13 +136,12 @@ function IncomeEntryRow({
     }
   };
 
-  const handleGrowthBlur = () => {
-    const parsed = growthStr.trim() === '' ? null : parseFloat(growthStr);
-    const current = entry.growthRate ?? null;
-    if (parsed !== current) {
-      onUpdate({ growthRate: isNaN(parsed as number) ? null : parsed });
-    }
-  };
+  const handleGrowthChange = useCallback(
+    (value: number) => {
+      onUpdate({ growthRate: value });
+    },
+    [onUpdate],
+  );
 
   return (
     <div className="border border-gray-100 rounded p-2 space-y-2">
@@ -187,19 +185,14 @@ function IncomeEntryRow({
           <span className="text-xs text-gray-500">yr</span>
         </div>
         <div className="flex items-center gap-1">
-          <input
-            type="number"
+          <ScrollPicker
+            value={growthRate}
+            onChange={handleGrowthChange}
             min={0}
             max={50}
             step={0.1}
-            value={growthStr}
-            onChange={(e) => setGrowthStr(e.target.value)}
-            onBlur={handleGrowthBlur}
-            placeholder="0"
-            title="Annual growth rate % (empty = 0%)"
-            className="w-14 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-lg"
+            suffix="%/yr"
           />
-          <span className="text-xs text-gray-500">%/yr</span>
         </div>
         <label className="flex items-center gap-1 text-xs text-gray-600 whitespace-nowrap">
           <input

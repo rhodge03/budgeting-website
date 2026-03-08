@@ -1,4 +1,5 @@
 import { AVAILABLE_SERIES } from './ProjectionChart';
+import ScrollPicker from '../shared/ScrollPicker';
 
 interface Props {
   inflationRate: number;
@@ -26,16 +27,13 @@ export default function ChartControls({
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-1.5">
           <label className="text-xs text-gray-500">Inflation Rate</label>
-          <input
-            type="number"
+          <ScrollPicker
+            value={inflationRate}
+            onChange={onInflationRateChange}
             min={0}
             max={20}
             step={0.5}
-            value={inflationRate}
-            onChange={(e) => onInflationRateChange(Number(e.target.value))}
-            className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
           />
-          <span className="text-xs text-gray-500">%</span>
         </div>
 
         <div className="flex items-center gap-1.5">

@@ -3,6 +3,7 @@ import { useHouseholdStore } from '../../stores/householdStore';
 import Card from '../shared/Card';
 import EmptyState from '../shared/EmptyState';
 import SegmentedControl from '../shared/SegmentedControl';
+import ScrollPicker from '../shared/ScrollPicker';
 import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 import CategoryGroup from './CategoryGroup';
 import ScenarioSelector from './ScenarioSelector';
@@ -84,15 +85,13 @@ export default function BudgetPanel() {
           />
           <div className="flex items-center gap-1.5">
             <label className="text-xs text-gray-500">Buffer</label>
-            <input
-              type="number"
-              min={0}
-              max={100}
+            <ScrollPicker
               value={bufferPct}
-              onChange={(e) => handleBufferChange(Number(e.target.value))}
-              className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
+              onChange={handleBufferChange}
+              min={0}
+              max={50}
+              step={1}
             />
-            <span className="text-xs text-gray-500">%</span>
           </div>
           <span className="text-sm font-semibold text-gray-900">
             Total: ${displayTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

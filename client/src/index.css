@@ -41,3 +41,17 @@
 @utility animate-fade-in {
   animation: fade-in 150ms ease-out;
 }
+
+@utility scroll-snap-y {
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+@utility snap-center {
+  scroll-snap-align: center;
+}
+
+@utility hide-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
