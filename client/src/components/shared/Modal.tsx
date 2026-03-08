@@ -37,7 +37,7 @@ export default function Modal({ open, onClose, children, maxWidth = 'max-w-md', 
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div
-        className={`bg-white rounded-xl shadow-xl w-full ${maxWidth} mx-4 animate-fade-in`}
+        className={`bg-white rounded-xl shadow-xl w-full ${maxWidth} mx-4 my-4 max-h-[calc(100vh-2rem)] overflow-y-auto animate-fade-in`}
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
