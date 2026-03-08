@@ -180,7 +180,7 @@ function IncomeEntryRow({
             onBlur={handleDurationBlur}
             placeholder={"\u221E"}
             title="Duration in years (empty = until retirement)"
-            className="w-12 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-lg"
+            className="w-16 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-lg"
           />
           <span className="text-xs text-gray-500">yr</span>
         </div>

@@ -103,8 +103,7 @@ export default function ScrollPicker({
     setIsTyping(false);
     const parsed = parseFloat(typedValue);
     if (!isNaN(parsed)) {
-      const snapped = Math.round((parsed - min) / step) * step + min;
-      const clamped = Math.max(min, Math.min(max, Number(snapped.toFixed(resolvedDecimals))));
+      const clamped = Math.max(min, Math.min(max, parsed));
       onChange(clamped);
     }
   };
