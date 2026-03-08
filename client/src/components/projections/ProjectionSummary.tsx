@@ -68,7 +68,7 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       {/* At Retirement */}
-      <Card>
+      <Card elevation="md">
         <div className="flex items-start justify-between gap-2">
           <div>
             <p className="text-xs text-gray-500 mb-1">At Retirement (Age {atRetirement.age})</p>
@@ -90,7 +90,7 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
       </Card>
 
       {/* At End of Projection */}
-      <Card>
+      <Card elevation="md">
         <div className="flex items-start justify-between gap-2">
           <div>
             <p className="text-xs text-gray-500 mb-1">At Age {finalYear.age}</p>
@@ -104,7 +104,7 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
       </Card>
 
       {/* Goal Progress */}
-      <Card>
+      <Card elevation="md">
         <p className="text-xs text-gray-500 mb-1">Retirement Goal</p>
         {retirementGoal && retirementGoal > 0 ? (
           <div className="flex items-center gap-3">
@@ -120,7 +120,7 @@ export default function ProjectionSummary({ data, retirementAge, retirementGoal,
       </Card>
 
       {/* Social Security */}
-      <Card>
+      <Card elevation="md">
         <p className="text-xs text-gray-500 mb-1">Est. Social Security</p>
         {ssEstimate ? (
           <>

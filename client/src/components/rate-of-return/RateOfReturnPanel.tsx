@@ -53,7 +53,7 @@ export default function RateOfReturnPanel({ earnerId }: Props) {
               <button
                 key={b.key}
                 onClick={() => handleBenchmarkClick(b)}
-                className={`px-3 py-1.5 text-sm rounded border transition-colors ${
+                className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
                   benchmarkType === b.key
                     ? 'bg-blue-600 text-white border-blue-600'
                     : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400 hover:text-blue-600'

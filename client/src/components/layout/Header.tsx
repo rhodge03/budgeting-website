@@ -11,7 +11,7 @@ export default function Header() {
   const { user, isGuest, logout } = useAuthStore();
 
   return (
-    <header className="sticky top-0 z-10 px-4 flex items-center justify-between h-12" style={{ backgroundColor: '#003262' }}>
+    <header className="sticky top-0 z-10 px-4 flex items-center justify-between h-12 bg-brand">
       {/* Brand */}
       <h1 className="text-base font-semibold text-white whitespace-nowrap">
         When Do I Quit?

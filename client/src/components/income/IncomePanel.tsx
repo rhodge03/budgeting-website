@@ -58,7 +58,7 @@ export default function IncomePanel({ earnerId }: Props) {
           )}
           <button
             onClick={handleAddEntry}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
           >
             + Add Income
           </button>
@@ -154,12 +154,12 @@ function IncomeEntryRow({
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           onBlur={handleLabelBlur}
-          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-300 rounded"
+          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-300 rounded-lg"
           placeholder="Income label"
         />
         <button
           onClick={onRemove}
-          className="text-gray-400 hover:text-red-500 text-lg leading-none px-1"
+          className="text-gray-400 hover:text-red-500 text-lg leading-none px-1 transition-colors"
           title="Remove"
         >
           &times;
@@ -182,7 +182,7 @@ function IncomeEntryRow({
             onBlur={handleDurationBlur}
             placeholder={"\u221E"}
             title="Duration in years (empty = until retirement)"
-            className="w-12 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded"
+            className="w-12 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-lg"
           />
           <span className="text-xs text-gray-500">yr</span>
         </div>
@@ -197,7 +197,7 @@ function IncomeEntryRow({
             onBlur={handleGrowthBlur}
             placeholder="0"
             title="Annual growth rate % (empty = 0%)"
-            className="w-14 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded"
+            className="w-14 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded-lg"
           />
           <span className="text-xs text-gray-500">%/yr</span>
         </div>

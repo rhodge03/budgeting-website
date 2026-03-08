@@ -5,6 +5,7 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 import EmptyState from '../shared/EmptyState';
 import SectionHeader from '../shared/SectionHeader';
 import { ANIMAL_ICONS, ANIMAL_KEYS } from '../shared/Icons';
+import SegmentedControl from '../shared/SegmentedControl';
 import type { MemberType } from 'shared';
 
 function IconPicker({ selectedIcon, onSelect }: { selectedIcon: string | null; onSelect: (key: string) => void }) {
@@ -17,7 +18,7 @@ function IconPicker({ selectedIcon, onSelect }: { selectedIcon: string | null; o
             key={key}
             onClick={() => onSelect(key)}
             title={key.charAt(0).toUpperCase() + key.slice(1)}
-            className={`w-9 h-9 rounded flex items-center justify-center transition-all ${
+            className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
               selectedIcon === key
                 ? 'bg-blue-100 ring-2 ring-blue-500 scale-110'
                 : 'bg-gray-50 hover:bg-gray-100 hover:scale-105'
@@ -49,22 +50,29 @@ export default function EarnerManager() {
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   // Edit state
+  const [saving, setSaving] = useState(false);
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editIcon, setEditIcon] = useState<string | null>(null);
 
   const handleAdd = async () => {
-    if (!newName.trim()) return;
-    await addEarner(newName.trim(), newMemberType);
-    const latest = useHouseholdStore.getState().earners;
-    const newEarner = latest[latest.length - 1];
-    if (newEarner && newIcon) {
-      await updateEarner(newEarner.id, { avatarIcon: newIcon });
+    if (!newName.trim() || saving) return;
+    setSaving(true);
+    try {
+      await addEarner(newName.trim(), newMemberType);
+      const latest = useHouseholdStore.getState().earners;
+      const newEarner = latest[latest.length - 1];
+      if (newEarner && newIcon) {
+        await updateEarner(newEarner.id, { avatarIcon: newIcon });
+      }
+      setNewName('');
+      setNewIcon(null);
+      setNewMemberType('adult');
+      setIsAdding(false);
+    } finally {
+      setSaving(false);
     }
-    setNewName('');
-    setNewIcon(null);
-    setNewMemberType('adult');
-    setIsAdding(false);
   };
 
   const handleDelete = async () => {
@@ -108,7 +116,7 @@ export default function EarnerManager() {
         {!isAdding && !editingId && (
           <button
             onClick={() => setIsAdding(true)}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
           >
             + Add Member
           </button>
@@ -117,29 +125,15 @@ export default function EarnerManager() {
 
       {isAdding && (
         <div className="mb-4 space-y-3">
-          {/* Member type toggle */}
-          <div className="flex gap-1 bg-gray-100 rounded p-0.5 w-fit">
-            <button
-              onClick={() => setNewMemberType('adult')}
-              className={`px-3 py-1.5 text-xs font-medium rounded transition-all ${
-                newMemberType === 'adult'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Adult
-            </button>
-            <button
-              onClick={() => setNewMemberType('child')}
-              className={`px-3 py-1.5 text-xs font-medium rounded transition-all ${
-                newMemberType === 'child'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Child
-            </button>
-          </div>
+          <SegmentedControl
+            options={[
+              { value: 'adult' as MemberType, label: 'Adult' },
+              { value: 'child' as MemberType, label: 'Child' },
+            ]}
+            value={newMemberType}
+            onChange={setNewMemberType}
+            size="sm"
+          />
 
           <div className="flex gap-2">
             <input
@@ -149,17 +143,18 @@ export default function EarnerManager() {
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
               placeholder="Name"
               autoFocus
-              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded"
+              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
             />
             <button
               onClick={handleAdd}
-              className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
+              disabled={saving}
+              className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Add
+              {saving ? 'Adding…' : 'Add'}
             </button>
             <button
               onClick={() => { setIsAdding(false); setNewName(''); setNewIcon(null); setNewMemberType('adult'); }}
-              className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
+              className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>
@@ -186,17 +181,17 @@ export default function EarnerManager() {
                     onChange={(e) => setEditName(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
                     autoFocus
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
                   />
                   <button
                     onClick={handleSaveEdit}
-                    className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
+                    className="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                   >
                     Save
                   </button>
                   <button
                     onClick={cancelEditing}
-                    className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
+                    className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
                   >
                     Cancel
                   </button>
@@ -232,7 +227,7 @@ export default function EarnerManager() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => startEditing(earner)}
-                    className="text-xs text-gray-500 hover:text-blue-600 px-2 py-1"
+                    className="text-xs text-gray-500 hover:text-blue-600 px-2 py-1 transition-colors"
                     title="Edit"
                   >
                     Edit
@@ -240,7 +235,7 @@ export default function EarnerManager() {
                   {!earner.isPrimary && earner.memberType !== 'child' && (
                     <button
                       onClick={() => setPrimaryEarner(earner.id)}
-                      className="text-xs text-gray-500 hover:text-blue-600 px-2 py-1"
+                      className="text-xs text-gray-500 hover:text-blue-600 px-2 py-1 transition-colors"
                       title="Set Primary"
                     >
                       Set Primary
@@ -248,14 +243,14 @@ export default function EarnerManager() {
                   )}
                   <button
                     onClick={() => archiveEarner(earner.id)}
-                    className="text-xs text-gray-500 hover:text-amber-600 px-2 py-1"
+                    className="text-xs text-gray-500 hover:text-amber-600 px-2 py-1 transition-colors"
                     title="Archive"
                   >
                     Archive
                   </button>
                   <button
                     onClick={() => setDeleteTarget({ id: earner.id, name: earner.name })}
-                    className="text-xs text-gray-500 hover:text-red-600 px-2 py-1"
+                    className="text-xs text-gray-500 hover:text-red-600 px-2 py-1 transition-colors"
                     title="Delete"
                   >
                     Delete

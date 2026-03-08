@@ -22,7 +22,7 @@ export default function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   return (
-    <Modal open={open} onClose={onCancel} maxWidth="max-w-sm">
+    <Modal open={open} onClose={onCancel} maxWidth="max-w-sm" ariaLabel={title}>
       <div className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
         <p className="text-sm text-gray-600 mb-6">{message}</p>

@@ -5,9 +5,10 @@ interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
   maxWidth?: string;
+  ariaLabel?: string;
 }
 
-export default function Modal({ open, onClose, children, maxWidth = 'max-w-md' }: ModalProps) {
+export default function Modal({ open, onClose, children, maxWidth = 'max-w-md', ariaLabel }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export default function Modal({ open, onClose, children, maxWidth = 'max-w-md' }
         className={`bg-white rounded-xl shadow-xl w-full ${maxWidth} mx-4 animate-fade-in`}
         role="dialog"
         aria-modal="true"
+        aria-label={ariaLabel}
       >
         {children}
       </div>

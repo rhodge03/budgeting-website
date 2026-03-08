@@ -1,4 +1,5 @@
 import Card from '../shared/Card';
+import SectionHeader from '../shared/SectionHeader';
 import type { SocialSecurityEstimate } from '../../utils/socialSecurityEstimator';
 
 interface Props {
@@ -11,7 +12,7 @@ const fmt = (n: number) =>
 export default function SocialSecurityDetail({ estimate }: Props) {
   return (
     <Card>
-      <h3 className="text-sm font-semibold text-gray-900 mb-3">Social Security Estimate</h3>
+      <SectionHeader className="mb-3">Social Security Estimate</SectionHeader>
 
       <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm mb-4">
         <div>
@@ -42,7 +43,7 @@ export default function SocialSecurityDetail({ estimate }: Props) {
 
       <div className="border-t border-gray-100 pt-3">
         <p className="text-xs font-medium text-gray-500 mb-1">Assumptions</p>
-        <ul className="text-xs text-gray-400 space-y-0.5">
+        <ul className="text-xs text-gray-500 space-y-0.5">
           {estimate.assumptions.map((a, i) => (
             <li key={i}>• {a}</li>
           ))}

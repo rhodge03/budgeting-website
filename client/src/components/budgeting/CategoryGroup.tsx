@@ -6,6 +6,7 @@ import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 import SubCategoryRow from './SubCategoryRow';
 import HomePurchaseDialog from './HomePurchaseDialog';
 import HomeEquityChart from './HomeEquityChart';
+import ConfirmDialog from '../shared/ConfirmDialog';
 
 interface CategoryGroupProps {
   category: ExpenseCategory;
@@ -17,6 +18,8 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
   const [addingSub, setAddingSub] = useState(false);
   const [newSubName, setNewSubName] = useState('');
   const [showHomeDialog, setShowHomeDialog] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [savingSub, setSavingSub] = useState(false);
 
   const isHousing = category.name === 'Housing';
   const hpMonthly = useMemo(
@@ -38,16 +41,19 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
   };
 
   const handleAddSub = async () => {
-    if (!newSubName.trim()) return;
-    await addExpenseSubCategory(category.id, newSubName.trim());
-    setNewSubName('');
-    setAddingSub(false);
+    if (!newSubName.trim() || savingSub) return;
+    setSavingSub(true);
+    try {
+      await addExpenseSubCategory(category.id, newSubName.trim());
+      setNewSubName('');
+      setAddingSub(false);
+    } finally {
+      setSavingSub(false);
+    }
   };
 
   const handleRemoveCategory = () => {
-    if (confirm(`Delete "${category.name}" and all its subcategories?`)) {
-      removeExpenseCategory(category.id);
-    }
+    setConfirmDelete(true);
   };
 
   const lockedItems = hpMonthly
@@ -77,7 +83,7 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
           {isHousing && (
             <button
               onClick={(e) => { e.stopPropagation(); setShowHomeDialog(true); }}
-              className="ml-1 px-2 py-0.5 text-[11px] text-blue-600 border border-blue-200 rounded hover:bg-blue-50 font-medium"
+              className="ml-1 px-2 py-0.5 text-[11px] text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 font-medium"
             >
               {homePurchase ? 'Edit Home' : 'Home Purchase'}
             </button>
@@ -90,7 +96,7 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); handleRemoveCategory(); }}
-            className="text-gray-400 hover:text-red-500 text-sm"
+            className="text-gray-400 hover:text-red-500 text-sm transition-colors"
             title="Delete category"
           >
             &times;
@@ -145,13 +151,14 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
                     onKeyDown={(e) => e.key === 'Enter' && handleAddSub()}
                     placeholder="Subcategory name"
                     autoFocus
-                    className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+                    className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-lg"
                   />
                   <button
                     onClick={handleAddSub}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    disabled={savingSub}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Add
+                    {savingSub ? 'Adding…' : 'Add'}
                   </button>
                   <button
                     onClick={() => { setAddingSub(false); setNewSubName(''); }}
@@ -163,7 +170,7 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
               ) : (
                 <button
                   onClick={() => setAddingSub(true)}
-                  className="text-xs text-blue-600 hover:text-blue-700"
+                  className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
                 >
                   + Add item
                 </button>
@@ -184,6 +191,16 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
       {isHousing && (
         <HomePurchaseDialog open={showHomeDialog} onClose={() => setShowHomeDialog(false)} />
       )}
+
+      <ConfirmDialog
+        open={confirmDelete}
+        title="Delete Category"
+        message={`Delete "${category.name}" and all its subcategories?`}
+        confirmLabel="Delete"
+        danger
+        onConfirm={() => { setConfirmDelete(false); removeExpenseCategory(category.id); }}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </Card>
   );
 }

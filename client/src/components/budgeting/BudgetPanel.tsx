@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import Card from '../shared/Card';
 import EmptyState from '../shared/EmptyState';
+import SegmentedControl from '../shared/SegmentedControl';
 import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 import CategoryGroup from './CategoryGroup';
 import ScenarioSelector from './ScenarioSelector';
@@ -72,24 +73,15 @@ export default function BudgetPanel() {
       {/* Header with toggle and total */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex rounded border border-gray-300 overflow-hidden text-sm">
-            <button
-              onClick={() => setShowMonthly(true)}
-              className={`px-3 py-1.5 transition-colors ${
-                showMonthly ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setShowMonthly(false)}
-              className={`px-3 py-1.5 transition-colors ${
-                !showMonthly ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Annual
-            </button>
-          </div>
+          <SegmentedControl
+            options={[
+              { value: 'monthly', label: 'Monthly' },
+              { value: 'annual', label: 'Annual' },
+            ]}
+            value={showMonthly ? 'monthly' : 'annual'}
+            onChange={(v) => setShowMonthly(v === 'monthly')}
+            size="sm"
+          />
           <div className="flex items-center gap-1.5">
             <label className="text-xs text-gray-500">Buffer</label>
             <input
@@ -98,7 +90,7 @@ export default function BudgetPanel() {
               max={100}
               value={bufferPct}
               onChange={(e) => handleBufferChange(Number(e.target.value))}
-              className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
+              className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
             />
             <span className="text-xs text-gray-500">%</span>
           </div>
@@ -112,7 +104,7 @@ export default function BudgetPanel() {
         </div>
         <button
           onClick={() => setAdding(true)}
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
         >
           + Add Category
         </button>
@@ -131,11 +123,11 @@ export default function BudgetPanel() {
             onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
             placeholder="Category name"
             autoFocus
-            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded"
+            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
           />
           <button
             onClick={handleAddCategory}
-            className="px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Add
           </button>

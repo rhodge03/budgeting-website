@@ -1,6 +1,7 @@
 import { useHouseholdStore } from '../../stores/householdStore';
 import Card from '../shared/Card';
 import SectionHeader from '../shared/SectionHeader';
+import SegmentedControl from '../shared/SegmentedControl';
 import { STATE_TAX_RATES } from 'shared/constants/taxBrackets';
 import type { FilingStatus } from 'shared';
 
@@ -46,7 +47,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           <select
             value={earner.state}
             onChange={(e) => handleChange('state', e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
           >
             {STATES.map((s) => (
               <option key={s.code} value={s.code}>
@@ -64,7 +65,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           <select
             value={earner.filingStatus}
             onChange={(e) => handleChange('filingStatus', e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
           >
             {FILING_STATUSES.map((fs) => (
               <option key={fs.value} value={fs.value}>
@@ -79,28 +80,14 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           <label className="block text-xs font-medium text-gray-600 mb-1">
             Deduction Type
           </label>
-          <div className="flex rounded border border-gray-300 overflow-hidden">
-            <button
-              onClick={() => handleChange('deductionType', 'standard')}
-              className={`flex-1 px-3 py-2 text-sm transition-colors ${
-                earner.deductionType === 'standard'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Standard
-            </button>
-            <button
-              onClick={() => handleChange('deductionType', 'itemized')}
-              className={`flex-1 px-3 py-2 text-sm transition-colors ${
-                earner.deductionType === 'itemized'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Itemized
-            </button>
-          </div>
+          <SegmentedControl
+            options={[
+              { value: 'standard', label: 'Standard' },
+              { value: 'itemized', label: 'Itemized' },
+            ]}
+            value={earner.deductionType}
+            onChange={(v) => handleChange('deductionType', v)}
+          />
         </div>
       </div>
     </Card>

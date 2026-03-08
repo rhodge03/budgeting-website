@@ -33,7 +33,7 @@ export default function ChartControls({
             step={0.5}
             value={inflationRate}
             onChange={(e) => onInflationRateChange(Number(e.target.value))}
-            className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
+            className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
           />
           <span className="text-xs text-gray-500">%</span>
         </div>
@@ -46,7 +46,7 @@ export default function ChartControls({
             max={120}
             value={maxAge}
             onChange={(e) => onMaxAgeChange(Math.min(120, Math.max(50, Number(e.target.value))))}
-            className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
+            className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
           />
         </div>
 
@@ -58,7 +58,7 @@ export default function ChartControls({
             max={70}
             value={ssClaimingAge}
             onChange={(e) => onSsClaimingAgeChange(Math.min(70, Math.max(62, Number(e.target.value))))}
-            className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
+            className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
           />
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function ChartControls({
             <button
               key={s.key}
               onClick={() => onToggleSeries(s.key)}
-              className={`px-2 py-0.5 text-[11px] rounded border transition-colors ${
+              className={`px-2 py-0.5 text-[11px] rounded-lg border transition-colors ${
                 active
                   ? 'text-white border-transparent'
                   : 'text-gray-500 border-gray-300 bg-white hover:bg-gray-50'

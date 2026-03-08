@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Card from '../shared/Card';
+import SectionHeader from '../shared/SectionHeader';
 import type { ProjectionYear } from '../../utils/projectionEngine';
 
 interface Props {
@@ -20,10 +21,10 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
   return (
     <Card padding={false} className="overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-900">Year-by-Year Breakdown</h3>
+        <SectionHeader>Year-by-Year Breakdown</SectionHeader>
         <button
           onClick={() => setExpanded(!expanded)}
-          className="text-xs text-blue-600 hover:text-blue-700"
+          className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
         >
           {expanded ? 'Show Summary' : 'Show All Years'}
         </button>

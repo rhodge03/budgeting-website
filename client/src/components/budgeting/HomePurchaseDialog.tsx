@@ -32,6 +32,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
   const [homeInsuranceMode, setHomeInsuranceMode] = useState<AmountMode>('percent');
   const [repairsPct, setRepairsPct] = useState(1.0);
   const [appreciationRate, setAppreciationRate] = useState(3.0);
+  const [saving, setSaving] = useState(false);
 
   // Populate from existing config when dialog opens
   useEffect(() => {
@@ -78,14 +79,20 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
   const closingCostTotal = useMemo(() => computeClosingCosts(formData), [formData]);
 
   const handleSave = async () => {
-    await upsertHomePurchase({
-      homePrice, downPayment, interestRate, loanTermYears,
-      closingCosts, closingCostMode,
-      propertyTax, propertyTaxMode,
-      homeInsurance, homeInsuranceMode,
-      repairsPct, appreciationRate,
-    });
-    onClose();
+    if (saving) return;
+    setSaving(true);
+    try {
+      await upsertHomePurchase({
+        homePrice, downPayment, interestRate, loanTermYears,
+        closingCosts, closingCostMode,
+        propertyTax, propertyTaxMode,
+        homeInsurance, homeInsuranceMode,
+        repairsPct, appreciationRate,
+      });
+      onClose();
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleRemove = async () => {
@@ -94,7 +101,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
   };
 
   return (
-    <Modal open={open} onClose={onClose} maxWidth="max-w-lg">
+    <Modal open={open} onClose={onClose} maxWidth="max-w-lg" ariaLabel="Home Purchase Details">
       <div className="p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-gray-900">Home Purchase</h2>
@@ -119,7 +126,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
                 step={0.125}
                 value={interestRate}
                 onChange={(e) => setInterestRate(Number(e.target.value))}
-                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded "
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
               />
               <span className="text-sm text-gray-500">%</span>
             </div>
@@ -131,7 +138,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
             <select
               value={loanTermYears}
               onChange={(e) => setLoanTermYears(Number(e.target.value))}
-              className="px-2 py-2 text-sm border border-gray-300 rounded "
+              className="px-2 py-2 text-sm border border-gray-300 rounded-lg"
             >
               <option value={15}>15 years</option>
               <option value={20}>20 years</option>
@@ -177,7 +184,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
                 step={0.1}
                 value={repairsPct}
                 onChange={(e) => setRepairsPct(Number(e.target.value))}
-                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded "
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
               />
               <span className="text-sm text-gray-500">%</span>
             </div>
@@ -194,7 +201,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
                 step={0.1}
                 value={appreciationRate}
                 onChange={(e) => setAppreciationRate(Number(e.target.value))}
-                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded "
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
               />
               <span className="text-sm text-gray-500">%</span>
             </div>
@@ -246,16 +253,16 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
+              className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              disabled={homePrice <= 0}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={homePrice <= 0 || saving}
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save
+              {saving ? 'Saving…' : 'Save'}
             </button>
           </div>
         </div>
@@ -296,7 +303,7 @@ function ModeInput({
           step={mode === 'percent' ? 0.1 : 100}
           value={value}
           onChange={(e) => onValueChange(Number(e.target.value))}
-          className="w-28 px-2 py-2 text-sm text-right border border-gray-300 rounded "
+          className="w-28 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
         />
         {mode === 'percent' && (
           <span className="text-sm text-gray-500">%</span>
@@ -304,7 +311,7 @@ function ModeInput({
         <button
           type="button"
           onClick={toggle}
-          className="px-2 py-1 text-xs border border-gray-300 rounded text-gray-600 hover:bg-gray-50"
+          className="px-2 py-1 text-xs border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
         >
           {mode === 'percent' ? 'Switch to $' : 'Switch to %'}
         </button>

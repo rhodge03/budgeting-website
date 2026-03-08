@@ -170,7 +170,7 @@ export default function ChildSavingsChart({ earner }: Props) {
               step={0.5}
               value={inflationRate}
               onChange={(e) => setInflationRate(Number(e.target.value))}
-              className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
+              className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
             />
             <span className="text-xs text-gray-500">%</span>
           </div>
@@ -184,7 +184,7 @@ export default function ChildSavingsChart({ earner }: Props) {
               <button
                 key={s.key}
                 onClick={() => handleToggle(s.key)}
-                className={`px-2 py-0.5 text-[11px] rounded border transition-colors ${
+                className={`px-2 py-0.5 text-[11px] rounded-lg border transition-colors ${
                   active
                     ? 'text-white border-transparent'
                     : 'text-gray-500 border-gray-300 bg-white hover:bg-gray-50'

@@ -61,12 +61,12 @@ export default function IncomeRetirementPage() {
                     {earner.name}
                   </h3>
                   {earner.isPrimary && (
-                    <span className="text-xs font-normal text-blue-600 bg-blue-50 px-2 py-0.5 rounded-sm">
+                    <span className="text-xs font-normal text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
                       Primary
                     </span>
                   )}
                   {isChild && (
-                    <span className="text-xs font-normal text-purple-600 bg-purple-50 px-2 py-0.5 rounded-sm">
+                    <span className="text-xs font-normal text-purple-700 bg-purple-100 px-2 py-0.5 rounded">
                       Child
                     </span>
                   )}

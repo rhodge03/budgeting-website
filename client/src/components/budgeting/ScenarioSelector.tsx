@@ -9,6 +9,7 @@ export default function ScenarioSelector() {
   const [newName, setNewName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
+  const [saving, setSaving] = useState(false);
   const activeId = household?.activeExpenseScenarioId;
   const activeScenario = expenseScenarios.find((s) => s.id === activeId);
 
@@ -22,10 +23,15 @@ export default function ScenarioSelector() {
 
   const handleCreate = async () => {
     const name = newName.trim();
-    if (!name) return;
-    await createScenario(name);
-    setNewName('');
-    setCreating(false);
+    if (!name || saving) return;
+    setSaving(true);
+    try {
+      await createScenario(name);
+      setNewName('');
+      setCreating(false);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleRename = async (id: string) => {
@@ -59,7 +65,7 @@ export default function ScenarioSelector() {
       </button>
 
       {open && (
-        <Modal open={open} onClose={handleClose} maxWidth="max-w-md">
+        <Modal open={open} onClose={handleClose} maxWidth="max-w-md" ariaLabel="Save Scenario">
           <div className="p-5">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
@@ -103,7 +109,7 @@ export default function ScenarioSelector() {
                           onBlur={() => handleRename(s.id)}
                           onClick={(e) => e.stopPropagation()}
                           autoFocus
-                          className="px-2 py-0.5 text-sm border border-blue-400 rounded flex-1"
+                          className="px-2 py-0.5 text-sm border border-blue-400 rounded-lg flex-1"
                         />
                       ) : (
                         <span className="text-sm font-medium text-gray-900 truncate">
@@ -116,7 +122,7 @@ export default function ScenarioSelector() {
                       <div className="flex items-center gap-1.5 ml-3 shrink-0">
                         <button
                           onClick={(e) => { e.stopPropagation(); setEditingId(s.id); setEditName(s.name); }}
-                          className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100"
+                          className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
                           title="Rename"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,7 +131,7 @@ export default function ScenarioSelector() {
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDelete(s.id); }}
-                          className="p-1 text-gray-400 hover:text-red-500 rounded hover:bg-red-50"
+                          className="p-1 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50"
                           title="Delete"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,13 +162,14 @@ export default function ScenarioSelector() {
                   }}
                   placeholder="Scenario name"
                   autoFocus
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg"
                 />
                 <button
                   onClick={handleCreate}
-                  className="px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded hover:bg-blue-700"
+                  disabled={saving}
+                  className="px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Save
+                  {saving ? 'Saving…' : 'Save'}
                 </button>
                 <button
                   onClick={() => { setCreating(false); setNewName(''); }}
@@ -174,7 +181,7 @@ export default function ScenarioSelector() {
             ) : (
               <button
                 onClick={() => setCreating(true)}
-                className="w-full px-3 py-2 text-sm font-medium text-blue-600 border border-dashed border-blue-300 rounded hover:bg-blue-50 transition-colors"
+                className="w-full px-3 py-2 text-sm font-medium text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
               >
                 + Save Current Expenses as Scenario
               </button>

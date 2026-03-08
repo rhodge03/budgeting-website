@@ -59,7 +59,7 @@ export default function SignupForm() {
           type="text"
           value={householdName}
           onChange={(e) => setHouseholdName(e.target.value)}
-          className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
           placeholder="My Household (optional)"
         />
       </div>
@@ -74,7 +74,7 @@ export default function SignupForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
           placeholder="you@example.com"
         />
       </div>
@@ -89,7 +89,7 @@ export default function SignupForm() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
           placeholder="At least 8 characters"
         />
       </div>
@@ -104,7 +104,7 @@ export default function SignupForm() {
           required
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
           placeholder="Confirm your password"
         />
       </div>
@@ -116,7 +116,7 @@ export default function SignupForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Creating account...' : 'Create Account'}
       </button>

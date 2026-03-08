@@ -3,6 +3,7 @@ interface CardProps {
   className?: string;
   accent?: 'blue' | 'purple' | 'green' | 'amber';
   padding?: boolean;
+  elevation?: 'sm' | 'md' | 'lg';
 }
 
 const ACCENT_CLASSES: Record<string, string> = {
@@ -12,15 +13,22 @@ const ACCENT_CLASSES: Record<string, string> = {
   amber: 'border-l-4 border-l-amber-500',
 };
 
+const ELEVATION_CLASSES: Record<string, string> = {
+  sm: 'shadow-sm',
+  md: 'shadow-md',
+  lg: 'shadow-lg',
+};
+
 export default function Card({
   children,
   className = '',
   accent,
   padding = true,
+  elevation = 'sm',
 }: CardProps) {
   return (
     <div
-      className={`bg-white rounded-xl shadow-sm ${padding ? 'p-4' : ''} ${accent ? ACCENT_CLASSES[accent] : ''} ${className}`}
+      className={`bg-white rounded-xl ${ELEVATION_CLASSES[elevation]} ${padding ? 'p-4' : ''} ${accent ? ACCENT_CLASSES[accent] : ''} ${className}`}
     >
       {children}
     </div>

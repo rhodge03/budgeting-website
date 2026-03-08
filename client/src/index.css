@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand: #003262;
+}
+
 @layer base {
   /* Tabular-nums for aligned numeric displays */
   input,

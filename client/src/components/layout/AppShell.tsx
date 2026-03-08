@@ -20,7 +20,7 @@ export default function AppShell() {
       <div className="min-h-screen bg-slate-50 flex">
         <div className="w-16 shrink-0 bg-white border-r border-gray-100" />
         <div className="flex-1 flex flex-col">
-          <div className="h-12" style={{ backgroundColor: '#003262' }} />
+          <div className="h-12 bg-brand" />
           <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-4 space-y-4">
             <SkeletonCard lines={2} />
             <SkeletonCard lines={4} />

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import Card from '../shared/Card';
 import EmptyState from '../shared/EmptyState';
+import SectionHeader from '../shared/SectionHeader';
 import { runProjection, type ProjectionInputs, type ProjectionYear } from '../../utils/projectionEngine';
 import type { ExpenseCategory, HomePurchase } from 'shared';
 import CompareOverlay from './CompareOverlay';
@@ -143,7 +144,7 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
     <Card padding={false} className="overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
-        <h3 className="text-sm font-semibold text-gray-900">Compare Scenarios</h3>
+        <SectionHeader>Compare Scenarios</SectionHeader>
         <div className="flex items-center gap-3">
           {/* View mode dropdown */}
           <select

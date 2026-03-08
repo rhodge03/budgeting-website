@@ -14,7 +14,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-slate-50">
-      <div className="bg-white rounded-xl shadow-sm p-10 max-w-md w-full text-center">
+      <div className="bg-white rounded-xl shadow-lg p-10 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">When Do I Quit?</h1>
         <p className="text-gray-600 mb-8">
           Plan your household finances and see when you can retire.
