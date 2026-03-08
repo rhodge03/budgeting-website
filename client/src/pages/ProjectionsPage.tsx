@@ -75,10 +75,11 @@ export default function ProjectionsPage() {
         expenseCategories,
         expenseBuffer: Number(household?.expenseBuffer ?? 0) || Number(localStorage.getItem('expense-buffer') ?? 0),
         inflationRate,
+        inflationMode: household?.inflationMode ?? 'simple',
         maxAge,
         homePurchase,
       }),
-    [earners, expenseCategories, household?.expenseBuffer, inflationRate, maxAge, homePurchase],
+    [earners, expenseCategories, household?.expenseBuffer, household?.inflationMode, inflationRate, maxAge, homePurchase],
   );
 
   const ssEstimate = useMemo(() => {

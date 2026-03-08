@@ -104,6 +104,8 @@ export async function switchTo(id: string, householdId: string) {
         isDefault: cat.isDefault ?? false,
         isCollapsed: cat.isCollapsed ?? false,
         sortOrder: cat.sortOrder ?? 0,
+        inflationPreset: cat.inflationPreset ?? '20yr',
+        customInflationRate: cat.customInflationRate ?? 0,
         subCategories: {
           create: (cat.subCategories || []).map((sub: any) => ({
             name: sub.name,

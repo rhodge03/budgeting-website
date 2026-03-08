@@ -27,6 +27,8 @@ export async function updateCategory(id: string, householdId: string, data: {
   name?: string;
   isCollapsed?: boolean;
   sortOrder?: number;
+  inflationPreset?: string;
+  customInflationRate?: number;
 }) {
   const cat = await prisma.expenseCategory.findFirst({ where: { id, householdId } });
   if (!cat) throw new NotFoundError('Category not found');

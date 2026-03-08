@@ -14,6 +14,7 @@ export async function mergeGuestData(
     data: {
       name: guestSnapshot.household.name,
       expenseBuffer: guestSnapshot.household.expenseBuffer,
+      inflationMode: (guestSnapshot.household as any).inflationMode ?? 'simple',
     },
   });
 
@@ -29,6 +30,8 @@ export async function mergeGuestData(
         isDefault: cat.isDefault,
         isCollapsed: cat.isCollapsed,
         sortOrder: i,
+        inflationPreset: cat.inflationPreset ?? '20yr',
+        customInflationRate: cat.customInflationRate ?? 0,
         subCategories: {
           create: cat.subCategories.map((sub, j) => ({
             name: sub.name,

@@ -13,6 +13,7 @@ model Household {
   id                       String   @id @default(uuid())
   name                     String   @default("My Household")
   expenseBuffer            Decimal  @default(0) @db.Decimal(5, 2) @map("expense_buffer")
+  inflationMode            String   @default("simple") @map("inflation_mode")
   activeExpenseScenarioId  String?  @map("active_expense_scenario_id")
   createdAt                DateTime @default(now()) @map("created_at")
   updatedAt                DateTime @updatedAt @map("updated_at")
@@ -204,9 +205,11 @@ model ExpenseCategory {
   name        String
   isDefault   Boolean  @default(false) @map("is_default")
   isCollapsed Boolean  @default(false) @map("is_collapsed")
-  sortOrder   Int      @default(0) @map("sort_order")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  sortOrder           Int      @default(0) @map("sort_order")
+  inflationPreset     String   @default("20yr") @map("inflation_preset")
+  customInflationRate Decimal  @default(0) @db.Decimal(5, 2) @map("custom_inflation_rate")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
   household     Household          @relation(fields: [householdId], references: [id], onDelete: Cascade)
   subCategories ExpenseSubCategory[]

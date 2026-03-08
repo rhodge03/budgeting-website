@@ -3,7 +3,8 @@ import { useHouseholdStore } from '../../stores/householdStore';
 import Card from '../shared/Card';
 import EmptyState from '../shared/EmptyState';
 import SegmentedControl from '../shared/SegmentedControl';
-import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
+import type { InflationMode } from 'shared';
+import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES, getCategoryInflationRate } from 'shared';
 import CategoryGroup from './CategoryGroup';
 import ScenarioSelector from './ScenarioSelector';
 
@@ -55,6 +56,36 @@ export default function BudgetPanel() {
   const bufferedMonthly = totalMonthly * (1 + bufferPct / 100) + childSavingsMonthly;
   const displayTotal = showMonthly ? bufferedMonthly : bufferedMonthly * 12;
 
+  const weightedAvgInflation = useMemo(() => {
+    if (household?.inflationMode !== 'perCategory') return null;
+    let totalAmount = 0;
+    let weightedSum = 0;
+    for (const cat of expenseCategories) {
+      const subs = cat.name === 'Housing' && homePurchase
+        ? cat.subCategories.filter((s) => !HOME_PURCHASE_LOCKED_NAMES.includes(s.name))
+        : cat.subCategories;
+      const catAmount = subs.reduce((s, sub) => s + Number(sub.amount), 0);
+      if (catAmount > 0) {
+        const rate = getCategoryInflationRate(cat.name, cat.inflationPreset ?? '20yr', cat.customInflationRate ?? 0);
+        weightedSum += catAmount * rate;
+        totalAmount += catAmount;
+      }
+    }
+    // Include home purchase costs (inflate at Housing rate)
+    if (hpMonthly) {
+      const housingCat = expenseCategories.find((c) => c.name === 'Housing');
+      const hpRate = housingCat
+        ? getCategoryInflationRate('Housing', housingCat.inflationPreset ?? '20yr', housingCat.customInflationRate ?? 0)
+        : 3.2;
+      const hpAmount = hpMonthly.propertyTax + hpMonthly.homeInsurance + hpMonthly.repairs;
+      weightedSum += hpAmount * hpRate;
+      totalAmount += hpAmount;
+      // Mortgage PI is fixed (0% inflation)
+      totalAmount += hpMonthly.mortgagePI;
+    }
+    return totalAmount > 0 ? weightedSum / totalAmount : 0;
+  }, [expenseCategories, homePurchase, hpMonthly, household?.inflationMode]);
+
   const handleBufferChange = (value: number) => {
     const clamped = Math.max(0, value);
     localStorage.setItem(BUFFER_STORAGE_KEY, String(clamped));
@@ -94,6 +125,20 @@ export default function BudgetPanel() {
             />
             <span className="text-xs text-gray-500">%</span>
           </div>
+          <SegmentedControl
+            options={[
+              { value: 'simple', label: 'Simple' },
+              { value: 'perCategory', label: 'Per-Category' },
+            ]}
+            value={(household?.inflationMode ?? 'simple') as string}
+            onChange={(v) => updateHousehold({ inflationMode: v as InflationMode })}
+            size="sm"
+          />
+          {weightedAvgInflation !== null && (
+            <span className="text-xs text-amber-600 font-medium" title="Expense-weighted average inflation rate">
+              Avg: {weightedAvgInflation.toFixed(1)}%
+            </span>
+          )}
           <span className="text-sm font-semibold text-gray-900">
             Total: ${displayTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             <span className="text-gray-500 font-normal"> / {showMonthly ? 'mo' : 'yr'}</span>
@@ -146,6 +191,7 @@ export default function BudgetPanel() {
           key={category.id}
           category={category}
           showMonthly={showMonthly}
+          showInflation={household?.inflationMode === 'perCategory'}
         />
       ))}
 

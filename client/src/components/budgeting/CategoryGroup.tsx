@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import Card from '../shared/Card';
-import type { ExpenseCategory } from 'shared';
-import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
+import SegmentedControl from '../shared/SegmentedControl';
+import type { ExpenseCategory, InflationPreset } from 'shared';
+import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES, getCategoryInflationRate, ZERO_INFLATION_CATEGORIES } from 'shared';
 import SubCategoryRow from './SubCategoryRow';
 import HomePurchaseDialog from './HomePurchaseDialog';
 import HomeEquityChart from './HomeEquityChart';
@@ -11,9 +12,10 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 interface CategoryGroupProps {
   category: ExpenseCategory;
   showMonthly: boolean;
+  showInflation?: boolean;
 }
 
-export default function CategoryGroup({ category, showMonthly }: CategoryGroupProps) {
+export default function CategoryGroup({ category, showMonthly, showInflation }: CategoryGroupProps) {
   const { updateExpenseCategory, removeExpenseCategory, addExpenseSubCategory, homePurchase } = useHouseholdStore();
   const [addingSub, setAddingSub] = useState(false);
   const [newSubName, setNewSubName] = useState('');
@@ -107,6 +109,14 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
       {/* Subcategories (collapsible) */}
       {!category.isCollapsed && (
         <div>
+          {/* Per-category inflation controls */}
+          {showInflation && (
+            <CategoryInflationRow
+              category={category}
+              onUpdate={(data) => updateExpenseCategory(category.id, data)}
+            />
+          )}
+
           {/* Locked home purchase rows */}
           {lockedItems.length > 0 && (
             <div className="divide-y divide-blue-100 bg-blue-50/40 border-b border-blue-200">
@@ -202,5 +212,61 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
         onCancel={() => setConfirmDelete(false)}
       />
     </Card>
+  );
+}
+
+function CategoryInflationRow({
+  category,
+  onUpdate,
+}: {
+  category: ExpenseCategory;
+  onUpdate: (data: Partial<ExpenseCategory>) => void;
+}) {
+  const isZero = ZERO_INFLATION_CATEGORIES.includes(category.name);
+  const effectiveRate = getCategoryInflationRate(
+    category.name,
+    category.inflationPreset ?? '20yr',
+    category.customInflationRate ?? 0,
+  );
+
+  if (isZero) {
+    return (
+      <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200">
+        <span className="text-xs text-gray-500 font-medium">Inflation:</span>
+        <span className="text-xs text-gray-400">0% (fixed)</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-100">
+      <span className="text-xs text-amber-700 font-medium">Inflation:</span>
+      <SegmentedControl
+        options={[
+          { value: '20yr', label: '20-yr' },
+          { value: '40yr', label: '40-yr' },
+          { value: 'custom', label: 'Custom' },
+        ]}
+        value={(category.inflationPreset ?? '20yr') as string}
+        onChange={(v) => onUpdate({ inflationPreset: v as InflationPreset })}
+        size="sm"
+      />
+      {category.inflationPreset === 'custom' ? (
+        <div className="flex items-center gap-1">
+          <input
+            type="number"
+            step={0.1}
+            min={0}
+            max={20}
+            value={category.customInflationRate ?? 0}
+            onChange={(e) => onUpdate({ customInflationRate: Number(e.target.value) })}
+            className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
+          />
+          <span className="text-xs text-amber-600">%</span>
+        </div>
+      ) : (
+        <span className="text-xs text-amber-600 font-medium">{effectiveRate.toFixed(1)}%</span>
+      )}
+    </div>
   );
 }

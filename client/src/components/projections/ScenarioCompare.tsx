@@ -91,7 +91,7 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
         id: 'current',
         name: 'Current',
         color: SCENARIO_COLORS[colorIdx++ % SCENARIO_COLORS.length],
-        data: runProjection({ earners, expenseCategories, expenseBuffer: currentBuffer, inflationRate, maxAge, homePurchase }),
+        data: runProjection({ earners, expenseCategories, expenseBuffer: currentBuffer, inflationRate, maxAge, homePurchase, inflationMode: household?.inflationMode ?? 'simple' }),
         expenseCategories,
         homePurchase: homePurchase ?? null,
         expenseBuffer: currentBuffer,
@@ -116,6 +116,7 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
           inflationRate,
           maxAge,
           homePurchase: scenarioHP,
+          inflationMode: household?.inflationMode ?? 'simple',
         }),
         expenseCategories: scenarioCategories,
         homePurchase: scenarioHP,
@@ -124,7 +125,7 @@ export default function ScenarioCompare({ earners, homePurchase, inflationRate, 
     }
 
     return results;
-  }, [selectedIds, earners, expenseCategories, currentBuffer, expenseScenarios, inflationRate, maxAge, homePurchase]);
+  }, [selectedIds, earners, expenseCategories, currentBuffer, expenseScenarios, inflationRate, maxAge, homePurchase, household?.inflationMode]);
 
   const toggleScenario = (id: string) => {
     setSelectedIds((prev) => {

@@ -34,6 +34,7 @@ export async function getSnapshot(householdId: string) {
 export async function updateHousehold(householdId: string, data: {
   name?: string;
   expenseBuffer?: number;
+  inflationMode?: string;
 }) {
   return prisma.household.update({
     where: { id: householdId },

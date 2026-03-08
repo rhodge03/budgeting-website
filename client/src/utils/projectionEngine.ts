@@ -1,6 +1,6 @@
 import { calculateTax, calculateCapitalGainsTax } from './taxCalculator';
-import type { HouseholdSnapshot, HomePurchase } from 'shared';
-import { computeHomePurchaseMonthly, computeMonthlyMortgage, computeClosingCosts, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
+import type { HouseholdSnapshot, HomePurchase, InflationMode } from 'shared';
+import { computeHomePurchaseMonthly, computeMonthlyMortgage, computeClosingCosts, HOME_PURCHASE_LOCKED_NAMES, getCategoryInflationRate } from 'shared';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
 
@@ -36,7 +36,8 @@ export interface ProjectionInputs {
   earners: EarnerWithRelations[];
   expenseCategories: HouseholdSnapshot['expenseCategories'];
   expenseBuffer: number;  // percentage
-  inflationRate: number;  // percentage, e.g. 3
+  inflationRate: number;  // percentage, e.g. 3 (also used for real-value deflation)
+  inflationMode?: InflationMode; // 'simple' | 'perCategory'
   maxAge: number;         // project until this age (default 100)
   homePurchase?: HomePurchase | null;
 }
@@ -57,6 +58,8 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
   const results: ProjectionYear[] = [];
   const inflationMultiplier = 1 + inflationRate / 100;
 
+  const usePerCategory = inputs.inflationMode === 'perCategory';
+
   // Monthly expenses (before buffer), accounting for home purchase locked subs
   const hpMonthly = inputs.homePurchase
     ? computeHomePurchaseMonthly(inputs.homePurchase)
@@ -67,19 +70,33 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
   const hpOtherAnnual = hpMonthly
     ? (hpMonthly.propertyTax + hpMonthly.homeInsurance + hpMonthly.repairs) * 12
     : 0;
-  const baseMonthlyExpenses = expenseCategories.reduce(
-    (sum, cat) => {
-      const subs = cat.name === 'Housing' && inputs.homePurchase
-        ? cat.subCategories.filter((s) => !HOME_PURCHASE_LOCKED_NAMES.includes(s.name))
-        : cat.subCategories;
-      return sum + subs.reduce((s, sub) => s + Number(sub.amount), 0);
-    },
-    0,
-  );
+
+  // Per-category expense info (used in perCategory mode)
+  const categoryExpenses = expenseCategories.map((cat) => {
+    const subs = cat.name === 'Housing' && inputs.homePurchase
+      ? cat.subCategories.filter((s) => !HOME_PURCHASE_LOCKED_NAMES.includes(s.name))
+      : cat.subCategories;
+    const monthlyTotal = subs.reduce((s, sub) => s + Number(sub.amount), 0);
+    const rate = getCategoryInflationRate(
+      cat.name,
+      cat.inflationPreset ?? '20yr',
+      cat.customInflationRate ?? 0,
+    );
+    return { annualBase: monthlyTotal * 12, inflationRate: rate / 100 };
+  });
+
+  // Simple mode totals (also used as fallback)
+  const baseMonthlyExpenses = categoryExpenses.reduce((s, ce) => s + ce.annualBase / 12, 0);
   // Inflateable annual expenses = non-mortgage expenses + other housing costs (all inflate)
   const inflatableAnnual = (baseMonthlyExpenses * 12 + hpOtherAnnual) * (1 + expenseBuffer / 100);
   // Fixed annual expenses = mortgage PI (no inflation, stops at payoff)
   const fixedMortgageAnnual = hpMortgageAnnual * (1 + expenseBuffer / 100);
+
+  // Housing category inflation rate for home purchase other costs in perCategory mode
+  const housingCat = expenseCategories.find((c) => c.name === 'Housing');
+  const hpOtherInflationRate = housingCat
+    ? getCategoryInflationRate(housingCat.name, housingCat.inflationPreset ?? '20yr', housingCat.customInflationRate ?? 0) / 100
+    : inflationRate / 100;
 
   // Per-earner tracking
   const earnerState = earners.map((earner) => {
@@ -254,7 +271,20 @@ export function runProjection(inputs: ProjectionInputs): ProjectionYear[] {
 
     // Household expenses: inflatable costs grow with inflation, mortgage PI is fixed and stops at payoff
     const mortgageThisYear = (hp && y < hpLoanTermYears) ? fixedMortgageAnnual : 0;
-    const yearExpenses = inflatableAnnual * inflationFactor + mortgageThisYear;
+    let yearExpenses: number;
+    if (usePerCategory) {
+      let inflatedTotal = 0;
+      for (const ce of categoryExpenses) {
+        inflatedTotal += ce.annualBase * Math.pow(1 + ce.inflationRate, y);
+      }
+      // Home purchase other costs inflate at housing category rate
+      inflatedTotal += hpOtherAnnual * Math.pow(1 + hpOtherInflationRate, y);
+      // Apply buffer after inflation
+      inflatedTotal *= (1 + expenseBuffer / 100);
+      yearExpenses = inflatedTotal + mortgageThisYear;
+    } else {
+      yearExpenses = inflatableAnnual * inflationFactor + mortgageThisYear;
+    }
 
     // Net cash flow = income - taxes - expenses - 401k contributions - child savings contributions
     const netCash = totalIncome - totalTax - yearExpenses - totalContributions401k - totalChildContributions;

@@ -4,6 +4,7 @@ export interface Household {
   id: string;
   name: string;
   expenseBuffer: number;
+  inflationMode: InflationMode;
   activeExpenseScenarioId: string | null;
   createdAt: string;
   updatedAt: string;
@@ -18,6 +19,8 @@ export interface User {
 }
 
 export type MemberType = 'adult' | 'child';
+export type InflationMode = 'simple' | 'perCategory';
+export type InflationPreset = '20yr' | '40yr' | 'custom';
 
 export interface Earner {
   id: string;
@@ -92,6 +95,8 @@ export interface ExpenseCategory {
   isDefault: boolean;
   isCollapsed: boolean;
   sortOrder: number;
+  inflationPreset: InflationPreset;
+  customInflationRate: number;
   subCategories: ExpenseSubCategory[];
 }
 

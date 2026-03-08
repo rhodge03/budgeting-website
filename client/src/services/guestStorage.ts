@@ -30,6 +30,14 @@ export function getSnapshot(): HouseholdSnapshot {
   }
   // Migrate older guest data that lacks homePurchase
   if ((snapshot as any).homePurchase === undefined) snapshot.homePurchase = null;
+  // Migrate older guest data that lacks inflation fields
+  if ((snapshot.household as any).inflationMode === undefined) {
+    snapshot.household.inflationMode = 'simple';
+  }
+  for (const cat of snapshot.expenseCategories) {
+    if ((cat as any).inflationPreset === undefined) cat.inflationPreset = '20yr';
+    if ((cat as any).customInflationRate === undefined) cat.customInflationRate = 0;
+  }
   return snapshot;
 }
 
@@ -50,6 +58,8 @@ export function initializeGuest(): HouseholdSnapshot {
       isDefault: true,
       isCollapsed: false,
       sortOrder: i,
+      inflationPreset: '20yr' as const,
+      customInflationRate: 0,
       subCategories: cat.subCategories.map((subName, j) => ({
         id: crypto.randomUUID(),
         categoryId: catId,
@@ -66,6 +76,7 @@ export function initializeGuest(): HouseholdSnapshot {
       id: householdId,
       name: 'My Household',
       expenseBuffer: 0,
+      inflationMode: 'simple' as const,
       activeExpenseScenarioId: null,
       createdAt: now,
       updatedAt: now,
@@ -307,6 +318,8 @@ export function createCategory(data: { name: string }): ExpenseCategory {
     isDefault: false,
     isCollapsed: false,
     sortOrder: snapshot.expenseCategories.length,
+    inflationPreset: '20yr',
+    customInflationRate: 0,
     subCategories: [],
   };
   snapshot.expenseCategories.push(category);
