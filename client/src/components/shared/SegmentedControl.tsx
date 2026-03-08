@@ -27,7 +27,7 @@ export default function SegmentedControl<T extends string>({
           onClick={() => onChange(opt.value)}
           className={`${padding} ${textSize} font-medium rounded-md transition-all ${
             value === opt.value
-              ? 'bg-white text-gray-900 shadow-sm'
+              ? 'bg-blue-600 text-white shadow-sm'
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
