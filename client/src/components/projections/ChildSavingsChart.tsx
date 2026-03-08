@@ -10,7 +10,9 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
+import Card from '../shared/Card';
 import type { HouseholdSnapshot } from 'shared';
+import ChartTooltip from '../shared/ChartTooltip';
 
 type EarnerWithRelations = HouseholdSnapshot['earners'][number];
 
@@ -124,8 +126,7 @@ const formatCurrency = (value: number) => {
   return `$${value}`;
 };
 
-const tooltipFormatter = (value: number | undefined) =>
-  value != null ? `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : '';
+
 
 export default function ChildSavingsChart({ earner }: Props) {
   const [inflationRate, setInflationRate] = useState(3);
@@ -145,9 +146,9 @@ export default function ChildSavingsChart({ earner }: Props) {
 
   if (data.length === 0) {
     return (
-      <div className="bg-white rounded border border-gray-200 p-8 text-center">
+      <Card className="text-center">
         <p className="text-sm text-gray-500">Set age and savings details to see projections.</p>
-      </div>
+      </Card>
     );
   }
 
@@ -169,7 +170,7 @@ export default function ChildSavingsChart({ earner }: Props) {
               step={0.5}
               value={inflationRate}
               onChange={(e) => setInflationRate(Number(e.target.value))}
-              className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
             />
             <span className="text-xs text-gray-500">%</span>
           </div>
@@ -200,8 +201,8 @@ export default function ChildSavingsChart({ earner }: Props) {
       {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {atWithdrawal && (
-          <div className="bg-white rounded border border-purple-200 p-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">At Withdrawal (Age {withdrawalAge})</p>
+          <Card accent="purple">
+            <p className="text-xs text-gray-500">At Withdrawal (Age {withdrawalAge})</p>
             <p className="text-2xl font-bold text-purple-700 mt-1">
               ${atWithdrawal.balance.toLocaleString('en-US')}
             </p>
@@ -210,27 +211,27 @@ export default function ChildSavingsChart({ earner }: Props) {
               {' | '}
               ${atWithdrawal.balanceReal.toLocaleString('en-US')} inflation-adj.
             </p>
-          </div>
+          </Card>
         )}
-        <div className="bg-white rounded border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Total Contributed</p>
+        <Card>
+          <p className="text-xs text-gray-500">Total Contributed</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">
             ${(atWithdrawal ?? finalYear).totalContributed.toLocaleString('en-US')}
           </p>
-        </div>
-        <div className="bg-white rounded border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Cumulative Interest</p>
+        </Card>
+        <Card>
+          <p className="text-xs text-gray-500">Cumulative Interest</p>
           <p className="text-2xl font-bold text-green-600 mt-1">
             ${(atWithdrawal ?? finalYear).cumulativeInterest.toLocaleString('en-US')}
           </p>
           <p className="text-xs text-gray-500 mt-1">
             at {Number(earner.rateOfReturn?.annualRate ?? 10)}% annual return
           </p>
-        </div>
+        </Card>
       </div>
 
       {/* Chart */}
-      <div className="bg-white rounded border border-gray-200 p-4">
+      <Card>
         <ResponsiveContainer width="100%" height={400}>
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -244,11 +245,7 @@ export default function ChildSavingsChart({ earner }: Props) {
               tick={{ fontSize: 12 }}
               width={65}
             />
-            <Tooltip
-              formatter={tooltipFormatter}
-              labelFormatter={(age) => `Age ${age}`}
-              contentStyle={{ fontSize: 13 }}
-            />
+            <Tooltip content={<ChartTooltip />} />
             <Legend wrapperStyle={{ fontSize: 13 }} />
 
             <ReferenceLine
@@ -274,10 +271,10 @@ export default function ChildSavingsChart({ earner }: Props) {
             ))}
           </AreaChart>
         </ResponsiveContainer>
-      </div>
+      </Card>
 
       {/* Year-by-year table */}
-      <div className="bg-white rounded border border-gray-200 overflow-hidden">
+      <Card padding={false} className="overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <h3 className="text-sm font-semibold text-gray-900">Year-by-Year Breakdown</h3>
           <button
@@ -318,7 +315,7 @@ export default function ChildSavingsChart({ earner }: Props) {
             </table>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

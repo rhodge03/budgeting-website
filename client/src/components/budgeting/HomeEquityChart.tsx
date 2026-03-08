@@ -9,8 +9,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import Card from '../shared/Card';
 import type { HomePurchase } from 'shared';
 import { computeHomeEquitySchedule } from 'shared';
+import ChartTooltip from '../shared/ChartTooltip';
 
 interface Props {
   homePurchase: HomePurchase;
@@ -22,8 +24,7 @@ const formatCurrency = (value: number) => {
   return `$${value}`;
 };
 
-const tooltipFormatter = (value: number | undefined) =>
-  value != null ? `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : '';
+
 
 const fmt = (n: number) =>
   `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
@@ -44,35 +45,35 @@ export default function HomeEquityChart({ homePurchase }: Props) {
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {at5 && (
-          <div className="bg-white rounded border border-blue-200 p-3">
-            <p className="text-[11px] text-gray-500 uppercase tracking-wide">Year 5</p>
+          <Card accent="blue">
+            <p className="text-[11px] text-gray-500">Year 5</p>
             <p className="text-lg font-bold text-blue-700">{fmt(at5.equity)}</p>
             <p className="text-[11px] text-gray-400">Home: {fmt(at5.homeValue)}</p>
-          </div>
+          </Card>
         )}
         {at10 && (
-          <div className="bg-white rounded border border-blue-200 p-3">
-            <p className="text-[11px] text-gray-500 uppercase tracking-wide">Year 10</p>
+          <Card accent="blue">
+            <p className="text-[11px] text-gray-500">Year 10</p>
             <p className="text-lg font-bold text-blue-700">{fmt(at10.equity)}</p>
             <p className="text-[11px] text-gray-400">Home: {fmt(at10.homeValue)}</p>
-          </div>
+          </Card>
         )}
         {at15 && (
-          <div className="bg-white rounded border border-blue-200 p-3">
-            <p className="text-[11px] text-gray-500 uppercase tracking-wide">Year 15</p>
+          <Card accent="blue">
+            <p className="text-[11px] text-gray-500">Year 15</p>
             <p className="text-lg font-bold text-blue-700">{fmt(at15.equity)}</p>
             <p className="text-[11px] text-gray-400">Home: {fmt(at15.homeValue)}</p>
-          </div>
+          </Card>
         )}
-        <div className="bg-white rounded border border-green-200 p-3">
-          <p className="text-[11px] text-gray-500 uppercase tracking-wide">Year {finalYear.year}</p>
+        <Card accent="green">
+          <p className="text-[11px] text-gray-500">Year {finalYear.year}</p>
           <p className="text-lg font-bold text-green-700">{fmt(finalYear.equity)}</p>
           <p className="text-[11px] text-gray-400">Interest: {fmt(finalYear.totalInterest)}</p>
-        </div>
+        </Card>
       </div>
 
       {/* Chart */}
-      <div className="bg-white rounded border border-gray-200 p-3">
+      <Card>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -86,11 +87,7 @@ export default function HomeEquityChart({ homePurchase }: Props) {
               tick={{ fontSize: 11 }}
               width={60}
             />
-            <Tooltip
-              formatter={tooltipFormatter}
-              labelFormatter={(year) => `Year ${year}`}
-              contentStyle={{ fontSize: 12 }}
-            />
+            <Tooltip content={<ChartTooltip labelPrefix="Year" />} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
             <Area
               type="monotone"
@@ -121,10 +118,10 @@ export default function HomeEquityChart({ homePurchase }: Props) {
             />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
+      </Card>
 
       {/* Year-by-year table */}
-      <div className="bg-white rounded border border-gray-200 overflow-hidden">
+      <Card padding={false} className="overflow-hidden">
         <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200">
           <h4 className="text-xs font-semibold text-gray-900">Year-by-Year Breakdown</h4>
           <button
@@ -162,7 +159,7 @@ export default function HomeEquityChart({ homePurchase }: Props) {
             </table>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

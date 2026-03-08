@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
+import Modal from '../shared/Modal';
 
 export default function ScenarioSelector() {
   const { household, expenseScenarios, createScenario, renameScenario, removeScenario, switchScenario } = useHouseholdStore();
@@ -8,18 +9,8 @@ export default function ScenarioSelector() {
   const [newName, setNewName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
   const activeId = household?.activeExpenseScenarioId;
   const activeScenario = expenseScenarios.find((s) => s.id === activeId);
-
-  useEffect(() => {
-    if (open) {
-      dialogRef.current?.showModal();
-    } else {
-      dialogRef.current?.close();
-    }
-  }, [open]);
 
   const handleClose = () => {
     setOpen(false);
@@ -68,11 +59,7 @@ export default function ScenarioSelector() {
       </button>
 
       {open && (
-        <dialog
-          ref={dialogRef}
-          onClose={handleClose}
-          className="rounded shadow-xl p-0 backdrop:bg-black/40 min-w-[360px] max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0"
-        >
+        <Modal open={open} onClose={handleClose} maxWidth="max-w-md">
           <div className="p-5">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
@@ -116,7 +103,7 @@ export default function ScenarioSelector() {
                           onBlur={() => handleRename(s.id)}
                           onClick={(e) => e.stopPropagation()}
                           autoFocus
-                          className="px-2 py-0.5 text-sm border border-blue-400 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 flex-1"
+                          className="px-2 py-0.5 text-sm border border-blue-400 rounded flex-1"
                         />
                       ) : (
                         <span className="text-sm font-medium text-gray-900 truncate">
@@ -169,7 +156,7 @@ export default function ScenarioSelector() {
                   }}
                   placeholder="Scenario name"
                   autoFocus
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded"
                 />
                 <button
                   onClick={handleCreate}
@@ -193,7 +180,7 @@ export default function ScenarioSelector() {
               </button>
             )}
           </div>
-        </dialog>
+        </Modal>
       )}
     </>
   );

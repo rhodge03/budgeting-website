@@ -9,13 +9,13 @@ import {
   ReferenceLine,
 } from 'recharts';
 import type { ScenarioProjection } from './ScenarioCompare';
+import ChartTooltip from '../shared/ChartTooltip';
 
 interface Props {
   scenarios: ScenarioProjection[];
   retirementAge?: number;
 }
 
-const fmt = (n: number) => `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 
 export default function CompareSideBySide({ scenarios, retirementAge }: Props) {
   return (
@@ -31,10 +31,7 @@ export default function CompareSideBySide({ scenarios, retirementAge }: Props) {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="age" tick={{ fontSize: 9 }} />
               <YAxis tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 9 }} width={50} />
-              <Tooltip
-                formatter={(value: number | undefined) => value != null ? fmt(value) : ''}
-                labelFormatter={(age) => `Age ${age}`}
-              />
+              <Tooltip content={<ChartTooltip />} />
               {retirementAge && (
                 <ReferenceLine x={retirementAge} stroke="#d97706" strokeDasharray="4 4" />
               )}

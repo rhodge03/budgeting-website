@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
 import type { AmountMode } from 'shared';
 import { computeHomePurchaseMonthly, computeClosingCosts } from 'shared';
 import CurrencyInput from '../shared/CurrencyInput';
+import Modal from '../shared/Modal';
 
 interface Props {
   open: boolean;
@@ -17,7 +18,6 @@ const fmtDecimal = (n: number) =>
 
 export default function HomePurchaseDialog({ open, onClose }: Props) {
   const { homePurchase, upsertHomePurchase, removeHomePurchase } = useHouseholdStore();
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Form state
   const [homePrice, setHomePrice] = useState(0);
@@ -64,11 +64,6 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
     }
   }, [open, homePurchase]);
 
-  useEffect(() => {
-    if (open) dialogRef.current?.showModal();
-    else dialogRef.current?.close();
-  }, [open]);
-
   // Live computed preview
   const formData = useMemo(() => ({
     id: '', householdId: '',
@@ -99,12 +94,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
   };
 
   return (
-    <dialog
-      ref={dialogRef}
-      onClose={onClose}
-      onClick={(e) => { if (e.target === dialogRef.current) onClose(); }}
-      className="backdrop:bg-black/40 bg-white rounded border border-gray-300 shadow-xl p-0 w-full max-w-lg"
-    >
+    <Modal open={open} onClose={onClose} maxWidth="max-w-lg">
       <div className="p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-gray-900">Home Purchase</h2>
@@ -129,7 +119,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
                 step={0.125}
                 value={interestRate}
                 onChange={(e) => setInterestRate(Number(e.target.value))}
-                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded "
               />
               <span className="text-sm text-gray-500">%</span>
             </div>
@@ -141,7 +131,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
             <select
               value={loanTermYears}
               onChange={(e) => setLoanTermYears(Number(e.target.value))}
-              className="px-2 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-2 py-2 text-sm border border-gray-300 rounded "
             >
               <option value={15}>15 years</option>
               <option value={20}>20 years</option>
@@ -187,7 +177,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
                 step={0.1}
                 value={repairsPct}
                 onChange={(e) => setRepairsPct(Number(e.target.value))}
-                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded "
               />
               <span className="text-sm text-gray-500">%</span>
             </div>
@@ -204,7 +194,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
                 step={0.1}
                 value={appreciationRate}
                 onChange={(e) => setAppreciationRate(Number(e.target.value))}
-                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded "
               />
               <span className="text-sm text-gray-500">%</span>
             </div>
@@ -270,7 +260,7 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
           </div>
         </div>
       </div>
-    </dialog>
+    </Modal>
   );
 }
 
@@ -306,7 +296,7 @@ function ModeInput({
           step={mode === 'percent' ? 0.1 : 100}
           value={value}
           onChange={(e) => onValueChange(Number(e.target.value))}
-          className="w-28 px-2 py-2 text-sm text-right border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-28 px-2 py-2 text-sm text-right border border-gray-300 rounded "
         />
         {mode === 'percent' && (
           <span className="text-sm text-gray-500">%</span>

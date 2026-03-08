@@ -1,6 +1,8 @@
 import { useHouseholdStore } from '../../stores/householdStore';
+import Card from '../shared/Card';
 import CurrencyInput from '../shared/CurrencyInput';
 import PercentageInput from '../shared/PercentageInput';
+import SectionHeader from '../shared/SectionHeader';
 
 interface Props {
   earnerId: string;
@@ -20,10 +22,10 @@ export default function ContributionSettings({ earnerId }: Props) {
   };
 
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
+    <Card>
+      <SectionHeader className="mb-4">
         {isChild ? 'Savings' : 'Savings & 401(k)'}
-      </h3>
+      </SectionHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CurrencyInput
@@ -58,6 +60,6 @@ export default function ContributionSettings({ earnerId }: Props) {
           </>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,5 +1,7 @@
 import { useHouseholdStore } from '../../stores/householdStore';
+import Card from '../shared/Card';
 import PercentageInput from '../shared/PercentageInput';
+import SectionHeader from '../shared/SectionHeader';
 
 const BENCHMARKS: { key: string; label: string; rate: number }[] = [
   { key: 'sp500', label: 'S&P 500', rate: 10.0 },
@@ -37,10 +39,8 @@ export default function RateOfReturnPanel({ earnerId }: Props) {
   };
 
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-        Expected Rate of Return
-      </h3>
+    <Card>
+      <SectionHeader className="mb-4">Expected Rate of Return</SectionHeader>
 
       <div className="space-y-4">
         {/* Benchmark buttons */}
@@ -76,6 +76,6 @@ export default function RateOfReturnPanel({ earnerId }: Props) {
           Historical average: S&P 500 ~10%, Dow Jones ~7%, Gold ~4.5% (nominal, pre-inflation).
         </p>
       </div>
-    </div>
+    </Card>
   );
 }

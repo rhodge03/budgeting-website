@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
+import Card from '../shared/Card';
+import SectionHeader from '../shared/SectionHeader';
 import { calculateTax } from '../../utils/taxCalculator';
 import { STATE_TAX_RATES } from 'shared/constants/taxBrackets';
 import type { FilingStatus } from 'shared';
@@ -60,10 +62,10 @@ export default function TaxSummaryPanel({ earnerId }: Props) {
   const stateName = STATE_TAX_RATES[earner.state]?.name ?? earner.state;
 
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
+    <Card>
+      <SectionHeader className="mb-4">
         Tax Breakdown {isJoint && '(Joint)'}
-      </h3>
+      </SectionHeader>
 
       <div className="space-y-3">
         <TaxRow label="Gross Taxable Income" value={breakdown.grossIncome} />
@@ -109,7 +111,7 @@ export default function TaxSummaryPanel({ earnerId }: Props) {
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 

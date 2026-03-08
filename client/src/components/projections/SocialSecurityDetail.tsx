@@ -1,3 +1,4 @@
+import Card from '../shared/Card';
 import type { SocialSecurityEstimate } from '../../utils/socialSecurityEstimator';
 
 interface Props {
@@ -9,7 +10,7 @@ const fmt = (n: number) =>
 
 export default function SocialSecurityDetail({ estimate }: Props) {
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
+    <Card>
       <h3 className="text-sm font-semibold text-gray-900 mb-3">Social Security Estimate</h3>
 
       <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm mb-4">
@@ -47,6 +48,6 @@ export default function SocialSecurityDetail({ estimate }: Props) {
           ))}
         </ul>
       </div>
-    </div>
+    </Card>
   );
 }

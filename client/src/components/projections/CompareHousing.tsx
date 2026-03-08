@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 import type { ScenarioProjection } from './ScenarioCompare';
+import ChartTooltip from '../shared/ChartTooltip';
 
 interface Props {
   scenarios: ScenarioProjection[];
@@ -20,7 +21,6 @@ interface Props {
   includeUtilities: boolean;
 }
 
-const fmt = (n: number) => `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 
 export default function CompareHousing({ scenarios, inflationRate, retirementAge, includeUtilities }: Props) {
   const merged = useMemo(() => {
@@ -124,10 +124,7 @@ export default function CompareHousing({ scenarios, inflationRate, retirementAge
           tick={{ fontSize: 11 }}
           width={65}
         />
-        <Tooltip
-          formatter={(value: number | undefined) => value != null ? [fmt(value), 'Monthly'] : ''}
-          labelFormatter={(age) => `Age ${age}`}
-        />
+        <Tooltip content={<ChartTooltip />} />
         <Legend />
         {retirementAge && (
           <ReferenceLine

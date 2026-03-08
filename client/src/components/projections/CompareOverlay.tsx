@@ -10,13 +10,13 @@ import {
   ReferenceLine,
 } from 'recharts';
 import type { ScenarioProjection } from './ScenarioCompare';
+import ChartTooltip from '../shared/ChartTooltip';
 
 interface Props {
   scenarios: ScenarioProjection[];
   retirementAge?: number;
 }
 
-const fmt = (n: number) => `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 
 export default function CompareOverlay({ scenarios, retirementAge }: Props) {
   // Merge scenario data by age index
@@ -28,10 +28,7 @@ export default function CompareOverlay({ scenarios, retirementAge }: Props) {
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
         <XAxis dataKey="age" tick={{ fontSize: 11 }} />
         <YAxis tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} width={60} />
-        <Tooltip
-          formatter={(value: number | undefined) => value != null ? fmt(value) : ''}
-          labelFormatter={(age) => `Age ${age}`}
-        />
+        <Tooltip content={<ChartTooltip />} />
         <Legend />
         {retirementAge && (
           <ReferenceLine

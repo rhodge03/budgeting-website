@@ -33,7 +33,7 @@ export default function ChartControls({
             step={0.5}
             value={inflationRate}
             onChange={(e) => onInflationRateChange(Number(e.target.value))}
-            className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
           />
           <span className="text-xs text-gray-500">%</span>
         </div>
@@ -46,7 +46,7 @@ export default function ChartControls({
             max={120}
             value={maxAge}
             onChange={(e) => onMaxAgeChange(Math.min(120, Math.max(50, Number(e.target.value))))}
-            className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
           />
         </div>
 
@@ -58,7 +58,7 @@ export default function ChartControls({
             max={70}
             value={ssClaimingAge}
             onChange={(e) => onSsClaimingAgeChange(Math.min(70, Math.max(62, Number(e.target.value))))}
-            className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-14 px-1.5 py-1 text-xs text-center border border-gray-300 rounded"
           />
         </div>
       </div>

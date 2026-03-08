@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
+import Card from '../shared/Card';
 import type { ExpenseCategory } from 'shared';
 import { computeHomePurchaseMonthly, HOME_PURCHASE_LOCKED_NAMES } from 'shared';
 import SubCategoryRow from './SubCategoryRow';
@@ -59,7 +60,7 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
     : [];
 
   return (
-    <div className="bg-white rounded border border-gray-200 overflow-hidden">
+    <Card padding={false} className="overflow-hidden">
       {/* Category header */}
       <div
         className="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer select-none"
@@ -144,7 +145,7 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
                     onKeyDown={(e) => e.key === 'Enter' && handleAddSub()}
                     placeholder="Subcategory name"
                     autoFocus
-                    className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
                   />
                   <button
                     onClick={handleAddSub}
@@ -183,6 +184,6 @@ export default function CategoryGroup({ category, showMonthly }: CategoryGroupPr
       {isHousing && (
         <HomePurchaseDialog open={showHomeDialog} onClose={() => setShowHomeDialog(false)} />
       )}
-    </div>
+    </Card>
   );
 }

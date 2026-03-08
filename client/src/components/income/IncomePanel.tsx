@@ -1,6 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
+import Card from '../shared/Card';
 import CurrencyInput from '../shared/CurrencyInput';
+import EmptyState from '../shared/EmptyState';
+import SectionHeader from '../shared/SectionHeader';
 import type { IncomeEntry } from 'shared';
 
 interface Props {
@@ -46,11 +49,9 @@ export default function IncomePanel({ earnerId }: Props) {
   const totalIncome = entries.reduce((sum, e) => sum + Number(e.amount), 0);
 
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
+    <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-          Income Sources
-        </h3>
+        <SectionHeader>Income Sources</SectionHeader>
         <div className="flex items-center gap-3">
           {saving && (
             <span className="text-xs text-gray-400">Saving...</span>
@@ -75,9 +76,14 @@ export default function IncomePanel({ earnerId }: Props) {
         ))}
 
         {entries.length === 0 && (
-          <p className="text-sm text-gray-500 text-center py-4">
-            No income entries yet. Add one to get started.
-          </p>
+          <EmptyState
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-gray-300">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            }
+            message="No income entries yet. Add one to get started."
+          />
         )}
       </div>
 
@@ -89,7 +95,7 @@ export default function IncomePanel({ earnerId }: Props) {
           </span>
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -148,7 +154,7 @@ function IncomeEntryRow({
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           onBlur={handleLabelBlur}
-          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-gray-300 rounded"
           placeholder="Income label"
         />
         <button
@@ -176,7 +182,7 @@ function IncomeEntryRow({
             onBlur={handleDurationBlur}
             placeholder={"\u221E"}
             title="Duration in years (empty = until retirement)"
-            className="w-12 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-12 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded"
           />
           <span className="text-xs text-gray-500">yr</span>
         </div>
@@ -191,7 +197,7 @@ function IncomeEntryRow({
             onBlur={handleGrowthBlur}
             placeholder="0"
             title="Annual growth rate % (empty = 0%)"
-            className="w-14 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-14 px-1.5 py-1.5 text-sm text-center border border-gray-300 rounded"
           />
           <span className="text-xs text-gray-500">%/yr</span>
         </div>

@@ -9,7 +9,9 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
+import Card from '../shared/Card';
 import type { ProjectionYear } from '../../utils/projectionEngine';
+import ChartTooltip from '../shared/ChartTooltip';
 
 export interface ChartSeries {
   key: keyof ProjectionYear;
@@ -56,24 +58,23 @@ const formatCurrency = (value: number) => {
   return `$${value}`;
 };
 
-const tooltipFormatter = (value: number | undefined) =>
-  value != null ? `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : '';
+
 
 export default function ProjectionChart({ data, enabledSeries, retirementAge, retirementGoal }: Props) {
   if (data.length === 0) {
     return (
-      <div className="bg-white rounded border border-gray-200 p-8 text-center">
+      <Card className="text-center">
         <p className="text-sm text-gray-500">
           Add earner details (income, savings, retirement age) to see projections.
         </p>
-      </div>
+      </Card>
     );
   }
 
   const activeSeries = AVAILABLE_SERIES.filter((s) => enabledSeries.has(s.key));
 
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
+    <Card>
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -87,11 +88,7 @@ export default function ProjectionChart({ data, enabledSeries, retirementAge, re
             tick={{ fontSize: 12 }}
             width={65}
           />
-          <Tooltip
-            formatter={tooltipFormatter}
-            labelFormatter={(age) => `Age ${age}`}
-            contentStyle={{ fontSize: 13 }}
-          />
+          <Tooltip content={<ChartTooltip />} />
           <Legend wrapperStyle={{ fontSize: 13 }} />
 
           {retirementGoal && retirementGoal > 0 && enabledSeries.has('netWorth') && (
@@ -128,6 +125,6 @@ export default function ProjectionChart({ data, enabledSeries, retirementAge, re
           ))}
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </Card>
   );
 }

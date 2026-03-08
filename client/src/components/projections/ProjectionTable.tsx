@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Card from '../shared/Card';
 import type { ProjectionYear } from '../../utils/projectionEngine';
 
 interface Props {
@@ -17,7 +18,7 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
   const displayed = expanded ? data : data.filter((_, i) => i % 5 === 0 || i === data.length - 1);
 
   return (
-    <div className="bg-white rounded border border-gray-200 overflow-hidden">
+    <Card padding={false} className="overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <h3 className="text-sm font-semibold text-gray-900">Year-by-Year Breakdown</h3>
         <button
@@ -80,6 +81,6 @@ export default function ProjectionTable({ data, retirementAge }: Props) {
           </tbody>
         </table>
       </div>
-    </div>
+    </Card>
   );
 }

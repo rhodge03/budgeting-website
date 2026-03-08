@@ -1,5 +1,7 @@
 import { useHouseholdStore } from '../../stores/householdStore';
+import Card from '../shared/Card';
 import CurrencyInput from '../shared/CurrencyInput';
+import SectionHeader from '../shared/SectionHeader';
 
 interface Props {
   earnerId: string;
@@ -27,10 +29,10 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
   const yearsUntilRetirement = Math.max(0, targetRetirementAge - currentAge);
 
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
+    <Card>
+      <SectionHeader className="mb-4">
         {isChild ? 'Age & Withdrawal' : 'Retirement Settings'}
-      </h3>
+      </SectionHeader>
 
       <div className="space-y-4">
         {/* Age Sliders */}
@@ -95,7 +97,7 @@ export default function RetirementSettingsPanel({ earnerId }: Props) {
           />
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -135,7 +137,7 @@ function AgeSlider({
             const v = Number(e.target.value);
             if (v >= min && v <= max) onChange(v);
           }}
-          className="w-16 px-2 py-1 text-sm text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-16 px-2 py-1 text-sm text-center border border-gray-300 rounded"
         />
       </div>
     </div>

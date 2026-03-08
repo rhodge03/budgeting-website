@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
-import TabBar from './TabBar';
 import GuestBanner from './GuestBanner';
-import AdUnit from '../ads/AdUnit';
 import EarnerSidebar from './EarnerSidebar';
+import SkeletonCard from '../shared/SkeletonCard';
 import { useHouseholdStore } from '../../stores/householdStore';
 
 export default function AppShell() {
   const loadSnapshot = useHouseholdStore((s) => s.loadSnapshot);
   const isLoading = useHouseholdStore((s) => s.isLoading);
+  const location = useLocation();
 
   useEffect(() => {
     loadSnapshot();
@@ -17,53 +17,35 @@ export default function AppShell() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      <div className="min-h-screen bg-slate-50 flex">
+        <div className="w-16 shrink-0 bg-white border-r border-gray-100" />
+        <div className="flex-1 flex flex-col">
+          <div className="h-12" style={{ backgroundColor: '#003262' }} />
+          <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-4 space-y-4">
+            <SkeletonCard lines={2} />
+            <SkeletonCard lines={4} />
+            <SkeletonCard lines={3} />
+          </main>
+        </div>
       </div>
     );
   }
 
   return (
-    <div
-      className="min-h-screen flex"
-      style={{
-        backgroundImage: 'url(/money_background.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}
-    >
+    <div className="min-h-screen flex bg-slate-50">
       {/* Left earner sidebar — full height */}
       <EarnerSidebar />
 
       {/* Everything else */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden bg-gray-50/70 backdrop-blur-sm">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         <GuestBanner />
         <Header />
-        <TabBar />
-
-        {/* Banner ad */}
-        <div className="w-full max-w-5xl mx-auto px-4 pt-4">
-          <AdUnit slot="BANNER_SLOT" format="horizontal" />
-        </div>
 
         <div className="flex-1 flex justify-center px-4 min-w-0">
           {/* Main content */}
-          <main className="flex-1 max-w-5xl w-full py-4 min-w-0">
+          <main key={location.pathname} className="flex-1 max-w-5xl w-full py-4 min-w-0 animate-fade-in">
             <Outlet />
           </main>
-
-          {/* Right sidebar ad — large screens only */}
-          <aside className="hidden lg:block w-[160px] shrink-0 ml-4 py-4">
-            <div className="sticky top-4">
-              <AdUnit
-                slot="SIDEBAR_SLOT"
-                format="vertical"
-                responsive={false}
-                style={{ width: 160, height: 600 }}
-              />
-            </div>
-          </aside>
         </div>
       </div>
     </div>

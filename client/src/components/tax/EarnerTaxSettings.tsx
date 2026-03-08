@@ -1,4 +1,6 @@
 import { useHouseholdStore } from '../../stores/householdStore';
+import Card from '../shared/Card';
+import SectionHeader from '../shared/SectionHeader';
 import { STATE_TAX_RATES } from 'shared/constants/taxBrackets';
 import type { FilingStatus } from 'shared';
 
@@ -32,10 +34,8 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
   };
 
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-        Tax Settings
-      </h3>
+    <Card>
+      <SectionHeader className="mb-4">Tax Settings</SectionHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* State selector */}
@@ -46,7 +46,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           <select
             value={earner.state}
             onChange={(e) => handleChange('state', e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded"
           >
             {STATES.map((s) => (
               <option key={s.code} value={s.code}>
@@ -64,7 +64,7 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           <select
             value={earner.filingStatus}
             onChange={(e) => handleChange('filingStatus', e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded"
           >
             {FILING_STATUSES.map((fs) => (
               <option key={fs.value} value={fs.value}>
@@ -103,6 +103,6 @@ export default function EarnerTaxSettings({ earnerId }: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

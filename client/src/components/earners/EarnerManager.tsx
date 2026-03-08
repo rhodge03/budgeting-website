@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useHouseholdStore } from '../../stores/householdStore';
+import Card from '../shared/Card';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import EmptyState from '../shared/EmptyState';
+import SectionHeader from '../shared/SectionHeader';
 import { ANIMAL_ICONS, ANIMAL_KEYS } from '../shared/Icons';
 import type { MemberType } from 'shared';
 
@@ -99,11 +102,9 @@ export default function EarnerManager() {
   };
 
   return (
-    <div className="bg-white rounded border border-gray-200 p-4">
+    <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-          Household
-        </h3>
+        <SectionHeader>Household</SectionHeader>
         {!isAdding && !editingId && (
           <button
             onClick={() => setIsAdding(true)}
@@ -148,7 +149,7 @@ export default function EarnerManager() {
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
               placeholder="Name"
               autoFocus
-              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded"
             />
             <button
               onClick={handleAdd}
@@ -185,7 +186,7 @@ export default function EarnerManager() {
                     onChange={(e) => setEditName(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
                     autoFocus
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded"
                   />
                   <button
                     onClick={handleSaveEdit}
@@ -266,9 +267,14 @@ export default function EarnerManager() {
         ))}
 
         {earners.length === 0 && (
-          <p className="text-sm text-gray-500 text-center py-4">
-            No members yet. Add one to get started.
-          </p>
+          <EmptyState
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-gray-300">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+              </svg>
+            }
+            message="No members yet. Add one to get started."
+          />
         )}
       </div>
 
@@ -281,6 +287,6 @@ export default function EarnerManager() {
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
-    </div>
+    </Card>
   );
 }
