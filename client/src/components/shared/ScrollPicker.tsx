@@ -39,7 +39,7 @@ export default function ScrollPicker({
       arr.push(Number(v.toFixed(resolvedDecimals)));
     }
     // If value is off-step but within range, insert it at the right position
-    if (value >= min && value <= max && !arr.some((v) => Math.abs(v - value) < step / 2)) {
+    if (value >= min && value <= max && !arr.some((v) => v === value)) {
       arr.push(value);
       arr.sort((a, b) => a - b);
     }
