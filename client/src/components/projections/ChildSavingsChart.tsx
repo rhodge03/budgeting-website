@@ -11,7 +11,6 @@ import {
   ReferenceLine,
 } from 'recharts';
 import Card from '../shared/Card';
-import ScrollPicker from '../shared/ScrollPicker';
 import type { HouseholdSnapshot } from 'shared';
 import ChartTooltip from '../shared/ChartTooltip';
 
@@ -164,13 +163,16 @@ export default function ChildSavingsChart({ earner }: Props) {
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-1.5">
             <label className="text-xs text-gray-500">Inflation Rate</label>
-            <ScrollPicker
-              value={inflationRate}
-              onChange={setInflationRate}
+            <input
+              type="number"
               min={0}
               max={20}
               step={0.5}
+              value={inflationRate}
+              onChange={(e) => setInflationRate(Number(e.target.value))}
+              className="w-16 px-1.5 py-1 text-xs text-center border border-gray-300 rounded-lg"
             />
+            <span className="text-xs text-gray-500">%</span>
           </div>
         </div>
 

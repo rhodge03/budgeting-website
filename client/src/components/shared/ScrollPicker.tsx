@@ -1,3 +1,10 @@
+/**
+ * WIP: ScrollPicker — iOS-style scroll wheel for percentage/rate inputs.
+ * Currently not used anywhere. Needs UX work before re-enabling:
+ * - Custom typed values don't persist well when scrolling
+ * - Scroll feel needs refinement
+ * Keep this component for future iteration.
+ */
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 
 interface ScrollPickerProps {

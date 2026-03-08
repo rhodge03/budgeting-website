@@ -3,7 +3,6 @@ import { useHouseholdStore } from '../../stores/householdStore';
 import type { AmountMode } from 'shared';
 import { computeHomePurchaseMonthly, computeClosingCosts } from 'shared';
 import CurrencyInput from '../shared/CurrencyInput';
-import ScrollPicker from '../shared/ScrollPicker';
 import Modal from '../shared/Modal';
 
 interface Props {
@@ -119,13 +118,18 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
           {/* Interest Rate */}
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Interest Rate</label>
-            <ScrollPicker
-              value={interestRate}
-              onChange={setInterestRate}
-              min={0}
-              max={30}
-              step={0.125}
-            />
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min={0}
+                max={30}
+                step={0.125}
+                value={interestRate}
+                onChange={(e) => setInterestRate(Number(e.target.value))}
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
+              />
+              <span className="text-sm text-gray-500">%</span>
+            </div>
           </div>
 
           {/* Loan Term */}
@@ -172,25 +176,35 @@ export default function HomePurchaseDialog({ open, onClose }: Props) {
           {/* Repairs */}
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Expected Repairs (% of home value/yr)</label>
-            <ScrollPicker
-              value={repairsPct}
-              onChange={setRepairsPct}
-              min={0}
-              max={10}
-              step={0.1}
-            />
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min={0}
+                max={10}
+                step={0.1}
+                value={repairsPct}
+                onChange={(e) => setRepairsPct(Number(e.target.value))}
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
+              />
+              <span className="text-sm text-gray-500">%</span>
+            </div>
           </div>
 
           {/* Appreciation Rate */}
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Home Appreciation Rate</label>
-            <ScrollPicker
-              value={appreciationRate}
-              onChange={setAppreciationRate}
-              min={-10}
-              max={20}
-              step={0.1}
-            />
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min={-10}
+                max={20}
+                step={0.1}
+                value={appreciationRate}
+                onChange={(e) => setAppreciationRate(Number(e.target.value))}
+                className="w-20 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
+              />
+              <span className="text-sm text-gray-500">%</span>
+            </div>
           </div>
         </div>
 
@@ -280,26 +294,19 @@ function ModeInput({
     <div>
       <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
       <div className="flex items-center gap-1.5">
-        {mode === 'percent' ? (
-          <ScrollPicker
-            value={value}
-            onChange={onValueChange}
-            min={0}
-            max={20}
-            step={0.1}
-          />
-        ) : (
-          <>
-            <span className="text-sm text-gray-400">$</span>
-            <input
-              type="number"
-              min={0}
-              step={100}
-              value={value}
-              onChange={(e) => onValueChange(Number(e.target.value))}
-              className="w-28 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
-            />
-          </>
+        {mode === 'dollar' && (
+          <span className="text-sm text-gray-400">$</span>
+        )}
+        <input
+          type="number"
+          min={0}
+          step={mode === 'percent' ? 0.1 : 100}
+          value={value}
+          onChange={(e) => onValueChange(Number(e.target.value))}
+          className="w-28 px-2 py-2 text-sm text-right border border-gray-300 rounded-lg"
+        />
+        {mode === 'percent' && (
+          <span className="text-sm text-gray-500">%</span>
         )}
         <button
           type="button"
